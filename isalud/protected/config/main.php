@@ -9,6 +9,7 @@ return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'iSalud',
 	'theme'=>'abound',
+	'language'=>'es',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
