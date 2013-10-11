@@ -62,7 +62,7 @@
 	</div>
 </div>
 
-<div class="subnav navbar navbar-fixed-top">
+<div class="subnav navbar navbar-top">
     <div class="navbar-inner">
     	<div class="container">
         
