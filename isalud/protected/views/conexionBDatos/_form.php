@@ -1,7 +1,21 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $('#probar_conexion').click(function(){
-            alert('Click Probar Conexion');
+            $.ajax({
+                url: '<?php echo Yii::app()->createURL('conexionbdatos/probar'); ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: $('#conexion-bdatos-form').serialize(),
+            }).done(function(response) {
+                if(response.error) {
+                    alert('ERROR: La conexión con la base de datos no fue exitosa, revise el mensaje de error. \n\n'+response.msjerror);
+                } else {
+                    alert('La prueba de conexión con la base de datos fue exitosa');
+                }
+                console.log(response);
+            }).fail(function() {
+                alert('ERROR: No se pudo realizar la prueba de conexión a la base de datos, intentelo nuevamente o notifiquelo con el administrador del sistema.')
+            });
         });
     });
 </script>

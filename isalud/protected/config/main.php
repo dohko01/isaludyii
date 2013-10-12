@@ -88,6 +88,10 @@ return array(
 				*/
 			),
 		),
+
+        'request'=>array(
+            'enableCsrfValidation'=>true,
+        ),
 	),
 
 	// application-level parameters that can be accessed

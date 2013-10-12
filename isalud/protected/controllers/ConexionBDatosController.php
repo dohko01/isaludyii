@@ -42,7 +42,7 @@ class ConexionBDatosController extends Controller
 	{
 		return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete', 'probar'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			   ),
 			/*array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -201,5 +201,92 @@ class ConexionBDatosController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+    /**
+	 * Prueba una conexion a base de datos.
+     * Si la prueba es exitosa devuelve true, de lo contrario devuelve false
+     * junto con el mensaje de error
+	 */
+	public function actionProbar()
+	{
+        if(Yii::app()->request->isAjaxRequest) {
+            $respuesta = array('error'=>false, 'msjerror'=>'');
+
+            $motorBDatos = MotorBDatos::model()->findByPk($_POST['ConexionBDatos']['id_motor_bdatos']);
+
+            $motorBDatos->driver;
+
+            try {
+                $dsn = '';
+
+                switch ($motorBDatos->driver) {
+                    case 'sqlite':
+                        $dsn = $motorBDatos->driver.':'.$_POST['ConexionBDatos']['direccion'];
+                        break;
+                    case 'mysql':
+                        if(empty($_POST['ConexionBDatos']['puerto']))
+                            $_POST['ConexionBDatos']['puerto'] = 3306;
+                        
+                        $dsn = $motorBDatos->driver.':'.
+                                            'host='.$_POST['ConexionBDatos']['direccion'].';'.
+                                            'port='.$_POST['ConexionBDatos']['puerto'].';'.
+                                            'dbname='.$_POST['ConexionBDatos']['base_datos'];
+                        break;
+                    case 'pgsql':
+                        if(empty($_POST['ConexionBDatos']['puerto']))
+                            $_POST['ConexionBDatos']['puerto'] = 5432;
+
+                        $dsn = $motorBDatos->driver.':'.
+                                            'host='.$_POST['ConexionBDatos']['direccion'].';'.
+                                            'port='.$_POST['ConexionBDatos']['puerto'].';'.
+                                            'dbname='.$_POST['ConexionBDatos']['base_datos'];
+                        break;
+                    case 'mssql':
+                        if(empty($_POST['ConexionBDatos']['puerto']))
+                            $_POST['ConexionBDatos']['puerto'] = 1433;
+
+                        if(!empty($_POST['ConexionBDatos']['instancia']))
+                            $_POST['ConexionBDatos']['direccion'] .= $_POST['ConexionBDatos']['direccion'].'\\'.$_POST['ConexionBDatos']['instancia'];
+                        
+                        $dsn = $motorBDatos->driver.':'.
+                                            'host='.$_POST['ConexionBDatos']['direccion'].';'.
+                                            'dbname='.$_POST['ConexionBDatos']['base_datos'];
+                        break;
+                    case 'sqlsrv': // Alternativa de conexion para SQL Server en php >= 5.3, http://mx1.php.net/manual/en/ref.pdo-sqlsrv.connection.php
+                        if(empty($_POST['ConexionBDatos']['puerto']))
+                            $_POST['ConexionBDatos']['puerto'] = 1433;
+
+                        if(!empty($_POST['ConexionBDatos']['instancia']))
+                            $_POST['ConexionBDatos']['direccion'] .= $_POST['ConexionBDatos']['direccion'].'\\'.$_POST['ConexionBDatos']['instancia'];
+
+                        $dsn = $motorBDatos->driver.':'.
+                                            'Server='.$_POST['ConexionBDatos']['direccion'].';'.
+                                            'Database='.$_POST['ConexionBDatos']['base_datos'];
+                        break;
+                    case 'oci':
+                        if(empty($_POST['ConexionBDatos']['puerto']))
+                            $_POST['ConexionBDatos']['puerto'] = 1521;
+
+                        $dsn = $motorBDatos->driver.':'.
+                                            'dbname='.$_POST['ConexionBDatos']['direccion'].':'.
+                                            $_POST['ConexionBDatos']['puerto'].'/'.
+                                            $_POST['ConexionBDatos']['base_datos'];
+                        break;
+                }
+
+                $conexion = new CDbConnection($dsn,$_POST['ConexionBDatos']['usuario'],$_POST['ConexionBDatos']['pass']);
+
+                $conexion->setActive(true);
+
+                if($conexion->active) // Si se establecio la conexion
+                    $conexion->active=false; // Cierra la conexion
+            } catch (Exception $exc) {
+                $respuesta['error'] = true;
+                $respuesta['msjerror'] = $exc->getMessage();
+            }
+
+            echo json_encode($respuesta);
+        }
 	}
 }

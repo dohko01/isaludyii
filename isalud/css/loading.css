@@ -1,0 +1,36 @@
+/* Fuente
+http://jsfiddle.net/justincook/x4C2t/
+http://jsfiddle.net/x4C2t/7/
+*/
+.loading
+{
+    /*background:url('../images/loading.gif') 50% 50% no-repeat;
+    position:absolute;
+    width:100px;
+    height:100px;
+    margin-left:-50px;
+    margin-top:-50px;
+    top:50%;
+    left:50%;*/
+    
+    /*background:url('../images/loading.gif') center center no-repeat white;
+    position:absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    border-radius:10px;
+    zoom: 1;
+	filter: alpha(opacity=50);
+	opacity: 0.5;*/
+    
+    background:url('../images/loading.gif') center center no-repeat white;
+    position:fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index:1000000;
+	filter: alpha(opacity=50);
+	opacity: 0.5;
+}
