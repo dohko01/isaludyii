@@ -1,0 +1,39 @@
+<?php
+/* @var $this FuenteDatosController */
+/* @var $data FuenteDatos */
+?>
+
+<div class="view">
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('nombre')); ?>:</b>
+	<?php echo CHtml::encode($data->nombre); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('id_cat_periodicidad')); ?>:</b>
+	<?php echo CHtml::encode($data->Periodicidad->nombre); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('responsable')); ?>:</b>
+	<?php echo CHtml::encode($data->responsable); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('descripcion')); ?>:</b>
+	<?php echo CHtml::encode($data->descripcion); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('id_conexion_bdatos')); ?>:</b>
+	<?php if($data->ConexionBDatos) echo CHtml::encode($data->ConexionBDatos->nombre); ?>
+	<br />
+	<b><?php echo CHtml::encode($data->getAttributeLabel('sentencia_sql')); ?>:</b>
+	<?php echo CHtml::encode($data->sentencia_sql); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('archivo')); ?>:</b>
+	<?php echo CHtml::encode($data->archivo); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('ultima_lectura')); ?>:</b>
+	<?php echo CHtml::encode($data->ultima_lectura); ?>
+	<br />
+
+</div>
