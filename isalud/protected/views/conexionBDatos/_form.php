@@ -2,7 +2,7 @@
     $(document).ready(function(){
         $('#probar_conexion').click(function(){
             $.ajax({
-                url: '<?php echo Yii::app()->createURL('conexionbdatos/probar'); ?>',
+                url: '<?php echo Yii::app()->createURL('conexionbdatos/probarconexion'); ?>',
                 type: 'POST',
                 dataType: 'json',
                 data: $('#conexion-bdatos-form').serialize(),
@@ -12,7 +12,6 @@
                 } else {
                     alert('La prueba de conexión con la base de datos fue exitosa');
                 }
-                console.log(response);
             }).fail(function() {
                 alert('ERROR: No se pudo realizar la prueba de conexión a la base de datos, intentelo nuevamente o notifiquelo con el administrador del sistema.')
             });

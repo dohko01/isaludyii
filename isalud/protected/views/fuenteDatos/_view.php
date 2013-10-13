@@ -6,7 +6,7 @@
 <div class="view">
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('nombre')); ?>:</b>
-	<?php echo CHtml::encode($data->nombre); ?>
+	<?php echo CHtml::link(CHtml::encode($data->nombre), array('view', 'id'=>$data->id)); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('id_cat_periodicidad')); ?>:</b>
@@ -22,7 +22,7 @@
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('id_conexion_bdatos')); ?>:</b>
-	<?php if($data->ConexionBDatos) echo CHtml::encode($data->ConexionBDatos->nombre); ?>
+	<?php if($data->ConexionBDatos) echo CHtml::link(CHtml::encode($data->ConexionBDatos->nombre), array('conexionbdatos/view', 'id'=>$data->ConexionBDatos->id)); ?>
 	<br />
 	<b><?php echo CHtml::encode($data->getAttributeLabel('sentencia_sql')); ?>:</b>
 	<?php echo CHtml::encode($data->sentencia_sql); ?>

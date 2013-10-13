@@ -116,7 +116,7 @@ div.form div.success label
 	color: inherit;
 }
 
-div.form .errorSummary
+div.form .errorSummary, .errorSummary
 {
 	border: 2px solid #C00;
 	padding: 7px 7px 12px 7px;

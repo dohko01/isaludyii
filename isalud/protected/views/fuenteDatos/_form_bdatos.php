@@ -17,3 +17,7 @@
 		<?php echo $form->textArea($model,'sentencia_sql',array('rows'=>6, 'cols'=>50)); ?>
 		<?php echo $form->error($model,'sentencia_sql'); ?>
 	</div>
+
+    <div class="row buttons">
+        <?php echo CHtml::Button('Probar sentencia SQL', array('id'=>'probar_sentencia_sql')); ?>
+	</div>

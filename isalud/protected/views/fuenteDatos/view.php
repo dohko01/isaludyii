@@ -18,7 +18,11 @@ $this->menu=array(
 
 <h1>Datos de la <?php echo $this->title_sin; ?></h1>
 
-<?php $this->widget('zii.widgets.CDetailView', array(
+<?php
+if(Yii::app()->user->getFlash('errorUploadFile'))
+    echo '<div class="errorSummary">'.Yii::app()->user->getFlash('errorUploadFile').'</div>';
+
+$this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
 		'nombre',
@@ -28,7 +32,11 @@ $this->menu=array(
         ),
 		'responsable',
 		'descripcion',
-        'ConexionBDatos.nombre',
+        array(
+            'label'=>'Conexión a base de datos',
+            'value'=>$model->ConexionBDatos ? CHtml::link(CHtml::encode($model->ConexionBDatos->nombre), array('conexionbdatos/view', 'id'=>$model->ConexionBDatos->id)) : "",
+            'type'=>'html',
+        ),
 		'sentencia_sql',
 		'archivo',
 		'ultima_lectura',

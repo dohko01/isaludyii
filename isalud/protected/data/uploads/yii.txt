@@ -1,0 +1,6 @@
+me quede en la pagina 118
+
+http://www.yiiframeworkenespanol.org/foro/archive/index.php?thread-145.html
+http://trucosdeprogramacionmovil.blogspot.mx/2012/10/file-uploads-en-yii-framework-con-drag.html
+http://www.yiiframework.com/doc/api/1.1/CUploadedFile
+http://www.yiiframework.com/forum/index.php/topic/6496-file-upload-form/

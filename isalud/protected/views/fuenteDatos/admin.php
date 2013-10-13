@@ -55,12 +55,13 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
             'name' => 'id_conexion_bdatos',
             // Si existe una relacion entre la fuente de base de datos y una conexion a base de datos
             // debemos mostrar el nombre de la base de datos
-            'value'=>'$data->ConexionBDatos ? $data->ConexionBDatos->nombre : ""',
+            'value'=>'$data->ConexionBDatos ? CHtml::link(CHtml::encode($data->ConexionBDatos->nombre), array(\'conexionbdatos/view\', \'id\'=>$data->ConexionBDatos->id)) : ""',
+            'type'=>'html',
             'filter'=>CHtml::listData(ConexionBDatos::model()->findAll(), 'id', 'nombre')
         ),
 		/*'descripcion',
-		'sentencia_sql',
-		'archivo',*/
+		'sentencia_sql',*/
+		'archivo',
 		'ultima_lectura',
 		array(
 			'class'=>'CButtonColumn',

@@ -42,7 +42,7 @@ class FuenteDatosController extends Controller
 	{
 		return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete','validararchivo'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),
 			/*array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -92,8 +92,19 @@ class FuenteDatosController extends Controller
 		if(isset($_POST['FuenteDatos']))
 		{
 			$model->attributes=$_POST['FuenteDatos'];
-			if($model->save())
+			$model->archivo = CUploadedFile::getInstance($model, 'archivo');
+
+			if($model->save()) {
+                if(!empty($model->archivo)) {
+                    $model->archivo->saveAs(Yii::getPathOfAlias('application').'/data/uploads/'.$model->archivo);
+
+                    if($model->archivo->hasError)
+                        Yii::app()->user->setFlash('errorUploadFile', $model->archivo->error);
+                }
+
+                Yii::app()->user->setFlash('errorUploadFile', 'Error enviado por set flash');
 				$this->redirect(array('view','id'=>$model->id));
+            }
 		}
 
 		$this->render('create',array(
@@ -118,8 +129,17 @@ class FuenteDatosController extends Controller
 		if(isset($_POST['FuenteDatos']))
 		{
 			$model->attributes=$_POST['FuenteDatos'];
-			if($model->save())
+            $model->archivo = CUploadedFile::getInstance($model, 'archivo');
+            
+			if($model->save()) {
+                if(!empty($model->archivo)) {
+                    $model->archivo->saveAs(Yii::getPathOfAlias('application').'/data/uploads/'.$model->archivo);
+
+                    if($model->archivo->hasError)
+                        Yii::app()->user->setFlash('errorUploadFile', $model->archivo->error);
+                }
 				$this->redirect(array('view','id'=>$model->id));
+            }
 		}
 
 		$this->render('update',array(
@@ -199,5 +219,32 @@ class FuenteDatosController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+    /**
+	 * Valida si existe un archivo con el mismo nombre del que se esta cargando al sistema
+	 */
+	public function actionValidarArchivo()
+	{
+        $directorio = opendir(Yii::getPathOfAlias('application').'/data/uploads/');
+        $archivoSubir = explode(DIRECTORY_SEPARATOR, $_POST['archivo']);
+        // El ultimo segmento del arreglo contiene el nombre del archivo
+        $archivoSubir = $archivoSubir[count($archivoSubir)-1];
+        $respuesta = array('error'=>false);
+
+        while (($archivo = readdir($directorio)) !== false)
+        {
+            // Comparación de string segura a nivel binario e insensible a mayúsculas y minúsculas
+            if(strcasecmp($archivoSubir, $archivo) == 0) {
+                $respuesta['error'] = true;
+                $respuesta['archivo'] = $archivoSubir;
+                $respuesta['archivo'] = $archivo;
+                break;
+            }
+        }
+
+        closedir($directorio);
+
+        echo json_encode($respuesta);
 	}
 }
