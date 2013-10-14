@@ -14,13 +14,18 @@ $this->menu=array(
 	array('label'=>'Eliminar '.$this->title_sin, 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'¿Esta seguro que desea eliminar el registro?')),
 	array('label'=>'Administrar '.$this->title_plu, 'url'=>array('admin')),
 );
+
+Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/cargarDatos.js');
 ?>
 
 <h1>Datos de la <?php echo $this->title_sin; ?></h1>
 
 <?php
-if(Yii::app()->user->getFlash('errorUploadFile'))
+if(Yii::app()->user->hasFlash('errorUploadFile'))
     echo '<div class="errorSummary">'.Yii::app()->user->getFlash('errorUploadFile').'</div>';
+
+if(Yii::app()->user->hasFlash('error'))
+    echo '<div class="errorSummary">'.Yii::app()->user->getFlash('error').'</div>';
 
 $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
@@ -41,4 +46,25 @@ $this->widget('zii.widgets.CDetailView', array(
 		'archivo',
 		'ultima_lectura',
 	),
-)); ?>
+));
+
+echo '<br /><p>';
+
+$this->widget('zii.widgets.jui.CJuiButton',array(
+    'buttonType'=>'button',
+    'name'=>'configCampos',
+    'caption'=>'Configurar Campos',
+    'onclick'=>new CJavaScriptExpression('function(){ location.href="'.Yii::app()->createUrl("/fuentedatos/configurarcampo", array("id" => $model->id)).'"} '),
+));
+
+$this->widget('zii.widgets.jui.CJuiButton',array(
+    'buttonType'=>'button',
+    'name'=>'cargarDatos',
+    'caption'=>'Cargar Datos',
+    'onclick'=>'fnCargarDatos',
+    'htmlOptions'=>array('id'=>$model->id)
+));
+
+echo '</p>';
+
+?>

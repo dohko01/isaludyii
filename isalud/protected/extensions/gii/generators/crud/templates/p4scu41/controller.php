@@ -187,7 +187,7 @@ class <?php echo $this->controllerClass; ?> extends <?php echo $this->baseContro
 	{
 		$model=<?php echo $this->modelClass; ?>::model()->findByPk($id);
 		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
+			throw new CHttpException(404,'La pagina solicitada no existe.');
 		return $model;
 	}
 

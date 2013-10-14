@@ -203,10 +203,12 @@ class ConexionBDatosController extends Controller
 		}
 	}
 
-    /*
-     * Devuelve un objeto de tipo CDbConnection
+    /**
+     * Devuelve un objeto de tipo CDbConnection.
+     * En caso de error, devuelve un array con dos elementos error y msjerror
      */
-    public function getConexion($datoConnec) {
+    public function getConexion($datoConnec)
+    {
         $datosConexion = null;
 
         // Si no es un array, quiere decir que estamos recibiendo el id de una conexion existente en la base de datos
@@ -300,9 +302,47 @@ class ConexionBDatosController extends Controller
     }
 
     /**
+	 * Devuelve un array con tres elementos
+     * error, msjerror y resultado.
+     * En caso de existir un error, error se establece con true y msjerror contiene el mensaje de error
+	 */
+    public function getQueryResult($objConnec, $sql, $limit = null)
+    {
+        $noPermitidos = '/\bUPDATE\b|\bDELETE\b|\bINSERT\b|\bCREATE\b|\bDROP\b|USUARIO|USER/i';
+        $respuesta = array('error'=>false, 'msjerror'=>'');
+
+        if (preg_match($noPermitidos, $sql) == FALSE) {
+            if($limit) {
+                if($objConnec->getDriverName() == 'mssql' || $objConnec->getDriverName() == 'sqlsrv')
+                     $sql = str_ireplace('SELECT', 'SELECT TOP '.$limit, $sql); // SQL Server no soporta limit
+                else
+                     $sql = $sql.' LIMIT '.$limit;
+            }
+            
+            $command = $objConnec->createCommand($sql);
+            $dataReader = $command->query();
+            $resultSet = $dataReader->readAll();
+
+            if(count($resultSet) > 0) {
+                // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
+                $funcConvertUFT8 = function(&$elemento, &$clave) {
+                    $elemento = mb_check_encoding($elemento, 'UTF-8') ? $elemento : utf8_encode(trim($elemento));
+                };
+                // Codificar todos los caracteres a utf-8 de lo contrario marca error al convertir a json
+                array_walk_recursive($resultSet, $funcConvertUFT8);
+                $respuesta['resultado'] = $resultSet;
+            }
+        } else {
+            $respuesta['error'] = true;
+            $respuesta['msjerror'] = 'Por seguridad, las siguientes sentencias no son permitidas UPDATE, DELETE, INSERT, CREATE y DROP, tampoco acceso a datos de USUARIO';
+        }
+
+        return $respuesta;
+     }
+
+    /**
 	 * Prueba una conexion a base de datos.
-     * Si la prueba es exitosa devuelve true, de lo contrario devuelve false
-     * junto con el mensaje de error
+     * Devueleve un json con dos elementos error y msjerror
 	 */
 	public function actionProbarConexion()
 	{
@@ -335,9 +375,10 @@ class ConexionBDatosController extends Controller
 	}
 
     /**
-	 * Prueba una conexion a base de datos.
-     * Si la prueba es exitosa devuelve true, de lo contrario devuelve false
-     * junto con el mensaje de error
+	 * Prueba una sentencia sql
+     * Devuelve un array con tres elementos
+     * error, msjerror y resultado.
+     * En caso de existir un error, error se establece con true y msjerror contiene el mensaje de error
 	 */
 	public function actionProbarSQL()
 	{
@@ -357,34 +398,7 @@ class ConexionBDatosController extends Controller
                     $conexion->setActive(true);
 
                     if($conexion->getActive()) { // Si se establecio la conexion
-                        $noPermitidos = '/\bUPDATE\b|\bDELETE\b|\bINSERT\b|\bCREATE\b|\bDROP\b/i';
-                        $sql = $_POST['sql'];
-
-                        if (preg_match($noPermitidos, $sql) == FALSE) {
-                            // limitar la consulta a los 15 primeros registros
-                            if($conexion->getDriverName() == 'mssql' || $conexion->getDriverName() == 'sqlsrv')
-                                 $sql = str_ireplace('SELECT', 'SELECT TOP 15 ', $sql); // SQL Server no soporta limit
-                            else
-                                 $sql = $sql.' LIMIT 15';
-
-                            $command = $conexion->createCommand($sql);
-                            $dataReader = $command->query();
-                            $resultSet = $dataReader->readAll();
-
-                            if(count($resultSet) > 0) {
-                                // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
-                                $funcConvertUFT8 = function(&$elemento, &$clave) {
-                                    $elemento = mb_check_encoding($elemento, 'UTF-8') ? $elemento : utf8_encode(trim($elemento));
-                                };
-                                // Codificar todos los caracteres a utf-8 de lo contrario marca error al convertir a json
-                                array_walk_recursive($resultSet, $funcConvertUFT8);
-                                $respuesta['resultado'] = $resultSet;
-                            }
-
-                        } else {
-                            $respuesta['error'] = true;
-                            $respuesta['msjerror'] = 'Sentencias no permitidas UPDATE, DELETE, INSERT, CREATE y DROP';
-                        }
+                        $respuesta = $this->getQueryResult($conexion, $_POST['sql'], '15');
                     } else { // De lo contrario, notificar el error
                         $respuesta['error'] = true;
                         $respuesta['msjerror'] = 'No se realizó la conexión con la base de datos, revise los datos proporcionados';

@@ -24,6 +24,8 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
+
+Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/cargarDatos.js');
 ?>
 
 <h1>Administraci&oacute;n de <?php echo $this->title_plu; ?></h1>
@@ -63,6 +65,28 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 		'sentencia_sql',*/
 		'archivo',
 		'ultima_lectura',
+        array(
+            // Utilizamos la nueva clase extendida para poder evaluar el id en el array options
+			'class'=>'ButtonColumn',
+            'template' => '{configCampos} {cargarDatos}',
+            'evaluateID'=>true, // Variable que define si será evaluado el id en el array options
+            'buttons' => array(
+                'configCampos' => array(
+                    'label'=>'Configurar Campos',
+                    'caption'=>'Configurar Campos',
+                    'url'=>'Yii::app()->createUrl("/fuentedatos/configurarcampo", array("id" => $data->id))',
+                    'imageUrl'=>Yii::app()->request->baseUrl.'/images/config.png',
+                ),
+                'cargarDatos' => array(
+                    'label'=>'Cargar Datos',
+                    'caption'=>'Cargar Datos',
+                    'url'=>'$data->id',
+                    'imageUrl'=>Yii::app()->request->baseUrl.'/images/load.png',
+                    'click'=>new CJavaScriptExpression('fnCargarDatos'),
+                    'options'=>array('id'=>'$data->id'),
+                ),
+            ),
+		),
 		array(
 			'class'=>'CButtonColumn',
 		),

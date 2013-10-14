@@ -42,7 +42,7 @@ class FuenteDatosController extends Controller
 	{
 		return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','validararchivo'),
+				'actions'=>array('index','view','create','update','admin','delete','validararchivo','configurarcampo'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),
 			/*array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -91,19 +91,64 @@ class FuenteDatosController extends Controller
 
 		if(isset($_POST['FuenteDatos']))
 		{
-			$model->attributes=$_POST['FuenteDatos'];
-			$model->archivo = CUploadedFile::getInstance($model, 'archivo');
+            //$transaction = null;
+            try {
+                $model->attributes=$_POST['FuenteDatos'];
+                $model->archivo = CUploadedFile::getInstance($model, 'archivo');
 
-			if($model->save()) {
-                if(!empty($model->archivo)) {
-                    $model->archivo->saveAs(Yii::getPathOfAlias('application').'/data/uploads/'.$model->archivo);
+                $transaction = Yii::app()->db->beginTransaction();
 
-                    if($model->archivo->hasError)
-                        Yii::app()->user->setFlash('errorUploadFile', $model->archivo->error);
+                if($model->save()) {
+                    // Subir el archivo al servidor
+                    if(!empty($model->archivo)) {
+                        $model->archivo->saveAs(Yii::getPathOfAlias('application').'/data/uploads/'.$model->archivo);
+
+                        if($model->archivo->hasError)
+                            Yii::app()->user->setFlash('errorUploadFile', 'Error al subir el archivo: '.$model->archivo->error);
+                    }
+
+                    // Cargar todos los campos
+                    // Desde una base de datos
+                    if($model->id_conexion_bdatos) {
+                        include(Yii::app()->getBasePath().DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.'ConexionBDatosController.php');
+                        Yii::import('application.controllers.ConexionBDatosController');
+                        
+                        $controllerConexion = new ConexionBDatosController('_ConexionBDatosController');
+                        $DBConec = $controllerConexion->getConexion($model->id_conexion_bdatos);
+
+                        // Si devuelve un array, eso significa que existe un error
+                        if(is_array($DBConec))
+                            throw new Exception($DBConec['msjerror']);
+                        
+                        // Leemos solo un registro de la consulta ya que lo que necesitamos son el nombre de las columnas
+                        $rsDatos = $controllerConexion->getQueryResult($DBConec, $model->sentencia_sql, 1);
+                        
+                        if($rsDatos['error'])
+                            throw new Exception($rsDatos['msjerror']);
+
+                        $nombresCampo = array_keys($rsDatos['resultado'][0]);
+                        
+                        foreach ($nombresCampo as $strCampo) {
+                            $objCampo = new Campo;
+                            $objCampo->id_fuente_datos = $model->id;
+                            $objCampo->nombre = $strCampo;
+
+                            $objCampo->save();
+                        }
+
+                    } // Desde un archivo
+                    else if($model->archivo) {
+                        $datosArchivo = 'Leer Datos del archivo';
+                        $nombresCampo = 'Primera fila del archivo';
+                    }
+
+                    $transaction->commit();
+
+                    $this->redirect(array('view','id'=>$model->id));
                 }
-
-                Yii::app()->user->setFlash('errorUploadFile', 'Error enviado por set flash');
-				$this->redirect(array('view','id'=>$model->id));
+            } catch (Exception $e) {
+                $transaction->rollback();
+                Yii::app()->user->setFlash('error', 'Error al crear la fuente de datos. '.$e->getMessage());
             }
 		}
 
@@ -204,7 +249,7 @@ class FuenteDatosController extends Controller
 	{
 		$model=FuenteDatos::model()->findByPk($id);
 		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
+			throw new CHttpException(404,'La pagina solicitado no existe.');
 		return $model;
 	}
 
@@ -246,5 +291,25 @@ class FuenteDatosController extends Controller
         closedir($directorio);
 
         echo json_encode($respuesta);
+	}
+
+    /**
+	 * Configura los campos de la fuente de datos
+	 */
+	public function actionConfigurarCampo($id)
+	{
+        $this->pageTitle = $this->title_sin.' - Configurar Campos';
+
+		$this->render('campos',array(
+			'model'=>$this->loadModel($id),
+		));
+	}
+
+    /**
+	 * Carga datos desde la fuente de datos
+	 */
+	public function actionCargarDatos($id)
+	{
+        echo 'Cargar Datos'.$id;
 	}
 }

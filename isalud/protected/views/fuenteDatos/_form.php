@@ -15,7 +15,7 @@
                     alert('ERROR: La prueba de la sentencia SQL no fue exitosa, revise el mensaje de error. \n\n'+response.msjerror);
                 } else {
                     alert('La prueba de la sentencia SQL fue exitosa. Puede ver, en la parte inferior, una muestra de los resultados obtenidos');
-                    $('#result_probar_sentencia_sql').html('<h3>Resultado parcial de la ejecución de la Sentencia SQL</h3>'+ConvertJsonToTable(response.resultado));
+                    $('#result_probar_sentencia_sql').html('<h3 align="center">Resultado parcial de la ejecución de la Sentencia SQL</h3>'+ConvertJsonToTable(response.resultado));
                 }
             }).fail(function() {
                 alert('ERROR: No se pudo realizar la prueba de la sentencia SQL, intentelo nuevamente o notifiquelo con el administrador del sistema.')
@@ -59,7 +59,12 @@
 
 	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
 
-	<?php echo $form->errorSummary($model); ?>
+	<?php
+        echo $form->errorSummary($model);
+        
+       if(Yii::app()->user->hasFlash('error'))
+            echo '<div class="errorSummary">'.Yii::app()->user->getFlash('error').'</div>';
+    ?>
 
     <?php
         $this->widget('zii.widgets.jui.CJuiTabs', array(
@@ -84,10 +89,6 @@
 
 </div><!-- form -->
 
-<div id="configurar_campos">
-
-</div>
-
-<div id="result_probar_sentencia_sql">
+<div id="result_probar_sentencia_sql" style="margin: auto;">
 
 </div>

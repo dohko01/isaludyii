@@ -42,8 +42,8 @@ class FuenteDatos extends CActiveRecord
 			array('id_cat_periodicidad, nombre, responsable', 'required'),
 			array('id_conexion_bdatos, id_cat_periodicidad', 'numerical', 'integerOnly'=>true),
 			array('nombre, responsable', 'length', 'max'=>45),
+			array('descripcion, sentencia_sql, ultima_lectura, archivo', 'safe'),
             array('archivo', 'file', 'types'=>'xls, xlsx, csv, txt', 'allowEmpty'=>true),
-			array('descripcion, sentencia_sql, ultima_lectura', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, id_conexion_bdatos, id_cat_periodicidad, nombre, responsable, descripcion, sentencia_sql, archivo, ultima_lectura', 'safe', 'on'=>'search'),
