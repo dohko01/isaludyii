@@ -42,7 +42,7 @@ foreach($this->tableSchema->columns as $column)
 ?>
 	<div class="row buttons">
 		<?php echo "<?php 
-        $this->widget('zii.widgets.jui.CJuiButton',array(
+        \$this->widget('zii.widgets.jui.CJuiButton',array(
             'buttonType'=>'submit',
             'name'=>'btnEnviarForm',
             'value'=>'1',
