@@ -30,6 +30,7 @@ class CriterioEvaluacion extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+            array('nombre, color', 'required'),
 			array('nombre', 'length', 'max'=>45),
 			array('color', 'length', 'max'=>20),
 			array('comentario', 'length', 'max'=>200),

@@ -22,7 +22,15 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton('Buscar'); ?>
+		<?php
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnBuscar',
+            'value'=>'1',
+            'caption'=>'Buscar',
+            )
+        );
+        ?>
 	</div>
 
 <?php $this->endWidget(); ?>

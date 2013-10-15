@@ -34,7 +34,15 @@
 
 <?php endforeach; ?>
 	<div class="row buttons">
-		<?php echo "<?php echo CHtml::submitButton('Buscar'); ?>\n"; ?>
+		<?php echo "<?php 
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnBuscar',
+            'value'=>'1',
+            'caption'=>'Buscar'),
+            )
+        );
+        ?>\n"; ?>
 	</div>
 
 <?php echo "<?php \$this->endWidget(); ?>\n"; ?>

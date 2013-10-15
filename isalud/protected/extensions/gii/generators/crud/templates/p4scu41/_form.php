@@ -41,7 +41,15 @@ foreach($this->tableSchema->columns as $column)
 }
 ?>
 	<div class="row buttons">
-		<?php echo "<?php echo CHtml::submitButton(\$model->isNewRecord ? 'Guardar' : 'Actualizar'); ?>\n"; ?>
+		<?php echo "<?php 
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnEnviarForm',
+            'value'=>'1',
+            'caption'=>(\$model->isNewRecord ? 'Guardar' : 'Actualizar'),
+            )
+        );
+        ?>\n"; ?>
 	</div>
 
 <?php echo "<?php \$this->endWidget(); ?>\n"; ?>
