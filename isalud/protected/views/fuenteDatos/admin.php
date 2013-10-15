@@ -91,4 +91,8 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 			'class'=>'CButtonColumn',
 		),
 	),
-)); ?>
+));
+
+// Para la validacion CSRF
+echo CHtml::hiddenField('YII_CSRF_TOKEN',Yii::app()->request->csrfToken);
+?>

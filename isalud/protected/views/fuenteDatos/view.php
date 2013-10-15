@@ -67,4 +67,6 @@ $this->widget('zii.widgets.jui.CJuiButton',array(
 
 echo '</p>';
 
+// Para la validacion CSRF
+echo CHtml::hiddenField('YII_CSRF_TOKEN',Yii::app()->request->csrfToken);
 ?>
