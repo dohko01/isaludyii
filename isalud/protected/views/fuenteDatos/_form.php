@@ -15,7 +15,7 @@
                     alert('ERROR: La prueba de la sentencia SQL no fue exitosa, revise el mensaje de error. \n\n'+response.msjerror);
                 } else {
                     alert('La prueba de la sentencia SQL fue exitosa. Puede ver, en la parte inferior, una muestra de los resultados obtenidos');
-                    $('#result_probar_sentencia_sql').html('<h3 align="center">Resultado parcial de la ejecución de la Sentencia SQL</h3>'+ConvertJsonToTable(response.resultado));
+                    $('#result_probar_sentencia_sql').html('<h3 align="center">Resultado parcial de la ejecución de la Sentencia SQL</h3>'+ConvertJsonToTable(response));
                 }
             }).fail(function() {
                 alert('ERROR: No se pudo realizar la prueba de la sentencia SQL, intentelo nuevamente o notifiquelo con el administrador del sistema.')
@@ -62,8 +62,7 @@
 	<?php
         echo $form->errorSummary($model);
         
-       if(Yii::app()->user->hasFlash('error'))
-            echo '<div class="errorSummary">'.Yii::app()->user->getFlash('error').'</div>';
+       if(!empty($msjError)) echo '<div class="errorSummary">'.$msjError.'</div>';
     ?>
 
     <?php
@@ -83,7 +82,15 @@
     ?>
 
     <div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar'); ?>
+		<?php
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnEnviarForm',
+            'value'=>'1',
+            'caption'=>($model->isNewRecord ? 'Guardar' : 'Actualizar'),
+            )
+        );
+        ?>
 	</div>
 <?php $this->endWidget(); ?>
 

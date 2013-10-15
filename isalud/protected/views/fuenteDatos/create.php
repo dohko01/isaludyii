@@ -15,4 +15,4 @@ $this->menu=array(
 
 <h1>Crear nueva <?php echo $this->title_sin; ?></h1>
 
-<?php $this->renderPartial('_form', array('model'=>$model)); ?>
+<?php $this->renderPartial('_form', array('model'=>$model, 'msjError'=>$msjError)); ?>

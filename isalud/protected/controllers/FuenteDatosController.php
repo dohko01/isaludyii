@@ -83,7 +83,8 @@ class FuenteDatosController extends Controller
 	public function actionCreate()
 	{
 		$this->pageTitle = $this->title_sin.' - Crear';
-        
+
+        $msjError = '';
 		$model=new FuenteDatos;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -91,7 +92,7 @@ class FuenteDatosController extends Controller
 
 		if(isset($_POST['FuenteDatos']))
 		{
-            //$transaction = null;
+            $transaction = null;
             try {
                 $model->attributes=$_POST['FuenteDatos'];
                 $model->archivo = CUploadedFile::getInstance($model, 'archivo');
@@ -101,7 +102,7 @@ class FuenteDatosController extends Controller
                 if($model->save()) {
                     // Subir el archivo al servidor
                     if(!empty($model->archivo)) {
-                        $model->archivo->saveAs(Yii::getPathOfAlias('application').'/data/uploads/'.$model->archivo);
+                        $model->archivo->saveAs(Yii::getPathOfAlias('application').DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.$model->archivo);
 
                         if($model->archivo->hasError)
                             Yii::app()->user->setFlash('errorUploadFile', 'Error al subir el archivo: '.$model->archivo->error);
@@ -110,23 +111,16 @@ class FuenteDatosController extends Controller
                     // Cargar todos los campos
                     // Desde una base de datos
                     if($model->id_conexion_bdatos) {
-                        include(Yii::app()->getBasePath().DIRECTORY_SEPARATOR.'controllers'.DIRECTORY_SEPARATOR.'ConexionBDatosController.php');
-                        Yii::import('application.controllers.ConexionBDatosController');
-                        
-                        $controllerConexion = new ConexionBDatosController('_ConexionBDatosController');
-                        $DBConec = $controllerConexion->getConexion($model->id_conexion_bdatos);
+                        $DBConec = ConexionBDatos::model()->getConexion($model->id_conexion_bdatos);
 
-                        // Si devuelve un array, eso significa que existe un error
-                        if(is_array($DBConec))
-                            throw new Exception($DBConec['msjerror']);
-                        
                         // Leemos solo un registro de la consulta ya que lo que necesitamos son el nombre de las columnas
-                        $rsDatos = $controllerConexion->getQueryResult($DBConec, $model->sentencia_sql, 1);
+                        $rsDatos = ConexionBDatos::model()->getQueryResult($DBConec, $model->sentencia_sql, 1);
                         
-                        if($rsDatos['error'])
-                            throw new Exception($rsDatos['msjerror']);
+                        if(empty($rsDatos))
+                            throw new Exception('No se pudieron obtener los campos desde la consulta.');
 
-                        $nombresCampo = array_keys($rsDatos['resultado'][0]);
+                        // Campos enviados desde la sentencia SQL
+                        $nombresCampo = array_keys($rsDatos[0]);
                         
                         foreach ($nombresCampo as $strCampo) {
                             $objCampo = new Campo;
@@ -139,7 +133,7 @@ class FuenteDatosController extends Controller
                     } // Desde un archivo
                     else if($model->archivo) {
                         $datosArchivo = 'Leer Datos del archivo';
-                        $nombresCampo = 'Primera fila del archivo';
+                        $nombresCampo = 'Primera fila del archivo contiene nombre de campos';
                     }
 
                     $transaction->commit();
@@ -148,12 +142,13 @@ class FuenteDatosController extends Controller
                 }
             } catch (Exception $e) {
                 $transaction->rollback();
-                Yii::app()->user->setFlash('error', 'Error al crear la fuente de datos. '.$e->getMessage());
+                $msjError = 'Error al crear la fuente de datos. '.$e->getMessage();
             }
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+            'msjError' => $msjError,
 		));
 	}
 
@@ -165,7 +160,8 @@ class FuenteDatosController extends Controller
 	public function actionUpdate($id)
 	{
 		$this->pageTitle = $this->title_sin.' - Actualizar';
-        
+
+        $msjError = '';
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -173,22 +169,88 @@ class FuenteDatosController extends Controller
 
 		if(isset($_POST['FuenteDatos']))
 		{
-			$model->attributes=$_POST['FuenteDatos'];
-            $model->archivo = CUploadedFile::getInstance($model, 'archivo');
-            
-			if($model->save()) {
-                if(!empty($model->archivo)) {
-                    $model->archivo->saveAs(Yii::getPathOfAlias('application').'/data/uploads/'.$model->archivo);
+            $transaction = null;
+            try {
+                $model->attributes=$_POST['FuenteDatos'];
+                $model->archivo = CUploadedFile::getInstance($model, 'archivo');
 
-                    if($model->archivo->hasError)
-                        Yii::app()->user->setFlash('errorUploadFile', $model->archivo->error);
+                $transaction = Yii::app()->db->beginTransaction();
+
+                if($model->save()) {
+                    // Subir el archivo al servidor
+                    if(!empty($model->archivo)) {
+                        $model->archivo->saveAs(Yii::getPathOfAlias('application').DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.$model->archivo);
+
+                        if($model->archivo->hasError)
+                            Yii::app()->user->setFlash('errorUploadFile', 'Error al subir el archivo: '.$model->archivo->error);
+                    }
+
+                    // Cargar todos los campos
+                    // Desde una base de datos
+                    if($model->id_conexion_bdatos) {
+                        $DBConec = ConexionBDatos::model()->getConexion($model->id_conexion_bdatos);
+
+                        // Leemos solo un registro de la consulta ya que lo que necesitamos son el nombre de las columnas
+                        $rsDatos = ConexionBDatos::model()->getQueryResult($DBConec, $model->sentencia_sql, 1);
+
+                       if(empty($rsDatos))
+                            throw new Exception('No se pudieron obtener los campos desde la consulta.');
+
+                        // Campos enviados desde la sentencia SQL
+                        $nombresCampo = array_keys($rsDatos[0]);
+
+                        // Campos que actualmente estan en la base de datos
+                        $camposExistentes = CHtml::listData($model->Campos, 'id', 'nombre');
+                        $camposEliminar = array();
+
+                        foreach ($camposExistentes as $existente) {
+                            // Si el campo que esta guardado en la base de datos
+                            // no se encuentra en la lista de los nuevos campos enviados
+                            if(!in_array($existente, $nombresCampo)) {
+                                // quiere decir que lo tenemos que eliminar
+                                $camposEliminar[] = $existente;
+                            }
+                        }
+
+                        if(!empty($camposEliminar)) {
+                            foreach ($camposEliminar as $eliminar) {
+                                $objCampo = Campo::model()->findByAttributes(array('id_fuente_datos'=>$model->id, 'nombre'=>$eliminar));
+
+                                $objCampo->delete();
+                            }
+                        }
+
+                        // Obtenemos los campos que no estan guardados en la base de datos
+                        $camposNuevos = array_diff($nombresCampo, $camposExistentes);
+
+                        if(!empty($camposNuevos)) {
+                            foreach ($camposNuevos as $strCampo) {
+                                $objCampo = new Campo;
+                                $objCampo->id_fuente_datos = $model->id;
+                                $objCampo->nombre = $strCampo;
+
+                                $objCampo->save();
+                            }
+                        }
+                    } // Desde un archivo
+                    else if($model->archivo) {
+                        $datosArchivo = 'Leer Datos del archivo';
+                        $nombresCampo = 'Primera fila del archivo';
+                    }
+
+                    $transaction->commit();
+
+                    $this->redirect(array('view','id'=>$model->id));
                 }
-				$this->redirect(array('view','id'=>$model->id));
+            } catch (Exception $e) {
+                $transaction->rollback();
+                 $msjError = 'Error al actualizar la fuente de datos. '.$e->getMessage();
             }
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
+            'msjError' => $msjError,
 		));
 	}
 
@@ -271,7 +333,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionValidarArchivo()
 	{
-        $directorio = opendir(Yii::getPathOfAlias('application').'/data/uploads/');
+        $directorio = opendir(Yii::getPathOfAlias('application').DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR);
         $archivoSubir = explode(DIRECTORY_SEPARATOR, $_POST['archivo']);
         // El ultimo segmento del arreglo contiene el nombre del archivo
         $archivoSubir = $archivoSubir[count($archivoSubir)-1];
@@ -283,7 +345,6 @@ class FuenteDatosController extends Controller
             if(strcasecmp($archivoSubir, $archivo) == 0) {
                 $respuesta['error'] = true;
                 $respuesta['archivo'] = $archivoSubir;
-                $respuesta['archivo'] = $archivo;
                 break;
             }
         }
@@ -300,8 +361,43 @@ class FuenteDatosController extends Controller
 	{
         $this->pageTitle = $this->title_sin.' - Configurar Campos';
 
+        // Configuracion de campos enviada desde la vista por el metodo POST
+        $configCampos = Yii::app()->request->getPost('Campo');
+        $msgResult = '';
+        $msjError = '';
+        
+        try {
+            if(!empty($configCampos)) {
+                // La configuracion de campos es un array asociativo
+                // con el id del campo como llave de cada arreglo de configuracion
+                foreach ($configCampos as $idCampo => $confCampo) {
+                    $campo = Campo::model()->findByPk($idCampo);
+
+                    $campo->id_tipo_campo = $confCampo['tipo'];
+                    $campo->id_significado_campo = $confCampo['significado'];
+
+                    $campo->save();
+                }
+                $msgResult = 'Campos configurados correctamente';
+            }
+        } catch(Exception $e) {
+            $msgResult = 'ERROR: No se guardo las configuraciones para los campos, revise el mensaje de error.';
+            $msjError = $e->getMessage();
+        }
+
+        $model = $this->loadModel($id);
+        $campos = $model->Campos;
+
+        $tipoCampo = CHtml::listData(TipoCampo::model()->findAll(), 'id', 'descripcion');
+        $significadoCampo = CHtml::listData(SignificadoCampo::model()->findAll(), 'id', 'descripcion');
+
 		$this->render('campos',array(
-			'model'=>$this->loadModel($id),
+			'model'=>$model,
+            'campos'=>$campos,
+            'tipoCampo'=>$tipoCampo,
+            'significadoCampo'=>$significadoCampo,
+            'msgResult'=>$msgResult,
+            'msjError'=>$msjError,
 		));
 	}
 
@@ -310,6 +406,91 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionCargarDatos($id)
 	{
-        echo 'Cargar Datos'.$id;
+        $res = '';
+		$model=$this->loadModel($id);
+        $respuesta = array('error'=>false, 'msjerror'=>'');
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+		/*if(isset($_POST['FuenteDatos']))
+		{
+            $transaction = null;
+            try {
+                $model->attributes=$_POST['FuenteDatos'];
+                $model->archivo = CUploadedFile::getInstance($model, 'archivo');
+
+                $transaction = Yii::app()->db->beginTransaction();
+
+                if($model->save()) {
+                    // Subir el archivo al servidor
+                    if(!empty($model->archivo)) {
+                        $model->archivo->saveAs(Yii::getPathOfAlias('application').DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.$model->archivo);
+
+                        if($model->archivo->hasError)
+                            Yii::app()->user->setFlash('errorUploadFile', 'Error al subir el archivo: '.$model->archivo->error);
+                    }
+
+                    // Cargar todos los campos
+                    // Desde una base de datos
+                    if($model->id_conexion_bdatos) {
+                        $DBConec = ConexionBDatos::model()->getConexion($model->id_conexion_bdatos);
+
+                        // Leemos solo un registro de la consulta ya que lo que necesitamos son el nombre de las columnas
+                        $rsDatos = ConexionBDatos::model()->getQueryResult($DBConec, $model->sentencia_sql, 1);
+
+                       if(empty($rsDatos))
+                            throw new Exception('No se pudieron obtener los campos desde la consulta.');
+
+                        // Campos enviados desde la sentencia SQL
+                        $nombresCampo = array_keys($rsDatos[0]);
+
+                        // Campos que actualmente estan en la base de datos
+                        $camposExistentes = CHtml::listData($model->Campos, 'id', 'nombre');
+                        $camposEliminar = array();
+
+                        foreach ($camposExistentes as $existente) {
+                            // Si el campo que esta guardado en la base de datos
+                            // no se encuentra en la lista de los nuevos campos enviados
+                            if(!in_array($existente, $nombresCampo)) {
+                                // quiere decir que lo tenemos que eliminar
+                                $camposEliminar[] = $existente;
+                            }
+                        }
+
+                        if(!empty($camposEliminar)) {
+                            foreach ($camposEliminar as $eliminar) {
+                                $objCampo = Campo::model()->findByAttributes(array('id_fuente_datos'=>$model->id, 'nombre'=>$eliminar));
+
+                                $objCampo->delete();
+                            }
+                        }
+
+                        // Obtenemos los campos que no estan guardados en la base de datos
+                        $camposNuevos = array_diff($nombresCampo, $camposExistentes);
+
+                        if(!empty($camposNuevos)) {
+                            foreach ($camposNuevos as $strCampo) {
+                                $objCampo = new Campo;
+                                $objCampo->id_fuente_datos = $model->id;
+                                $objCampo->nombre = $strCampo;
+
+                                $objCampo->save();
+                            }
+                        }
+                    } // Desde un archivo
+                    else if($model->archivo) {
+                        $datosArchivo = 'Leer Datos del archivo';
+                        $nombresCampo = 'Primera fila del archivo';
+                    }
+
+                    $transaction->commit();
+
+                    $this->redirect(array('view','id'=>$model->id));
+                }
+            } catch (Exception $e) {
+                $transaction->rollback();
+                 $msjError = 'Error al actualizar la fuente de datos. '.$e->getMessage();
+            }
+		}*/
 	}
 }

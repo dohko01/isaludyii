@@ -124,4 +124,139 @@ class ConexionBDatos extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+    /**
+     * Devuelve un objeto de tipo CDbConnection.
+     * En caso de error, lanza una excepción.
+     */
+    public function getConexion($datoConnec)
+    {
+        $datosConexion = null;
+
+        // Si no es un array, quiere decir que estamos recibiendo el id de una conexion existente en la base de datos
+        // de lo contrario recibe los datos en forma de array de una nueva conexion, es decir, los datos del formulario
+        if(!is_array($datoConnec)) {
+            $datosConexion = $this->findByPk($datoConnec);
+
+            if($datosConexion)
+                $datosConexion = $datosConexion->getAttributes(false);
+            else
+                throw new Exception('Especifique una conexión a base de datos válida');
+                //return array('error'=>true, 'msjerror'=>'No existe el registro de la conexión a base de datos especificada');
+        }
+        else
+            $datosConexion = $datoConnec;
+
+        // Validar los datos propocionados
+        if(!$datosConexion['direccion'])
+            throw new Exception('Proporcione la IP o URL para la conexión');
+        if(!$datosConexion['usuario'])
+            throw new Exception('Proporcione el dato del nombre de usuario');
+        if(!$datosConexion['pass'])
+            throw new Exception('Proporcione la contraseña del usuario');
+        if(!$datosConexion['base_datos'])
+            throw new Exception('Proporcione el nombre de la base de datos');
+
+        $dsn = '';
+        $motorBDatos = MotorBDatos::model()->findByPk($datosConexion['id_motor_bdatos']);
+
+        if(is_null($motorBDatos))
+            throw new Exception('Especifique un motor de base de datos válido para la conexión');
+
+        switch ($motorBDatos->driver) {
+            case 'sqlite':
+                $dsn = $motorBDatos->driver.':'.$datosConexion['direccion'];
+                break;
+            case 'mysql':
+                if(empty($datosConexion['puerto']))
+                    $datosConexion['puerto'] = 3306;
+
+                $dsn = $motorBDatos->driver.':'.
+                                    'host='.$datosConexion['direccion'].';'.
+                                    'port='.$datosConexion['puerto'].';'.
+                                    'dbname='.$datosConexion['base_datos'];
+                break;
+            case 'pgsql':
+                if(empty($datosConexion['puerto']))
+                    $datosConexion['puerto'] = 5432;
+
+                $dsn = $motorBDatos->driver.':'.
+                                    'host='.$datosConexion['direccion'].';'.
+                                    'port='.$datosConexion['puerto'].';'.
+                                    'dbname='.$datosConexion['base_datos'];
+                break;
+            case 'mssql':
+                if(empty($datosConexion['puerto']))
+                    $datosConexion['puerto'] = 1433;
+
+                if(!empty($datosConexion['instancia']))
+                    $datosConexion['direccion'] .= $datosConexion['direccion'].'\\'.$datosConexion['instancia'];
+
+                $dsn = $motorBDatos->driver.':'.
+                                    'host='.$datosConexion['direccion'].';'.
+                                    'dbname='.$datosConexion['base_datos'];
+                break;
+            case 'sqlsrv': // Alternativa de conexion para SQL Server en php >= 5.3, http://mx1.php.net/manual/en/ref.pdo-sqlsrv.connection.php
+                if(empty($datosConexion['puerto']))
+                    $datosConexion['puerto'] = 1433;
+
+                if(!empty($datosConexion['instancia']))
+                    $datosConexion['direccion'] .= $datosConexion['direccion'].'\\'.$datosConexion['instancia'];
+
+                $dsn = $motorBDatos->driver.':'.
+                                    'Server='.$datosConexion['direccion'].';'.
+                                    'Database='.$datosConexion['base_datos'];
+                break;
+            case 'oci':
+                if(empty($datosConexion['puerto']))
+                    $datosConexion['puerto'] = 1521;
+
+                $dsn = $motorBDatos->driver.':'.
+                                    'dbname='.$datosConexion['direccion'].':'.
+                                    $datosConexion['puerto'].'/'.
+                                    $datosConexion['base_datos'];
+                break;
+        }
+
+        $conexion = new CDbConnection($dsn,$datosConexion['usuario'],$datosConexion['pass']);
+
+        return $conexion;
+    }
+
+    /**
+	 * Devuelve un array con los resultados de la consulta.
+     * En caso de existir un error, lanza una excepción.
+	 */
+    public function getQueryResult($objConnec, $sql, $limit=null)
+    {
+        $noPermitidos = '/\bUPDATE\b|\bDELETE\b|\bINSERT\b|\bCREATE\b|\bDROP\b|USUARIO|USER/i';
+        $respuesta = null;//array('error'=>false, 'msjerror'=>'');
+
+        if (preg_match($noPermitidos, $sql) == FALSE) {
+            if($limit) {
+                if($objConnec->getDriverName() == 'mssql' || $objConnec->getDriverName() == 'sqlsrv')
+                     $sql = str_ireplace('SELECT', 'SELECT TOP '.$limit, $sql); // SQL Server no soporta limit
+                else
+                     $sql = $sql.' LIMIT '.$limit;
+            }
+
+            $command = $objConnec->createCommand($sql);
+            $dataReader = $command->query();
+            $resultSet = $dataReader->readAll();
+
+            if(count($resultSet) > 0) {
+                // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
+                $funcConvertUFT8 = function(&$elemento, &$clave) {
+                    $elemento = mb_check_encoding($elemento, 'UTF-8') ? $elemento : utf8_encode(trim($elemento));
+                };
+                // Codificar todos los caracteres a utf-8 de lo contrario marca error al convertir a json
+                array_walk_recursive($resultSet, $funcConvertUFT8);
+                $respuesta = $resultSet;
+            }
+        } else {
+            throw new Exception('Por seguridad, las siguientes sentencias no son permitidas UPDATE, DELETE, INSERT, CREATE y DROP, tampoco acceso a datos de USUARIO');
+        }
+
+        return $respuesta;
+     }
 }

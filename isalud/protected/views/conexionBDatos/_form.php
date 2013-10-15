@@ -97,8 +97,23 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar'); ?>
-		<?php echo CHtml::Button('Probar conexión', array('id'=>'probar_conexion')); ?>
+		<?php
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnEnviarForm',
+            'value'=>'1',
+            'caption'=>$model->isNewRecord ? 'Guardar' : 'Actualizar',
+            )
+        );
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'button',
+            'name'=>'probar_conexion',
+            'value'=>'1',
+            'caption'=>'Probar conexión',
+            'htmlOptions'=>array('id'=>'probar_conexion')
+            )
+        );
+        ?>
 	</div>
 
 <?php $this->endWidget(); ?>
