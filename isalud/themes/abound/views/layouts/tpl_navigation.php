@@ -15,58 +15,29 @@
 		$items = array();
 		
 		$items[] = array('label'=>'Home', 'url'=>array('/site/index'));
-		
-		$menuUsuario = Modulo::model()->findAllByAttributes(array('id_cat_tipo_usuario'=>Yii::app()->user->tipoUsuario, 'parent_id'=>NULL));
-		
-		foreach($menuUsuario as $kk => $itemMenu)
+		if(Yii::app()->user->id != 0)
 		{
-			$subMenuUsuario = Modulo::model()->findAllByAttributes(array('parent_id'=>$itemMenu->id));
+			$menuUsuario = Modulo::model()->findAllByAttributes(array('id_cat_tipo_usuario'=>Yii::app()->user->tipoUsuario, 'parent_id'=>NULL));
 			
-			$arraySubMenu = array();
-			if(count($subMenuUsuario) > 0)
+			foreach($menuUsuario as $kk => $itemMenu)
 			{
-				foreach($subMenuUsuario as $jj => $itemSubMenu)
-					$arraySubMenu[] = array('label'=>$itemSubMenu->nombre, 'url'=>array('/'.$itemSubMenu->url));
-			}
+				$subMenuUsuario = Modulo::model()->findAllByAttributes(array('parent_id'=>$itemMenu->id));
 				
-			if(count($arraySubMenu) > 0)
-				$menuItem = array('label'=>$itemMenu->nombre.' <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-						'items'=>$arraySubMenu);
-			else
-				$menuItem = array('label'=>$itemMenu->nombre, 'url'=>array('/'.$itemMenu->url));
-			array_push($items,$menuItem);
+				$arraySubMenu = array();
+				if(count($subMenuUsuario) > 0)
+				{
+					foreach($subMenuUsuario as $jj => $itemSubMenu)
+						$arraySubMenu[] = array('label'=>$itemSubMenu->nombre, 'url'=>array('/'.$itemSubMenu->url));
+				}
+					
+				if(count($arraySubMenu) > 0)
+					$menuItem = array('label'=>$itemMenu->nombre.' <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+							'items'=>$arraySubMenu);
+				else
+					$menuItem = array('label'=>$itemMenu->nombre, 'url'=>array('/'.$itemMenu->url));
+				array_push($items,$menuItem);
+			}
 		}
-		
-		/*if(Yii::app()->user->id != 0 && Yii::app()->user->tipoUsuario == 1)
-		{
-			array_push($items,
-					array('label'=>'Catalogos <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-							'items'=>array(
-								array('label'=>'Tipos de Usuario', 'url'=>array('/tipoUsuario')),
-								array('label'=>'Usuarios', 'url'=>array('/usuario')),
-								array('label'=>'Tipo Indicador', 'url'=>array('/tipoIndicador')),
-								array('label'=>'Nivel', 'url'=>array('/nivel')),
-								array('label'=>'Clasificacion', 'url'=>array('/clasificacion')),
-								array('label'=>'Direccion', 'url'=>array('/direccion')),
-                                array('label'=>'Motor de base de datos', 'url'=>array('/motorbdatos')),
-                                array('label'=>'Significado de campo', 'url'=>array('/significadocampo')),
-                                array('label'=>'Tipo de campo', 'url'=>array('/tipocampo')),
-                                array('label'=>'Criterio de evaluación', 'url'=>array('/criterioevaluacion')),
-                                array('label'=>'Periodicidad', 'url'=>array('/periodicidad')),
-                                array('label'=>'Escala de evaluación', 'url'=>array('/escalaevaluacion')),
-							)));
-		}
-		//
-		if(Yii::app()->user->id != 0 && Yii::app()->user->tipoUsuario == 2)
-		{
-			array_push($items,
-					array('label'=>'Menu Analista <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-							'items'=>array(
-								array('label'=>'List 1', 'url'=>'#'),
-								array('label'=>'List 2', 'url'=>'#'),
-								array('label'=>'List 3', 'url'=>'#'),
-							)));
-		} */
 		array_push($items,
 			array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
 			array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest));
