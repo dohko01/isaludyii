@@ -13,8 +13,33 @@
           <div class="nav-collapse">
 		  <?php 
 		$items = array();
+		
 		$items[] = array('label'=>'Home', 'url'=>array('/site/index'));
-		if(Yii::app()->user->id != 0 && Yii::app()->user->tipoUsuario == 1)
+		
+		$menuUsuario = Modulo::model()->findAllByAttributes(array('id_cat_tipo_usuario'=>Yii::app()->user->tipoUsuario, 'parent_id'=>NULL));
+		
+		foreach($menuUsuario as $kk => $itemMenu)
+		{
+			$menuItem = array('label'=>$itemMenu->nombre, 'url'=>array('/'.$itemMenu->url));
+			if($itemMenu->parent_id == NULL)
+			{
+				$subMenuUsuario = Modulo::model()->findAllByAttributes(array('parent_id'=>$itemMenu->id));
+				
+				if(count($subMenuUsuario) > 0)
+				{
+					$arraySubMenu = array();
+					foreach($subMenuUsuario as $jj => $itemSubMenu)
+						$arraySubMenu[] = array('label'=>$itemSubMenu->nombre, 'url'=>array('/'.$itemSubMenu->url));
+				}
+				
+				if(count($arraySubMenu) > 0)
+					$menuItem = array('label'=>$itemMenu->nombre.' <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+							'items'=>$arraySubMenu);
+			}
+			array_push($items,$menuItem);
+		}
+		
+		/*if(Yii::app()->user->id != 0 && Yii::app()->user->tipoUsuario == 1)
 		{
 			array_push($items,
 					array('label'=>'Catalogos <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
@@ -43,7 +68,7 @@
 								array('label'=>'List 2', 'url'=>'#'),
 								array('label'=>'List 3', 'url'=>'#'),
 							)));
-		} 
+		} */
 		array_push($items,
 			array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
 			array('label'=>'Contact', 'url'=>array('/site/contact')),
