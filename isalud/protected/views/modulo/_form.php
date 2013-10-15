@@ -20,9 +20,8 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php $list = CHtml::listData(TipoUsuario::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->labelEx($model,'id_cat_tipo_usuario'); ?>
-		<?php echo $form->dropDownList($model,'id_cat_tipo_usuario', $list); ?>
+		<?php echo $form->textField($model,'id_cat_tipo_usuario'); ?>
 		<?php echo $form->error($model,'id_cat_tipo_usuario'); ?>
 	</div>
 
@@ -45,14 +44,21 @@
 	</div>
 
 	<div class="row">
-		<?php $list = CHtml::listData(Modulo::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->labelEx($model,'parent_id'); ?>
-		<?php echo $form->dropDownList($model,'parent_id', $list, array('empty'=>'Seleccionar..')); ?>
+		<?php echo $form->textField($model,'parent_id'); ?>
 		<?php echo $form->error($model,'parent_id'); ?>
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar'); ?>
+		<?php 
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnEnviarForm',
+            'value'=>'1',
+            'caption'=>($model->isNewRecord ? 'Guardar' : 'Actualizar'),
+            )
+        );
+        ?>
 	</div>
 
 <?php $this->endWidget(); ?>

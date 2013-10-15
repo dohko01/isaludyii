@@ -20,22 +20,20 @@
 		
 		foreach($menuUsuario as $kk => $itemMenu)
 		{
-			$menuItem = array('label'=>$itemMenu->nombre, 'url'=>array('/'.$itemMenu->url));
-			if($itemMenu->parent_id == NULL)
+			$subMenuUsuario = Modulo::model()->findAllByAttributes(array('parent_id'=>$itemMenu->id));
+			
+			$arraySubMenu = array();
+			if(count($subMenuUsuario) > 0)
 			{
-				$subMenuUsuario = Modulo::model()->findAllByAttributes(array('parent_id'=>$itemMenu->id));
-				
-				if(count($subMenuUsuario) > 0)
-				{
-					$arraySubMenu = array();
-					foreach($subMenuUsuario as $jj => $itemSubMenu)
-						$arraySubMenu[] = array('label'=>$itemSubMenu->nombre, 'url'=>array('/'.$itemSubMenu->url));
-				}
-				
-				if(count($arraySubMenu) > 0)
-					$menuItem = array('label'=>$itemMenu->nombre.' <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-							'items'=>$arraySubMenu);
+				foreach($subMenuUsuario as $jj => $itemSubMenu)
+					$arraySubMenu[] = array('label'=>$itemSubMenu->nombre, 'url'=>array('/'.$itemSubMenu->url));
 			}
+				
+			if(count($arraySubMenu) > 0)
+				$menuItem = array('label'=>$itemMenu->nombre.' <span class="caret"></span>', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+						'items'=>$arraySubMenu);
+			else
+				$menuItem = array('label'=>$itemMenu->nombre, 'url'=>array('/'.$itemMenu->url));
 			array_push($items,$menuItem);
 		}
 		
@@ -70,8 +68,6 @@
 							)));
 		} */
 		array_push($items,
-			array('label'=>'About', 'url'=>array('/site/page', 'view'=>'about')),
-			array('label'=>'Contact', 'url'=>array('/site/contact')),
 			array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
 			array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest));
 		  

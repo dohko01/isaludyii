@@ -12,9 +12,9 @@
  * @property integer $parent_id
  *
  * The followings are the available model relations:
- * @property TblcTipoUsuario $idCatTipoUsuario
  * @property Modulo $parent
  * @property Modulo[] $tblcModulos
+ * @property TblcTipoUsuario $idCatTipoUsuario
  */
 class Modulo extends CActiveRecord
 {
@@ -53,9 +53,9 @@ class Modulo extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'idCatTipoUsuario' => array(self::BELONGS_TO, 'TblcTipoUsuario', 'id_cat_tipo_usuario'),
 			'parent' => array(self::BELONGS_TO, 'Modulo', 'parent_id'),
 			'tblcModulos' => array(self::HAS_MANY, 'Modulo', 'parent_id'),
+			'idCatTipoUsuario' => array(self::BELONGS_TO, 'TblcTipoUsuario', 'id_cat_tipo_usuario'),
 		);
 	}
 
