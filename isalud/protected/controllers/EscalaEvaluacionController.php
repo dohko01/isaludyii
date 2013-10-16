@@ -84,19 +84,50 @@ class EscalaEvaluacionController extends Controller
 		$this->pageTitle = $this->title_sin.' - Crear';
         
 		$model=new EscalaEvaluacion;
+        $criteriosEvaluacion = CHtml::listData(CriterioEvaluacion::model()->findAll(), 'id', 'nombre');
+        $msjError = '';
+        $transaction = null;
+        $reglasEvaluacion = null;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['EscalaEvaluacion']))
 		{
-			$model->attributes=$_POST['EscalaEvaluacion'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+            try {
+                $transaction = Yii::app()->db->beginTransaction();
+                $model->attributes=$_POST['EscalaEvaluacion'];
+
+                if($model->save()) {
+                    $reglasEvaluacion = $_POST['EscalaEvaluacion']['reglas'];
+
+                    if(!empty($reglasEvaluacion)) {
+                        foreach($reglasEvaluacion as $id => $regEval) {
+                            $criEscEva = new CriterioEscalaEvaluacion;
+
+                            $criEscEva->id_cat_criterio_evaluacion = $regEval['criterio'];
+                            $criEscEva->id_escala_evaluacion = $model->id;
+                            $criEscEva->limite_inf = $regEval['limInf'];
+                            $criEscEva->limite_sup = $regEval['limSup'];
+
+                            $criEscEva->save();
+                        }
+                    } else {
+                        throw new Exception('Debe especificar por lo menos una regla de evaluación');
+                    }
+                }
+                $transaction->commit();
+            } catch (Exception $e) {
+                $msjError = 'Error al guardar los datos datos. '.$e->getMessage();
+            }
+
+            $this->redirect(array('view','id'=>$model->id));
 		}
 
 		$this->render('create',array(
 			'model'=>$model,
+            'criteriosEvaluacion'=>$criteriosEvaluacion,
+            'msjError'=>$msjError,
 		));
 	}
 
@@ -110,19 +141,75 @@ class EscalaEvaluacionController extends Controller
 		$this->pageTitle = $this->title_sin.' - Actualizar';
         
 		$model=$this->loadModel($id);
-
+        $msjError = '';
+        $reglasEliminar = null;
+        $transaction = null;
+        
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['EscalaEvaluacion']))
 		{
-			$model->attributes=$_POST['EscalaEvaluacion'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+            try {
+                $transaction = Yii::app()->db->beginTransaction();
+                $model->attributes=$_POST['EscalaEvaluacion'];
+
+                if($model->save()) {
+                    if(!empty($_POST['ReglasEliminar'])) {
+                        $reglasEliminar = explode(',', $_POST['ReglasEliminar']);
+                        $reglasEliminar = array_filter($reglasEliminar);
+
+                        foreach ($reglasEliminar as $eliminar) {
+                            $objEliminar = CriterioEscalaEvaluacion::model()->findByAttributes(array('id_escala_evaluacion'=>$model->id, 'id_cat_criterio_evaluacion'=>$eliminar));
+
+                            $objEliminar->delete();
+                        }
+                    }
+
+                    $reglasEvaluacion = $_POST['EscalaEvaluacion']['reglas'];
+
+                    if(!empty($reglasEvaluacion)) {
+                        foreach($reglasEvaluacion as $id => $regEval) {
+                            $criEscEva = CriterioEscalaEvaluacion::model()->findByAttributes(array('id_escala_evaluacion'=>$model->id, 'id_cat_criterio_evaluacion'=>$id));
+
+                            if($criEscEva) {
+                                $criEscEva->id_cat_criterio_evaluacion = $regEval['criterio'];
+                                $criEscEva->id_escala_evaluacion = $model->id;
+                                $criEscEva->limite_inf = $regEval['limInf'];
+                                $criEscEva->limite_sup = $regEval['limSup'];
+
+                                $criEscEva->save();
+                            } else {
+                                $criEscEva = new CriterioEscalaEvaluacion;
+
+                                $criEscEva->id_cat_criterio_evaluacion = $regEval['criterio'];
+                                $criEscEva->id_escala_evaluacion = $model->id;
+                                $criEscEva->limite_inf = $regEval['limInf'];
+                                $criEscEva->limite_sup = $regEval['limSup'];
+
+                                $criEscEva->save();
+                            }
+                        }
+                    } else {
+                        throw new Exception('Debe especificar por lo menos una regla de evaluación');
+                    }
+                }
+                $transaction->commit();
+            } catch (Exception $e) {
+                $msjError = 'Error al guardar los datos datos. '.$e->getMessage();
+            }
+
+            $this->redirect(array('view','id'=>$model->id));
 		}
 
+        $reglasEvaluacion = $model->CriteriosEscalaEvaluacion;
+        $criteriosEvaluacion = CHtml::listData(CriterioEvaluacion::model()->findAll(), 'id', 'nombre');
+        
 		$this->render('update',array(
 			'model'=>$model,
+            'criteriosEvaluacion'=>$criteriosEvaluacion,
+            'msjError'=>$msjError,
+            'reglasEvaluacion'=>$reglasEvaluacion
 		));
 	}
 
