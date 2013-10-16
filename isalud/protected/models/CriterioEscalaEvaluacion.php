@@ -1,25 +1,22 @@
 <?php
 
 /**
- * This is the model class for table "tblc_criterio_evaluacion".
+ * This is the model class for table "tbl_criterio_escala_evaluacion".
  *
- * The followings are the available columns in table 'tblc_criterio_evaluacion':
- * @property integer $id
- * @property string $nombre
- * @property string $color
- * @property string $comentario
- *
- * The followings are the available model relations:
- * @property TblEscalaEvaluacion[] $tblEscalaEvaluacions
+ * The followings are the available columns in table 'tbl_criterio_escala_evaluacion':
+ * @property integer $id_cat_criterio_evaluacion
+ * @property integer $id_escala_evaluacion
+ * @property double $limite_inf
+ * @property double $limite_sup
  */
-class CriterioEvaluacion extends CActiveRecord
+class CriterioEscalaEvaluacion extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'tblc_criterio_evaluacion';
+		return 'tbl_criterio_escala_evaluacion';
 	}
 
 	/**
@@ -30,13 +27,12 @@ class CriterioEvaluacion extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-            array('nombre, color', 'required'),
-			array('nombre', 'length', 'max'=>45),
-			array('color', 'length', 'max'=>20),
-			array('comentario', 'length', 'max'=>200),
+			array('id_cat_criterio_evaluacion, id_escala_evaluacion', 'required'),
+			array('id_cat_criterio_evaluacion, id_escala_evaluacion', 'numerical', 'integerOnly'=>true),
+			array('limite_inf, limite_sup', 'numerical'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nombre, color, comentario', 'safe', 'on'=>'search'),
+			array('id_cat_criterio_evaluacion, id_escala_evaluacion, limite_inf, limite_sup', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,8 +44,8 @@ class CriterioEvaluacion extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'EscalasEvaluacion' => array(self::MANY_MANY, 'EscalaEvaluacion', 'tbl_criterio_escala_evaluacion(id_cat_criterio_evaluacion, id_escala_evaluacion)'),
-            'CriteriosEscalaEvaluacion' => array(self::HAS_MANY, 'CriterioEscalaEvaluacion', 'id_cat_criterio_evaluacion'),
+            'EscalaEvaluacion' => array(self::BELONGS_TO, 'EscalaEvaluacion', 'id_escala_evaluacion'),
+            'CriterioEvaluacion' => array(self::BELONGS_TO, 'CriterioEvaluacion', 'id_cat_criterio_evaluacion'),
 		);
 	}
 
@@ -59,9 +55,10 @@ class CriterioEvaluacion extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'nombre' => 'Nombre',
-			'color' => 'Color',
-			'comentario' => 'Comentario',
+			'id_cat_criterio_evaluacion' => 'Id Cat Criterio Evaluacion',
+			'id_escala_evaluacion' => 'Id Escala Evaluacion',
+			'limite_inf' => 'Limite Inf',
+			'limite_sup' => 'Limite Sup',
 		);
 	}
 
@@ -83,9 +80,10 @@ class CriterioEvaluacion extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('color',$this->color,true);
-		$criteria->compare('comentario',$this->comentario,true);
+		$criteria->compare('id_cat_criterio_evaluacion',$this->id_cat_criterio_evaluacion);
+		$criteria->compare('id_escala_evaluacion',$this->id_escala_evaluacion);
+		$criteria->compare('limite_inf',$this->limite_inf);
+		$criteria->compare('limite_sup',$this->limite_sup);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -96,7 +94,7 @@ class CriterioEvaluacion extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return CriterioEvaluacion the static model class
+	 * @return CriterioEscalaEvaluacion the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
