@@ -1,13 +1,13 @@
 <?php
-/* @var $this DireccionController */
-/* @var $model Direccion */
+/* @var $this SubdireccionController */
+/* @var $model Subdireccion */
 /* @var $form CActiveForm */
 ?>
 
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'direccion-form',
+	'id'=>'subdireccion-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -20,10 +20,10 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'Institución'); ?>
-		<?php $list = CHTml::listData(Institucion::model()->findAll(), 'id', 'nombre'); ?>
-		<?php echo $form->dropDownList($model,'id_cat_institucion', $list); ?>
-		<?php echo $form->error($model,'id_cat_institucion'); ?>
+		<?php echo $form->labelEx($model,'id_cat_direccion'); ?>
+		<?php $list = CHTml::listData(Direccion::model()->findAll(), 'id','nombre');?>
+		<?php echo $form->dropDownList($model,'id_cat_direccion', $list); ?>
+		<?php echo $form->error($model,'id_cat_direccion'); ?>
 	</div>
 
 	<div class="row">

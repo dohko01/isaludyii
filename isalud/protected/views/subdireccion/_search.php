@@ -1,6 +1,6 @@
 <?php
-/* @var $this DireccionController */
-/* @var $model Direccion */
+/* @var $this SubdireccionController */
+/* @var $model Subdireccion */
 /* @var $form CActiveForm */
 ?>
 
@@ -12,8 +12,8 @@
 )); ?>
 
 	<div class="row">
-		<?php echo $form->label($model,'id_cat_institucion'); ?>
-		<?php echo $form->textField($model,'id_cat_institucion'); ?>
+		<?php echo $form->label($model,'id_cat_direccion'); ?>
+		<?php echo $form->textField($model,'id_cat_direccion'); ?>
 	</div>
 
 	<div class="row">

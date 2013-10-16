@@ -1,6 +1,6 @@
 <?php
-/* @var $this DireccionController */
-/* @var $model Direccion */
+/* @var $this ProgramaAccionController */
+/* @var $model ProgramaAccion */
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),

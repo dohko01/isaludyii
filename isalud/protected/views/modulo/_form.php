@@ -20,8 +20,9 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
+		<?php $list = CHtml::listData(TipoUsuario::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->labelEx($model,'id_cat_tipo_usuario'); ?>
-		<?php echo $form->textField($model,'id_cat_tipo_usuario'); ?>
+		<?php echo $form->dropDownList($model,'id_cat_tipo_usuario', $list); ?>
 		<?php echo $form->error($model,'id_cat_tipo_usuario'); ?>
 	</div>
 
@@ -44,8 +45,9 @@
 	</div>
 
 	<div class="row">
+		<?php $list = CHtml::listData(Modulo::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->labelEx($model,'parent_id'); ?>
-		<?php echo $form->textField($model,'parent_id'); ?>
+		<?php echo $form->dropDownList($model,'parent_id', $list, array('empty'=>'Seleccionar..')); ?>
 		<?php echo $form->error($model,'parent_id'); ?>
 	</div>
 

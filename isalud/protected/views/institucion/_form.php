@@ -1,13 +1,13 @@
 <?php
-/* @var $this DireccionController */
-/* @var $model Direccion */
+/* @var $this InstitucionController */
+/* @var $model Institucion */
 /* @var $form CActiveForm */
 ?>
 
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'direccion-form',
+	'id'=>'institucion-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -20,28 +20,21 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'Institución'); ?>
-		<?php $list = CHTml::listData(Institucion::model()->findAll(), 'id', 'nombre'); ?>
-		<?php echo $form->dropDownList($model,'id_cat_institucion', $list); ?>
-		<?php echo $form->error($model,'id_cat_institucion'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->labelEx($model,'nombre'); ?>
-		<?php echo $form->textField($model,'nombre',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'nombre',array('size'=>60,'maxlength'=>80)); ?>
 		<?php echo $form->error($model,'nombre'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'responsable'); ?>
-		<?php echo $form->textField($model,'responsable',array('size'=>45,'maxlength'=>45)); ?>
-		<?php echo $form->error($model,'responsable'); ?>
+		<?php echo $form->labelEx($model,'descripcion_corta'); ?>
+		<?php echo $form->textField($model,'descripcion_corta',array('size'=>15,'maxlength'=>15)); ?>
+		<?php echo $form->error($model,'descripcion_corta'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'comentario'); ?>
-		<?php echo $form->textArea($model,'comentario',array('rows'=>6, 'cols'=>50)); ?>
-		<?php echo $form->error($model,'comentario'); ?>
+		<?php echo $form->labelEx($model,'descripcion_clues'); ?>
+		<?php echo $form->textField($model,'descripcion_clues',array('size'=>10,'maxlength'=>10)); ?>
+		<?php echo $form->error($model,'descripcion_clues'); ?>
 	</div>
 
 	<div class="row buttons">

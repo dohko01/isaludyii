@@ -42,17 +42,20 @@ class ModuloController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view'),
-				'users'=>array('*'),
-			),
+				'actions'=>array('index','view','create','update','admin','delete'),
+				//'users'=>array('*'),
+				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
+			),/*
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update'),
-				'users'=>array('@'),
+				//'users'=>array('@'),
+				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),
 			array('allow', // allow admin user to perform 'admin' and 'delete' actions
 				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
-			),
+				//'users'=>array('admin'),
+				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
+			),*/
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),

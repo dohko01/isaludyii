@@ -5,12 +5,12 @@
 
 <div class="view">
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
+	<!--b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
 	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
-	<br />
+	<br /-->
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id_cat_tipo_usuario')); ?>:</b>
-	<?php echo CHtml::encode($data->id_cat_tipo_usuario); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('Tipo Usuario')); ?>:</b>
+	<?php echo CHtml::encode(($data->idCatTipoUsuario!=null) ? $data->idCatTipoUsuario->nombre : null); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('nombre')); ?>:</b>
@@ -22,11 +22,14 @@
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('activo')); ?>:</b>
-	<?php echo CHtml::encode($data->activo); ?>
+	<?php $activo = "No"; if($data->activo) $activo = "Si"; ?>
+	<?php echo CHtml::encode($activo); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('parent_id')); ?>:</b>
-	<?php echo CHtml::encode($data->parent_id); ?>
+	<?php $record = Modulo::model()->findByAttributes(array("id"=>$data->parent_id));?>
+	<?php if(count($record) > 0) $nombre = $record->nombre; else $nombre = NULL;?>
+	<?php echo CHtml::encode($nombre); ?>
 	<br />
 
 

@@ -1,5 +1,5 @@
 <?php
-/* @var $this DireccionController */
+/* @var $this SubdireccionController */
 /* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(

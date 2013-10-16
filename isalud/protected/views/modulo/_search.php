@@ -42,7 +42,7 @@
             'buttonType'=>'submit',
             'name'=>'btnBuscar',
             'value'=>'1',
-            'caption'=>'Buscar'),
+            'caption'=>'Buscar',
             )
         );
         ?>

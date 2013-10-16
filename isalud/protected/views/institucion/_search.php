@@ -1,6 +1,6 @@
 <?php
-/* @var $this DireccionController */
-/* @var $model Direccion */
+/* @var $this InstitucionController */
+/* @var $model Institucion */
 /* @var $form CActiveForm */
 ?>
 
@@ -12,23 +12,18 @@
 )); ?>
 
 	<div class="row">
-		<?php echo $form->label($model,'id_cat_institucion'); ?>
-		<?php echo $form->textField($model,'id_cat_institucion'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->label($model,'nombre'); ?>
-		<?php echo $form->textField($model,'nombre',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'nombre',array('size'=>60,'maxlength'=>80)); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'responsable'); ?>
-		<?php echo $form->textField($model,'responsable',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->label($model,'descripcion_corta'); ?>
+		<?php echo $form->textField($model,'descripcion_corta',array('size'=>15,'maxlength'=>15)); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'comentario'); ?>
-		<?php echo $form->textArea($model,'comentario',array('rows'=>6, 'cols'=>50)); ?>
+		<?php echo $form->label($model,'descripcion_clues'); ?>
+		<?php echo $form->textField($model,'descripcion_clues',array('size'=>10,'maxlength'=>10)); ?>
 	</div>
 
 	<div class="row buttons">

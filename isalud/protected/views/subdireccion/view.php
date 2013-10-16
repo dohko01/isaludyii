@@ -1,6 +1,6 @@
 <?php
-/* @var $this DireccionController */
-/* @var $model Direccion */
+/* @var $this SubdireccionController */
+/* @var $model Subdireccion */
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),
@@ -21,7 +21,7 @@ $this->menu=array(
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id_cat_institucion',
+		'id_cat_direccion',
 		'nombre',
 		'responsable',
 		'comentario',

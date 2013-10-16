@@ -1,13 +1,13 @@
 <?php
-/* @var $this DireccionController */
-/* @var $model Direccion */
+/* @var $this ProgramaAccionController */
+/* @var $model ProgramaAccion */
 /* @var $form CActiveForm */
 ?>
 
 <div class="form">
 
 <?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'direccion-form',
+	'id'=>'programa-accion-form',
 	// Please note: When you enable ajax validation, make sure the corresponding
 	// controller action is handling ajax validation correctly.
 	// There is a call to performAjaxValidation() commented in generated controller code.
@@ -20,15 +20,14 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'Institución'); ?>
-		<?php $list = CHTml::listData(Institucion::model()->findAll(), 'id', 'nombre'); ?>
-		<?php echo $form->dropDownList($model,'id_cat_institucion', $list); ?>
-		<?php echo $form->error($model,'id_cat_institucion'); ?>
+		<?php echo $form->labelEx($model,'id_cat_coordinacion'); ?>
+		<?php echo $form->textField($model,'id_cat_coordinacion'); ?>
+		<?php echo $form->error($model,'id_cat_coordinacion'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'nombre'); ?>
-		<?php echo $form->textField($model,'nombre',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'nombre',array('size'=>60,'maxlength'=>80)); ?>
 		<?php echo $form->error($model,'nombre'); ?>
 	</div>
 

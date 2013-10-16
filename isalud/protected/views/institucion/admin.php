@@ -1,6 +1,6 @@
 <?php
-/* @var $this ModuloController */
-/* @var $model Modulo */
+/* @var $this InstitucionController */
+/* @var $model Institucion */
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),
@@ -18,7 +18,7 @@ $('.search-button').click(function(){
 	return false;
 });
 $('.search-form form').submit(function(){
-	$('#modulo-grid').yiiGridView('update', {
+	$('#institucion-grid').yiiGridView('update', {
 		data: $(this).serialize()
 	});
 	return false;
@@ -40,22 +40,13 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 </div><!-- search-form -->
 
 <?php $this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'modulo-grid',
+	'id'=>'institucion-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		//'id_cat_tipo_usuario',
 		'nombre',
-		'url',
-		'activo',
-		array(
-			'header'=>'Parent',
-			'value'=>'($data->parent!=null) ? $data->parent->nombre : null',
-		),
-		array(
-			'header'=>'Tipo de usuario',
-			'value'=>'($data->idCatTipoUsuario!=null) ? $data->idCatTipoUsuario->nombre : null',
-		),
+		'descripcion_corta',
+		'descripcion_clues',
 		array(
 			'class'=>'CButtonColumn',
 		),

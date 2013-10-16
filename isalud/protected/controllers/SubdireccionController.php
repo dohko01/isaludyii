@@ -1,6 +1,6 @@
 <?php
 
-class DireccionController extends Controller
+class SubdireccionController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -13,14 +13,14 @@ class DireccionController extends Controller
 	 *
 	 * @var string
 	 */
-	public $title_sin = 'Direccion';
+	public $title_sin = 'Subdireccion';
 
 	/**
 	 * Titulo plural para breadcrumb y encabezado
 	 *     
 	 * @var string 
 	 */
-	public $title_plu = 'Direccion';
+	public $title_plu = 'Subdireccion';
 
 	/**
 	 * @return array action filters
@@ -83,14 +83,14 @@ class DireccionController extends Controller
 	{
 		$this->pageTitle = $this->title_sin.' - Crear';
         
-		$model=new Direccion;
+		$model=new Subdireccion;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Direccion']))
+		if(isset($_POST['Subdireccion']))
 		{
-			$model->attributes=$_POST['Direccion'];
+			$model->attributes=$_POST['Subdireccion'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -114,9 +114,9 @@ class DireccionController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Direccion']))
+		if(isset($_POST['Subdireccion']))
 		{
-			$model->attributes=$_POST['Direccion'];
+			$model->attributes=$_POST['Subdireccion'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -149,7 +149,7 @@ class DireccionController extends Controller
 	{
 		$this->pageTitle = $this->title_sin.' - Inicio';
         
-		$dataProvider=new CActiveDataProvider('Direccion');
+		$dataProvider=new CActiveDataProvider('Subdireccion');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -162,10 +162,10 @@ class DireccionController extends Controller
 	{
 		$this->pageTitle = $this->title_sin.' - Administración';
         
-		$model=new Direccion('search');
+		$model=new Subdireccion('search');
 		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Direccion']))
-			$model->attributes=$_GET['Direccion'];
+		if(isset($_GET['Subdireccion']))
+			$model->attributes=$_GET['Subdireccion'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -176,12 +176,12 @@ class DireccionController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Direccion the loaded model
+	 * @return Subdireccion the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Direccion::model()->findByPk($id);
+		$model=Subdireccion::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'La pagina solicitada no existe.');
 		return $model;
@@ -189,11 +189,11 @@ class DireccionController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Direccion $model the model to be validated
+	 * @param Subdireccion $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='direccion-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='subdireccion-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();

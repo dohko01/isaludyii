@@ -1,6 +1,6 @@
 <?php
-/* @var $this DireccionController */
-/* @var $model Direccion */
+/* @var $this ProgramaAccionController */
+/* @var $model ProgramaAccion */
 /* @var $form CActiveForm */
 ?>
 
@@ -12,13 +12,13 @@
 )); ?>
 
 	<div class="row">
-		<?php echo $form->label($model,'id_cat_institucion'); ?>
-		<?php echo $form->textField($model,'id_cat_institucion'); ?>
+		<?php echo $form->label($model,'id_cat_coordinacion'); ?>
+		<?php echo $form->textField($model,'id_cat_coordinacion'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->label($model,'nombre'); ?>
-		<?php echo $form->textField($model,'nombre',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'nombre',array('size'=>60,'maxlength'=>80)); ?>
 	</div>
 
 	<div class="row">

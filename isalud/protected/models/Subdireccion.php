@@ -1,29 +1,29 @@
 <?php
 
 /**
- * This is the model class for table "tblc_modulo".
+ * This is the model class for table "tblc_subdireccion".
  *
- * The followings are the available columns in table 'tblc_modulo':
+ * The followings are the available columns in table 'tblc_subdireccion':
  * @property integer $id
- * @property integer $id_cat_tipo_usuario
+ * @property integer $id_cat_direccion
  * @property string $nombre
- * @property string $url
- * @property boolean $activo
- * @property integer $parent_id
+ * @property string $responsable
+ * @property string $comentario
  *
  * The followings are the available model relations:
- * @property TblcTipoUsuario $idCatTipoUsuario
- * @property Modulo $parent
- * @property Modulo[] $tblcModulos
+ * @property TblFichaTecnica[] $tblFichaTecnicas
+ * @property TblcDireccion $idCatDireccion
+ * @property TblcCoordinacion[] $tblcCoordinacions
+ * @property TblUsuario[] $tblUsuarios
  */
-class Modulo extends CActiveRecord
+class Subdireccion extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'tblc_modulo';
+		return 'tblc_subdireccion';
 	}
 
 	/**
@@ -34,14 +34,13 @@ class Modulo extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_cat_tipo_usuario, nombre', 'required'),
-			array('id_cat_tipo_usuario, parent_id', 'numerical', 'integerOnly'=>true),
-			array('nombre', 'length', 'max'=>50),
-			array('url', 'length', 'max'=>45),
-			array('activo', 'safe'),
+			array('id_cat_direccion, nombre, responsable', 'required'),
+			array('id_cat_direccion', 'numerical', 'integerOnly'=>true),
+			array('nombre, responsable', 'length', 'max'=>45),
+			array('comentario', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, id_cat_tipo_usuario, nombre, url, activo, parent_id', 'safe', 'on'=>'search'),
+			array('id, id_cat_direccion, nombre, responsable, comentario', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -53,9 +52,10 @@ class Modulo extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'idCatTipoUsuario' => array(self::BELONGS_TO, 'TipoUsuario', 'id_cat_tipo_usuario'),
-			'parent' => array(self::BELONGS_TO, 'Modulo', 'parent_id'),
-			'tblcModulos' => array(self::HAS_MANY, 'Modulo', 'parent_id'),
+			'tblFichaTecnicas' => array(self::HAS_MANY, 'FichaTecnica', 'id_cat_subdireccion'),
+			'idCatDireccion' => array(self::BELONGS_TO, 'Direccion', 'id_cat_direccion'),
+			'tblcCoordinacions' => array(self::HAS_MANY, 'Coordinacion', 'id_cat_subdireccion'),
+			'tblUsuarios' => array(self::HAS_MANY, 'Usuario', 'id_cat_subdireccion'),
 		);
 	}
 
@@ -66,11 +66,10 @@ class Modulo extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'id_cat_tipo_usuario' => 'Tipo de Usuario',
+			'id_cat_direccion' => 'Id Cat Direccion',
 			'nombre' => 'Nombre',
-			'url' => 'Url',
-			'activo' => 'Activo',
-			'parent_id' => 'Parent',
+			'responsable' => 'Responsable',
+			'comentario' => 'Comentario',
 		);
 	}
 
@@ -93,11 +92,10 @@ class Modulo extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('id_cat_tipo_usuario',$this->id_cat_tipo_usuario);
+		$criteria->compare('id_cat_direccion',$this->id_cat_direccion);
 		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('url',$this->url,true);
-		$criteria->compare('activo',$this->activo);
-		$criteria->compare('parent_id',$this->parent_id);
+		$criteria->compare('responsable',$this->responsable,true);
+		$criteria->compare('comentario',$this->comentario,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -108,7 +106,7 @@ class Modulo extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Modulo the static model class
+	 * @return Subdireccion the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

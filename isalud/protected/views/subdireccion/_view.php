@@ -1,16 +1,16 @@
 <?php
-/* @var $this DireccionController */
-/* @var $data Direccion */
+/* @var $this SubdireccionController */
+/* @var $data Subdireccion */
 ?>
 
 <div class="view">
-
+<? /*
 	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
 	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
 	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id_cat_institucion')); ?>:</b>
-	<?php echo CHtml::encode(($data->idCatInstitucion!=null) ? $data->idCatInstitucion->nombre : null); ?>
+*/ ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('id_cat_direccion')); ?>:</b>
+	<?php echo CHtml::encode(($data->idCatDireccion!=null) ? $data->idCatDireccion->nombre : null); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('nombre')); ?>:</b>
