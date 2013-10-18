@@ -45,8 +45,8 @@ class Periodicidad extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'tblFuenteDatoses' => array(self::HAS_MANY, 'TblFuenteDatos', 'id_cat_periodicidad'),
-			'tblFichaTecnicas' => array(self::HAS_MANY, 'TblFichaTecnica', 'id_cat_periodicidad'),
+			'FuenteDatos' => array(self::HAS_MANY, 'FuenteDatos', 'id_cat_periodicidad'),
+			'FichaTecnicas' => array(self::HAS_MANY, 'FichaTecnica', 'id_cat_periodicidad'),
 		);
 	}
 
