@@ -18,7 +18,7 @@ function getTemplateReglaNegocio($index='{0}', $class='{1}', $criteriosEvaluacio
 
 <script type="text/javascript">
     var tmplRegla = '';
-    var contReglas = 1;
+    var contReglas = 0;
 
 	function addReglaEvaluacion() {
         cssClass = '';
@@ -48,6 +48,8 @@ function getTemplateReglaNegocio($index='{0}', $class='{1}', $criteriosEvaluacio
 
     $(document).ready(function() {
         tmplRegla = jQuery.validator.format($.trim($("#templateReglaNegocio").val()));
+
+        contReglas = parseInt($('#maxIdCriEva').val()) + 1;
 
         addReglaEvaluacion();
     });
@@ -104,9 +106,10 @@ function getTemplateReglaNegocio($index='{0}', $class='{1}', $criteriosEvaluacio
             </thead>
             <tbody>
                 <?php
-                    if(isset($reglasEvaluacion)) {
-                        $i = 0;
-                        foreach ($reglasEvaluacion as $id => $regla) {
+                    $maxIdCriEva = 0;
+                    if(isset($model->CriteriosEscalaEvaluacion)) {
+                        $i = 0;    
+                        foreach ($model->CriteriosEscalaEvaluacion as $id => $regla) {
                             $rowClass = '';
                             if($i%2 == 0)
                                 $rowClass = 'alt';
@@ -119,6 +122,7 @@ function getTemplateReglaNegocio($index='{0}', $class='{1}', $criteriosEvaluacio
                                     $regla->limite_inf,
                                     $regla->limite_sup);
                             $i++;
+                            $maxIdCriEva = $regla->id_cat_criterio_evaluacion;
                         }
                     }
                 ?>
@@ -127,6 +131,8 @@ function getTemplateReglaNegocio($index='{0}', $class='{1}', $criteriosEvaluacio
     </div>
 
     <?php
+    echo CHtml::hiddenField('maxIdCriEva', $maxIdCriEva);
+
     $this->widget('zii.widgets.jui.CJuiButton',array(
         'buttonType'=>'button',
         'name'=>'btnAgregaRegla',

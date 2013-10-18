@@ -22,7 +22,11 @@ $this->menu=array(
 	'data'=>$model,
 	'attributes'=>array(
 		'nombre',
-		'color',
+        array(
+            'label'=>'Color',
+            'value'=>'<span style="color:'.$model->color.';"><strong>'.CHtml::encode($model->color).'</strong></span>',
+            'type'=>'html',
+        ),
 		'comentario',
 	),
 )); ?>

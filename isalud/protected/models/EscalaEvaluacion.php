@@ -49,7 +49,7 @@ class EscalaEvaluacion extends CActiveRecord
 		return array(
 			'CriteriosEvaluacion' => array(self::MANY_MANY, 'CriterioEvaluacion', 'tbl_criterio_escala_evaluacion(id_escala_evaluacion, id_cat_criterio_evaluacion)'),
 			'FichasTecnicas' => array(self::HAS_MANY, 'FichaTecnica', 'id_escala_evaluacion'),
-            'CriteriosEscalaEvaluacion' => array(self::HAS_MANY, 'CriterioEscalaEvaluacion', 'id_escala_evaluacion'),
+            'CriteriosEscalaEvaluacion' => array(self::HAS_MANY, 'CriterioEscalaEvaluacion', 'id_escala_evaluacion', 'order'=>'id_cat_criterio_evaluacion ASC'),
 		);
 	}
 

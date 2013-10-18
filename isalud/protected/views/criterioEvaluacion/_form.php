@@ -49,6 +49,12 @@
         ?>
 	</div>
 
-<?php $this->endWidget(); ?>
+<?php $this->endWidget();
+
+$this->widget('ext.SMiniColors.SColorPicker', array(
+    'id' => 'CriterioEvaluacion_color',
+));
+
+?>
 
 </div><!-- form -->

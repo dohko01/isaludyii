@@ -10,7 +10,7 @@
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('color')); ?>:</b>
-	<?php echo CHtml::encode($data->color); ?>
+	<?php echo '<span style="color:'.$data->color.';"><strong>'.CHtml::encode($data->color).'</strong></span>'; ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('comentario')); ?>:</b>

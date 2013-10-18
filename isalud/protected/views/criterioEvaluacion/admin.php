@@ -45,7 +45,11 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 	'filter'=>$model,
 	'columns'=>array(
 		'nombre',
-		'color',
+         array(
+            'name' => 'color',
+            'value'=> 'CHtml::tag("span",array("style"=>"color:$data->color"),"<strong>$data->color</strong>")',
+            'type'=>'html'
+        ),
 		'comentario',
 		array(
 			'class'=>'CButtonColumn',

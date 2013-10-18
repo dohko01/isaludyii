@@ -199,17 +199,15 @@ class EscalaEvaluacionController extends Controller
                 $msjError = 'Error al guardar los datos datos. '.$e->getMessage();
             }
 
-            $this->redirect(array('view','id'=>$model->id));
+            //$this->redirect(array('view','id'=>$model->id));
 		}
 
-        $reglasEvaluacion = $model->CriteriosEscalaEvaluacion;
-        $criteriosEvaluacion = CHtml::listData(CriterioEvaluacion::model()->findAll(), 'id', 'nombre');
+        $criteriosEvaluacion = CHtml::listData(CriterioEvaluacion::model()->findAll(array('order'=>'id')), 'id', 'nombre');
         
 		$this->render('update',array(
 			'model'=>$model,
             'criteriosEvaluacion'=>$criteriosEvaluacion,
             'msjError'=>$msjError,
-            'reglasEvaluacion'=>$reglasEvaluacion
 		));
 	}
 
