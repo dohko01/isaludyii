@@ -13,7 +13,7 @@
                     alert('La prueba de conexión con la base de datos fue exitosa');
                 }
             }).fail(function() {
-                alert('ERROR: No se pudo realizar la prueba de conexión a la base de datos, intentelo nuevamente o notifiquelo con el administrador del sistema.')
+                alert('ERROR: No se pudo realizar la prueba de conexión a la base de datos, intentelo nuevamente o notifiquelo con el administrador del sistema.');
             });
         });
     });

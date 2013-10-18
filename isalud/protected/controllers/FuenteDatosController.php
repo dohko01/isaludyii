@@ -42,7 +42,7 @@ class FuenteDatosController extends Controller
 	{
 		return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','validararchivo','configurarcampo', 'cargardatos'),
+				'actions'=>array('index','view','create','update','admin','delete','validararchivo','configurarcampo', 'cargardatos', 'ObtenerCampos'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),
 			/*array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -470,4 +470,30 @@ class FuenteDatosController extends Controller
 
         echo json_encode($respuesta);
 	}
+
+    /**
+	 * Devuelve un json con los campos de la fuente de datos
+	 */
+	public function actionObtenerCampos($id)
+	{
+        if($id==0)
+            return false;
+
+        if(Yii::app()->request->isAjaxRequest) {
+            $respuesta = array();
+
+            try {
+                $model = $this->loadModel($id);
+                $respuesta = CHtml::listData($model->Campos, 'id', 'nombre');
+            } catch(Exception $e) {
+                $respuesta['error'] = true;
+                $respuesta['msjerror'] = $e->getMessage();
+            }
+
+            echo json_encode($respuesta);
+        }
+        else
+            return false;
+	}
+
 }

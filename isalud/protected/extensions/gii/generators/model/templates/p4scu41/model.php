@@ -126,7 +126,7 @@ foreach($columns as $name=>$column)
 {
 	if($column->type==='string')
 	{
-		echo "\t\t\$criteria->compare('LOWER($name)',strtolower(\$this->$name,true));\n";
+		echo "\t\t\$criteria->compare('LOWER($name)',strtolower(\$this->$name),true);\n";
 	}
 	else
 	{

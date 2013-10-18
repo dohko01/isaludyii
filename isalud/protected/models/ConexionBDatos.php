@@ -37,7 +37,7 @@ class ConexionBDatos extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id_motor_bdatos, nombre, usuario, pass, base_datos', 'required'),
+			array('id_motor_bdatos, nombre, usuario, pass, base_datos, direccion', 'required'),
 			array('id_motor_bdatos, puerto', 'numerical', 'integerOnly'=>true),
 			array('nombre, instancia, direccion, pass, base_datos', 'length', 'max'=>45),
 			array('usuario', 'length', 'max'=>20),
