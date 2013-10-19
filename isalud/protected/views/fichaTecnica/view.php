@@ -39,14 +39,27 @@ $this->menu=array(
             'name'=>'id_cat_periodicidad',
             'value' => $model->Periodicidad->nombre,
         ),
-		'id_ficha_tecnica_padre',
+        array(
+            'name'=>'id_ficha_tecnica_padre',
+            'value' => $model->FichaTecnicaPadre ? CHtml::link(CHtml::encode($model->FichaTecnicaPadre->nombre), array('fichatecnica/view', 'id'=>$model->FichaTecnicaPadre->id)) : '',
+            'type'=>'html',
+        ),
         array(
             'name'=>'id_cat_direccion',
             'value' => $model->Direccion->nombre,
         ),
-		'id_cat_subdireccion',
-		'id_cat_coordinacion',
-		'id_cat_programa_accion',
+        array(
+            'name'=>'id_cat_subdireccion',
+            'value' => $model->Subdireccion ? $model->Subdireccion->nombre : '',
+        ),
+        array(
+            'name'=>'id_cat_coordinacion',
+            'value' => $model->Coordinacion ? $model->Coordinacion->nombre : '',
+        ),
+        array(
+            'name'=>'id_cat_programa_accion',
+            'value' => $model->ProgramaAccion ? $model->ProgramaAccion->nombre : '',
+        ),
         array(
             'name'=>'id_cat_nivel',
             'value' => $model->Nivel->nombre,

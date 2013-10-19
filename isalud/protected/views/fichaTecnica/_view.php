@@ -22,8 +22,9 @@
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('id_ficha_tecnica_padre')); ?>:</b>
-	<?php echo CHtml::encode($data->id_ficha_tecnica_padre); ?>
+	<?php echo $data->FichaTecnicaPadre ? CHtml::link(CHtml::encode($data->FichaTecnicaPadre->nombre), array('fichatecnica/view', 'id'=>$data->FichaTecnicaPadre->id)) : ''; ?>
 	<br />
+
 	<b><?php echo CHtml::encode($data->getAttributeLabel('id_cat_direccion')); ?>:</b>
 	<?php echo CHtml::encode($data->Direccion->nombre); ?>
 	<br />

@@ -134,6 +134,8 @@ class FuenteDatosController extends Controller
                     else if($model->archivo) {
                         $datosArchivo = 'Leer Datos del archivo';
                         $nombresCampo = 'Primera fila del archivo contiene nombre de campos';
+                    } else {
+                        throw new Exception('Debe especificar un origen de datos, puede ser una base de datos o un archivo');
                     }
 
                     $transaction->commit();

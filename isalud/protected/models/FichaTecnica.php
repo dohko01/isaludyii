@@ -88,6 +88,8 @@ class FichaTecnica extends CActiveRecord
 			'Coordinacion' => array(self::BELONGS_TO, 'Coordinacion', 'id_cat_coordinacion'),
 			'ProgramaAccion' => array(self::BELONGS_TO, 'ProgramaAccion', 'id_cat_programa_accion'),
 			'Nivel' => array(self::BELONGS_TO, 'Nivel', 'id_cat_nivel'),
+            'Variables' => array(self::MANY_MANY, 'Variable', 'tbl_ficha_tecnica_variable(id_ficha_tecnica, id_variable)'),
+            'FichaTecnicaVariables' => array(self::HAS_MANY, 'FichaTecnicaVariable', 'id_ficha_tecnica'),
 		);
 	}
 

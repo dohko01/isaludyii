@@ -54,6 +54,8 @@ class Variable extends CActiveRecord
 		return array(
 			'FuenteDatos' => array(self::BELONGS_TO, 'FuenteDatos', 'id_fuente_datos'),
 			'Campo' => array(self::BELONGS_TO, 'Campo', 'id_campo'),
+            'FichasTecnicas' => array(self::MANY_MANY, 'FichaTecnica', 'tbl_ficha_tecnica_variable(id_ficha_tecnica, id_variable)'),
+            'FichaTecnicasVariable' => array(self::HAS_MANY, 'FichaTecnicaVariable', 'id_variable'),
 		);
 	}
 
@@ -111,5 +113,14 @@ class Variable extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+    /**
+	 * Devuelve la concatenacion del nombre mas la inicial para formula
+     * Se utiliza en el CHtml::listData
+	 */
+	public function getFullName()
+	{
+		return $this->nombre.' ['.$this->ini_formula.']';
 	}
 }
