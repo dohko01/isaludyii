@@ -533,15 +533,48 @@ class FuenteDatosController extends Controller
                     $command = Yii::app()->db->createCommand($sqlInsert);
                     $command->execute();
 
-                    $respuesta['insert'] = $sqlInsert;
+                    //$respuesta['insert'] = $sqlInsert;
                 }
                 // ***********************
                 //     Desde un archivo
                 // ***********************
                 else if($model->archivo) {
-                    $model->archivo->saveAs(Yii::getPathOfAlias('application').DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.$model->archivo);
-                    $datosArchivo = 'Leer Datos del archivo';
-                    $nombresCampo = 'Primera fila del archivo';
+                    // Fuente: https://github.com/marcovtwout/yii-phpexcel
+                    Yii::import('ext.phpexcel.XPHPExcel');
+                    XPHPExcel::init();
+
+                    $archivo = YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR.$model->archivo;
+
+                    $inputFileType = PHPExcel_IOFactory::identify($archivo);
+                    $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                    $objReader->setReadDataOnly(true);
+                    $objPHPExcel = $objReader->load($archivo);
+                    // La primera fila del archivo contiene el nombre de los campos
+                    $datos = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+                    
+                    if(empty($datos))
+                        throw new Exception('No se pudieron obtener los datos desde el archivo.');
+                    
+                    $nombreCampo = array_shift($datos);
+
+                    foreach ($datos as $fila) {
+                        $cadenaInsert .= '('.$model->id.',\'';
+                        foreach ($fila as $campo => $valor) {
+                            // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
+                            $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
+                            $cadenaInsert .= $nombreCampo[$campo].'=>"'.$valor.'",';
+                        }
+                        // Eliminar la ultima coma (,)
+                        $cadenaInsert = substr($cadenaInsert, 0, -1);
+                        $cadenaInsert .= '\'),';
+                    }
+
+                    // Eliminar la ultima coma (,)
+                    $cadenaInsert = substr($cadenaInsert, 0, -1);
+
+                    $sqlInsert = 'INSERT INTO tbl_datos_origen(id_fuente_datos, datos) VALUES '.$cadenaInsert;
+                    $command = Yii::app()->db->createCommand($sqlInsert);
+                    $command->execute();
                 }
 
                 $transaction->commit();
