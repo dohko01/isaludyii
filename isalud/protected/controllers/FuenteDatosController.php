@@ -85,7 +85,8 @@ class FuenteDatosController extends Controller
 		$this->pageTitle = $this->title_sin.' - Crear';
 
         $msjError = '';
-		$model=new FuenteDatos;
+		$model = new FuenteDatos;
+        $archivo = null;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -102,7 +103,8 @@ class FuenteDatosController extends Controller
                 if($model->save()) {
                     // Subir el archivo al servidor
                     if(!empty($model->archivo)) {
-                        $model->archivo->saveAs(YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR.$model->archivo);
+                        $archivo = YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR.$model->archivo;
+                        $model->archivo->saveAs($archivo);
 
                         if($model->archivo->hasError)
                             Yii::app()->user->setFlash('errorUploadFile', 'Error al subir el archivo: '.$model->archivo->error);
@@ -110,7 +112,7 @@ class FuenteDatosController extends Controller
 
                     // Cargar todos los campos
                     // Desde una base de datos
-                    if($model->id_conexion_bdatos) {
+                    if(!empty($model->id_conexion_bdatos)) {
                         $DBConec = ConexionBDatos::model()->getConexion($model->id_conexion_bdatos);
 
                         // Leemos solo un registro de la consulta ya que lo que necesitamos son el nombre de las columnas
@@ -131,9 +133,31 @@ class FuenteDatosController extends Controller
                         }
 
                     } // Desde un archivo
-                    else if($model->archivo) {
-                        $datosArchivo = 'Leer Datos del archivo';
-                        $nombresCampo = 'Primera fila del archivo contiene nombre de campos';
+                    else if(!empty($archivo)) {
+                        // Fuente: https://github.com/marcovtwout/yii-phpexcel
+                        Yii::import('ext.phpexcel.XPHPExcel');
+                        XPHPExcel::init();
+
+                        $inputFileType = PHPExcel_IOFactory::identify($archivo);
+                        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                        $objReader->setReadDataOnly(true);
+                        $objPHPExcel = $objReader->load($archivo);
+                        // La primera fila del archivo contiene el nombre de los campos
+                        $datos = $objPHPExcel->getActiveSheet()->rangeToArray(
+                                    'A1:'.$objPHPExcel->getActiveSheet()->getHighestColumn().'1', // Solo lee la primera fila
+                                    null,true,true,true
+                                );
+
+                        if(empty($datos))
+                            throw new Exception('No se pudieron obtener los campos desde el archivo.');
+
+                        foreach ($datos[1] as $strCampo) {
+                            $objCampo = new Campo;
+                            $objCampo->id_fuente_datos = $model->id;
+                            $objCampo->nombre = $strCampo;
+
+                            $objCampo->save();
+                        }
                     } else {
                         throw new Exception('Debe especificar un origen de datos, puede ser una base de datos o un archivo');
                     }
@@ -164,7 +188,8 @@ class FuenteDatosController extends Controller
 		$this->pageTitle = $this->title_sin.' - Actualizar';
 
         $msjError = '';
-		$model=$this->loadModel($id);
+		$model = $this->loadModel($id);
+        $archivo = null;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
@@ -174,14 +199,20 @@ class FuenteDatosController extends Controller
             $transaction = null;
             try {
                 $model->attributes=$_POST['FuenteDatos'];
-                $model->archivo = CUploadedFile::getInstance($model, 'archivo');
+                // Si no hay valor para el archivo actual
+                // quiere decir que esta subiendo un nuevo archivo
+                if(empty($_POST['archivoActual']))
+                    $model->archivo = CUploadedFile::getInstance($model, 'archivo');
+                else
+                    $model->archivo = $_POST['archivoActual'];
 
                 $transaction = Yii::app()->db->beginTransaction();
 
                 if($model->save()) {
                     // Subir el archivo al servidor
-                    if(!empty($model->archivo)) {
-                        $model->archivo->saveAs(Yii::getPathOfAlias('application').DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.$model->archivo);
+                    if(empty($_POST['archivoActual']) && !empty($model->archivo)) {
+                        $archivo = YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR.$model->archivo;
+                        $model->archivo->saveAs($archivo);
 
                         if($model->archivo->hasError)
                             Yii::app()->user->setFlash('errorUploadFile', 'Error al subir el archivo: '.$model->archivo->error);
@@ -189,7 +220,7 @@ class FuenteDatosController extends Controller
 
                     // Cargar todos los campos
                     // Desde una base de datos
-                    if($model->id_conexion_bdatos) {
+                    if(!empty($model->id_conexion_bdatos)) {
                         $DBConec = ConexionBDatos::model()->getConexion($model->id_conexion_bdatos);
 
                         // Leemos solo un registro de la consulta ya que lo que necesitamos son el nombre de las columnas
@@ -235,9 +266,60 @@ class FuenteDatosController extends Controller
                             }
                         }
                     } // Desde un archivo
-                    else if($model->archivo) {
-                        $datosArchivo = 'Leer Datos del archivo';
-                        $nombresCampo = 'Primera fila del archivo';
+                    else if(empty($_POST['archivoActual']) && !empty($archivo)) {
+                        // Fuente: https://github.com/marcovtwout/yii-phpexcel
+                        Yii::import('ext.phpexcel.XPHPExcel');
+                        XPHPExcel::init();
+
+                        $inputFileType = PHPExcel_IOFactory::identify($archivo);
+                        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                        $objReader->setReadDataOnly(true);
+                        $objPHPExcel = $objReader->load($archivo);
+                        // La primera fila del archivo contiene el nombre de los campos
+                        $datos = $objPHPExcel->getActiveSheet()->rangeToArray(
+                                    'A1:'.$objPHPExcel->getActiveSheet()->getHighestColumn().'1', // Solo lee la primera fila
+                                    null,true,true,true
+                                );
+
+                        if(empty($datos))
+                            throw new Exception('No se pudieron obtener los campos desde el archivo.');
+
+                        // Campos obtenidos desde el archivo
+                        $nombresCampo = $datos[1];
+
+                        // Campos que actualmente estan en la base de datos
+                        $camposExistentes = CHtml::listData($model->Campos, 'id', 'nombre');
+                        $camposEliminar = array();
+
+                        foreach ($camposExistentes as $existente) {
+                            // Si el campo que esta guardado en la base de datos
+                            // no se encuentra en la lista de los nuevos campos enviados
+                            if(!in_array($existente, $nombresCampo)) {
+                                // quiere decir que lo tenemos que eliminar
+                                $camposEliminar[] = $existente;
+                            }
+                        }
+
+                        if(!empty($camposEliminar)) {
+                            foreach ($camposEliminar as $eliminar) {
+                                $objCampo = Campo::model()->findByAttributes(array('id_fuente_datos'=>$model->id, 'nombre'=>$eliminar));
+
+                                $objCampo->delete();
+                            }
+                        }
+
+                        // Obtenemos los campos que no estan guardados en la base de datos
+                        $camposNuevos = array_diff($nombresCampo, $camposExistentes);
+
+                        if(!empty($camposNuevos)) {
+                            foreach ($camposNuevos as $strCampo) {
+                                $objCampo = new Campo;
+                                $objCampo->id_fuente_datos = $model->id;
+                                $objCampo->nombre = $strCampo;
+
+                                $objCampo->save();
+                            }
+                        }
                     }
 
                     $transaction->commit();

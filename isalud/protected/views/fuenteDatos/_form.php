@@ -30,10 +30,11 @@
                 data: 'YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val()+'&archivo='+$(this).val(),
             }).done(function(response) {
                 if(response.error) {
-                    alert('ERROR: Existe un archivo, previamente cargado al sistema, con el mismo nombre del que esta intentando subir ('+response.archivo+'). Si desea sobreescribirlo puede continuar, de lo contrario se recomienda renombrar el archivo seleccionado.');
+                    alert('ADVERTENCIA: Existe un archivo, previamente cargado al sistema, con el mismo nombre del que esta intentando subir ('+response.archivo+'). Si desea sobreescribirlo puede continuar, de lo contrario se recomienda renombrar el archivo seleccionado.');
                 }
+                $('#archivoActual').val('');
             }).fail(function() {
-                alert('ERROR: No se pudo realizar la del archivo, intentelo cargar nuevamente o notifiquelo con el administrador del sistema.')
+                alert('ERROR: No se pudo realizar la verificación del archivo, intentelo cargar nuevamente o notifiquelo con el administrador del sistema.')
             });
         });
     });
