@@ -115,4 +115,29 @@ class SiteController extends Controller
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
 	}
+
+    /**
+	 * test PHPExcel
+	 */
+	public function actionExcel()
+	{
+        // Fuente: https://github.com/marcovtwout/yii-phpexcel
+		Yii::import('ext.phpexcel.XPHPExcel');
+        
+        //$phpExcel = XPHPExcel::createPHPExcel();
+        XPHPExcel::init();
+        
+        $archivo = YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR.'testphpexcel.csv';
+
+//        $objPHPExcel = PHPExcel_IOFactory::load($archivo);
+        
+        $inputFileType = PHPExcel_IOFactory::identify($archivo);
+        $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+        $objReader->setReadDataOnly(true);
+        $objPHPExcel = $objReader->load($archivo);
+        $sheetData = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+
+        echo $archivo.'<br>'.memory_get_usage();
+        var_dump($sheetData);
+	}
 }

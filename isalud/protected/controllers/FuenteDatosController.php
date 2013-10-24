@@ -102,7 +102,7 @@ class FuenteDatosController extends Controller
                 if($model->save()) {
                     // Subir el archivo al servidor
                     if(!empty($model->archivo)) {
-                        $model->archivo->saveAs(Yii::getPathOfAlias('application').DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.$model->archivo);
+                        $model->archivo->saveAs(YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR.$model->archivo);
 
                         if($model->archivo->hasError)
                             Yii::app()->user->setFlash('errorUploadFile', 'Error al subir el archivo: '.$model->archivo->error);
