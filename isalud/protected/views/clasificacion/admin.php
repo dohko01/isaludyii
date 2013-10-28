@@ -8,8 +8,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Clasificacion', 'url'=>array('index')),
-	array('label'=>'Create Clasificacion', 'url'=>array('create')),
+	array('label'=>'Lista Clasificacion', 'url'=>array('index')),
+	array('label'=>'Crear Clasificacion', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -45,7 +45,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'id',
+		//'id',
 		'nombre',
 		array(
 			'class'=>'CButtonColumn',

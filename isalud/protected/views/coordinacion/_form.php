@@ -20,8 +20,9 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
+		<?php $list = CHtml::listData(Subdireccion::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->labelEx($model,'id_cat_subdireccion'); ?>
-		<?php echo $form->textField($model,'id_cat_subdireccion'); ?>
+		<?php echo $form->dropDownList($model,'id_cat_subdireccion',$list); ?>
 		<?php echo $form->error($model,'id_cat_subdireccion'); ?>
 	</div>
 

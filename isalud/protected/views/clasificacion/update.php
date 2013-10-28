@@ -9,10 +9,10 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Clasificacion', 'url'=>array('index')),
-	array('label'=>'Create Clasificacion', 'url'=>array('create')),
-	array('label'=>'View Clasificacion', 'url'=>array('view', 'id'=>$model->id)),
-	array('label'=>'Manage Clasificacion', 'url'=>array('admin')),
+	array('label'=>'Listar Clasificacion', 'url'=>array('index')),
+	array('label'=>'Crear Clasificacion', 'url'=>array('create')),
+	array('label'=>'Ver Clasificacion', 'url'=>array('view', 'id'=>$model->id)),
+	array('label'=>'Administrar Clasificacion', 'url'=>array('admin')),
 );
 ?>
 

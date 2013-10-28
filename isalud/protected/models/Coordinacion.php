@@ -21,6 +21,9 @@ class Coordinacion extends CActiveRecord
 	/**
 	 * @return string the associated database table name
 	 */
+	 
+	public $subdireccion_search; //se define la variable para realizar la busqueda en admin por las relaciones que tiene.
+	
 	public function tableName()
 	{
 		return 'tblc_coordinacion';
@@ -41,7 +44,7 @@ class Coordinacion extends CActiveRecord
 			array('comentario', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, id_cat_subdireccion, nombre, responsable, comentario', 'safe', 'on'=>'search'),
+			array('id, id_cat_subdireccion, subdireccion_search, nombre, responsable, comentario', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -53,10 +56,10 @@ class Coordinacion extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'tblcProgramaAccions' => array(self::HAS_MANY, 'TblcProgramaAccion', 'id_cat_coordinacion'),
-			'tblFichaTecnicas' => array(self::HAS_MANY, 'TblFichaTecnica', 'id_cat_coordinacion'),
-			'idCatSubdireccion' => array(self::BELONGS_TO, 'TblcSubdireccion', 'id_cat_subdireccion'),
-			'tblUsuarios' => array(self::HAS_MANY, 'TblUsuario', 'id_cat_coordinacion'),
+			'tblcProgramaAccions' => array(self::HAS_MANY, 'ProgramaAccion', 'id_cat_coordinacion'),
+			'tblFichaTecnicas' => array(self::HAS_MANY, 'FichaTecnica', 'id_cat_coordinacion'),
+			'idCatSubdireccion' => array(self::BELONGS_TO, 'Subdireccion', 'id_cat_subdireccion'),
+			'tblUsuarios' => array(self::HAS_MANY, 'Usuario', 'id_cat_coordinacion'),
 		);
 	}
 
@@ -97,6 +100,9 @@ class Coordinacion extends CActiveRecord
 		$criteria->compare('nombre',$this->nombre,true);
 		$criteria->compare('responsable',$this->responsable,true);
 		$criteria->compare('comentario',$this->comentario,true);
+		// Se crea el apuntador al campo que se va a buscar de la tabla a la que pertenece la llave foranea
+		$criteria->with=array('idCatSubdireccion');
+		$criteria->compare('"idCatSubdireccion"."nombre"',$this->subdireccion_search, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

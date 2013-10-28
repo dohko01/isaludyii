@@ -17,11 +17,12 @@
 		$items[] = array('label'=>'Home', 'url'=>array('/site/index'));
 		if(Yii::app()->user->id != 0)
 		{
+			$orderBy = new CDbCriteria(array('order'=>'nombre'));
 			$menuUsuario = Modulo::model()->findAllByAttributes(array('id_cat_tipo_usuario'=>Yii::app()->user->tipoUsuario, 'parent_id'=>NULL));
 			
 			foreach($menuUsuario as $kk => $itemMenu)
 			{
-				$subMenuUsuario = Modulo::model()->findAllByAttributes(array('parent_id'=>$itemMenu->id));
+				$subMenuUsuario = Modulo::model()->findAllByAttributes(array('parent_id'=>$itemMenu->id),$orderBy);
 				
 				$arraySubMenu = array();
 				if(count($subMenuUsuario) > 0)

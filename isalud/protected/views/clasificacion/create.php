@@ -8,8 +8,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Clasificacion', 'url'=>array('index')),
-	array('label'=>'Manage Clasificacion', 'url'=>array('admin')),
+	array('label'=>'Listar Clasificacion', 'url'=>array('index')),
+	array('label'=>'Administrar Clasificacion', 'url'=>array('admin')),
 );
 ?>
 
