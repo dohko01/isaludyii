@@ -19,5 +19,12 @@
 	</div>
 
     <div class="row buttons">
-        <?php echo CHtml::Button('Probar sentencia SQL', array('id'=>'probar_sentencia_sql')); ?>
+        <?php  $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'button',
+            'name'=>'probar_sentencia_sql',
+            'value'=>'1',
+            'caption'=>'Probar sentencia SQL',
+            'htmlOptions'=>array('id'=>'probar_sentencia_sql')
+            )
+        ); ?>
 	</div>

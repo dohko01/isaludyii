@@ -27,7 +27,11 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'color'); ?>
-		<?php echo $form->textField($model,'color',array('size'=>20,'maxlength'=>20)); ?>
+		<?php $this->widget('ext.SMiniColors.SActiveColorPicker', array(
+            'model' => $model,
+            'attribute' => 'color',
+            'htmlOptions' => array('size'=>20,'maxlength'=>20)
+        ));?>
 		<?php echo $form->error($model,'color'); ?>
 	</div>
 
@@ -49,12 +53,6 @@
         ?>
 	</div>
 
-<?php $this->endWidget();
-
-$this->widget('ext.SMiniColors.SColorPicker', array(
-    'id' => 'CriterioEvaluacion_color',
-));
-
-?>
+<?php $this->endWidget(); ?>
 
 </div><!-- form -->

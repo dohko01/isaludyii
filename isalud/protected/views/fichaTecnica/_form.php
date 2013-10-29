@@ -180,7 +180,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'ponderacion'); ?>
-		<?php echo $form->numberField($model,'ponderacion', array('class'=>'span7')); ?>
+		<?php echo $form->numberField($model,'ponderacion', array('class'=>'span7', 'min'=>'0')); ?>
 		<?php echo $form->error($model,'ponderacion'); ?>
 	</div>
 

@@ -9,8 +9,8 @@ Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'
 function getTemplateReglaNegocio($index='{0}', $class='{1}', $criteriosEvaluacion, $criterio='', $inf='', $sup='') {
     echo '<tr align="center" class="'.$class.'">
         <td>'.CHtml::dropDownList('EscalaEvaluacion[reglas]['.$index.'][criterio]', $criterio, $criteriosEvaluacion, array('empty'=>'Seleccionar...')).'</td>
-        <td>'.CHtml::numberField('EscalaEvaluacion[reglas]['.$index.'][limSup]', $sup, array('size'=>5, 'maxlength'=>5, 'step'=>'0.01', 'style'=>'width:60px;', 'pattern'=>'[0-9]+([\.|,][0-9]+)?')).'</td>
-        <td>'.CHtml::numberField('EscalaEvaluacion[reglas]['.$index.'][limInf]', $inf, array('size'=>5, 'maxlength'=>5, 'step'=>'0.01', 'style'=>'width:60px;', 'pattern'=>'[0-9]+([\.|,][0-9]+)?')).'</td>
+        <td>'.CHtml::numberField('EscalaEvaluacion[reglas]['.$index.'][limInf]', $inf, array('size'=>5, 'maxlength'=>5, 'step'=>'0.1', 'min'=>'0', 'style'=>'width:60px;', 'pattern'=>'[0-9]+([\.|,][0-9]+)?')).'</td>
+        <td>'.CHtml::numberField('EscalaEvaluacion[reglas]['.$index.'][limSup]', $sup, array('size'=>5, 'maxlength'=>5, 'step'=>'0.1', 'min'=>'0', 'style'=>'width:60px;', 'pattern'=>'[0-9]+([\.|,][0-9]+)?')).'</td>        
         <td>'.CHtml::link(CHtml::image(Yii::app()->request->baseUrl.'/images/delete.png'), '', array('id'=>$criterio, 'onclick'=>'eliminarRegla(this)', 'style'=>'cursor: pointer;')).'</td>
     </tr>';
 }
@@ -99,8 +99,8 @@ function getTemplateReglaNegocio($index='{0}', $class='{1}', $criteriosEvaluacio
             <thead>
                 <tr align="center">
                     <th>Criterio de evaluación</th>
-                    <th>Limite Superior</th>
                     <th>Limite Inferior</th>
+                    <th>Limite Superior</th>
                     <th>Eliminar</th>
                 </tr>
             </thead>
@@ -129,6 +129,7 @@ function getTemplateReglaNegocio($index='{0}', $class='{1}', $criteriosEvaluacio
             </tbody>
         </table>
     </div>
+    <br />
 
     <?php
     echo CHtml::hiddenField('maxIdCriEva', $maxIdCriEva);

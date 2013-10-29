@@ -37,8 +37,8 @@ $this->widget('zii.widgets.CDetailView', array(
             <tr align="center">
                 <th>Criterio de evaluación</th>
                 <th>Color</th>
-                <th>Limite Superior</th>
                 <th>Limite Inferior</th>
+                <th>Limite Superior</th>
             </tr>
         </thead>
         <tbody>
@@ -52,8 +52,8 @@ $this->widget('zii.widgets.CDetailView', array(
                     echo '<tr class="'.$rowClass.'">
                         <td>'.$regla->CriterioEvaluacion->nombre.'</td>
                         <td><span style="color:'.$regla->CriterioEvaluacion->color.';"><strong>'.$regla->CriterioEvaluacion->color.'</strong></span></td>
-                        <td align="center">'.$regla->limite_sup.'</td>
                         <td align="center">'.$regla->limite_inf.'</td>
+                        <td align="center">'.$regla->limite_sup.'</td>
                     </tr>';
                     $i++;
                 }

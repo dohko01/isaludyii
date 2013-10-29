@@ -113,7 +113,7 @@ class FichaTecnica extends CActiveRecord
 			'nombre' => 'Nombre',
 			'codigo' => 'Código',
 			'formula' => 'Formula',
-			'ponderacion' => 'Ponderación',
+			'ponderacion' => 'Ponderación (%)',
 			'unidad_medida' => 'Unidad de medida',
 			'meta' => 'Meta institucional',
 			'definicion' => 'Definición',
