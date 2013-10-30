@@ -14,7 +14,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'sentencia_sql'); ?>
-		<?php echo $form->textArea($model,'sentencia_sql',array('rows'=>6, 'cols'=>50)); ?>
+		<?php echo $form->textArea($model,'sentencia_sql',array('rows'=>10, 'cols'=>50, 'class'=>'span11')); ?>
 		<?php echo $form->error($model,'sentencia_sql'); ?>
 	</div>
 
