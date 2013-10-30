@@ -243,14 +243,14 @@ class ConexionBDatosController extends Controller
             $respuesta = array('error'=>false, 'msjerror'=>'');
 
             try {
-                if(empty($_POST['sql']))
+                if(empty($_POST['FuenteDatos']['sentencia_sql']))
                     throw new Exception ('Debe especificar una sentencia SQL');
                 
-                $conexion = ConexionBDatos::model()->getConexion($_POST['conexion']);
+                $conexion = ConexionBDatos::model()->getConexion($_POST['FuenteDatos']['id_conexion_bdatos']);
                 $conexion->setActive(true);
 
                 if($conexion->getActive()) { // Si se establecio la conexion
-                    $respuesta = ConexionBDatos::model()->getQueryResult($conexion, $_POST['sql'], '15');
+                    $respuesta = ConexionBDatos::model()->getQueryResult($conexion, $_POST['FuenteDatos']['sentencia_sql'], '15');
                 } else { // De lo contrario, notificar el error
                     $respuesta['error'] = true;
                     $respuesta['msjerror'] = 'No se realizó la conexión con la base de datos, revise los datos proporcionados';

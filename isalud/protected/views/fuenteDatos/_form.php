@@ -9,7 +9,7 @@
                 url: '<?php echo Yii::app()->createURL('conexionbdatos/probarsql'); ?>',
                 type: 'POST',
                 dataType: 'json',
-                data: 'YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val()+'&conexion='+$('#FuenteDatos_id_conexion_bdatos').val()+'&sql='+$('#FuenteDatos_sentencia_sql').val(),
+                data: $('#fuente-datos-form').serialize(),
             }).done(function(response) {
                 if(response.error) {
                     alert('ERROR: La prueba de la sentencia SQL no fue exitosa, revise el mensaje de error. \n\n'+response.msjerror);
