@@ -13,6 +13,10 @@
 	<?php echo CHtml::encode($data->Periodicidad->nombre); ?>
 	<br />
 
+    <b><?php echo CHtml::encode($data->getAttributeLabel('es_actualizacion_incremental')); ?>:</b>
+	<?php echo CHtml::encode($data->es_actualizacion_incremental ? 'Si' : 'No'); ?>
+	<br />
+
 	<b><?php echo CHtml::encode($data->getAttributeLabel('responsable')); ?>:</b>
 	<?php echo CHtml::encode($data->responsable); ?>
 	<br />
@@ -23,9 +27,6 @@
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('id_conexion_bdatos')); ?>:</b>
 	<?php if($data->ConexionBDatos) echo CHtml::link(CHtml::encode($data->ConexionBDatos->nombre), array('conexionbdatos/view', 'id'=>$data->ConexionBDatos->id)); ?>
-	<br />
-	<b><?php echo CHtml::encode($data->getAttributeLabel('sentencia_sql')); ?>:</b>
-	<?php echo CHtml::encode($data->sentencia_sql); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('archivo')); ?>:</b>

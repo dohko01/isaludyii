@@ -68,7 +68,7 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
         array(
             // Utilizamos la nueva clase extendida para poder evaluar el id en el array options
 			'class'=>'ButtonColumn',
-            'template' => '{configCampos} {cargarDatos}',
+            'template' => '{configCampos} &nbsp; {cargarDatos} &nbsp; {verDatos}',
             'evaluateID'=>true, // Variable que define si será evaluado el id en el array options
             'buttons' => array(
                 'configCampos' => array(
@@ -84,6 +84,12 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
                     'imageUrl'=>Yii::app()->request->baseUrl.'/images/load.png',
                     'click'=>new CJavaScriptExpression('fnCargarDatos'),
                     'options'=>array('id'=>'$data->id'),
+                ),
+                'verDatos' => array(
+                    'label'=>'Ver datos cargados',
+                    'caption'=>'Ver datos cargados',
+                    'url'=>'',//'Yii::app()->createUrl("/fuentedatos/verdatos", array("id" => $data->id))',
+                    'imageUrl'=>Yii::app()->request->baseUrl.'/images/view.png',
                 ),
             ),
 		),

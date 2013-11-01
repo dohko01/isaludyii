@@ -35,7 +35,11 @@ $this->widget('zii.widgets.CDetailView', array(
             'label'=>'Periodicidad de actualización',
             'value' => $model->Periodicidad->nombre,
         ),
-		'responsable',
+        array(
+            'name'=>'es_actualizacion_incremental',
+            'value' => $model->es_actualizacion_incremental ? 'Si' : 'No',
+        ),
+        'responsable',
 		'descripcion',
         array(
             'label'=>'Conexión a base de datos',

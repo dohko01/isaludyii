@@ -40,7 +40,7 @@ class FuenteDatos extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('id_cat_periodicidad, nombre, responsable', 'required'),
-			array('id_conexion_bdatos, id_cat_periodicidad', 'numerical', 'integerOnly'=>true),
+			array('id_conexion_bdatos, id_cat_periodicidad, es_actualizacion_incremental', 'numerical', 'integerOnly'=>true),
 			array('nombre, responsable', 'length', 'max'=>45),
 			array('descripcion, sentencia_sql, ultima_lectura, archivo', 'safe'),
             array('archivo', 'file', 'types'=>'xls, xlsx, csv, txt', 'allowEmpty'=>true),
@@ -80,6 +80,7 @@ class FuenteDatos extends CActiveRecord
 			'sentencia_sql' => 'Sentencia SQL',
 			'archivo' => 'Archivo',
 			'ultima_lectura' => 'Última Lectura',
+            'es_actualizacion_incremental' => '¿Es actualización incremental?',
 		);
 	}
 

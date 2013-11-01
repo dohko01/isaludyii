@@ -33,6 +33,10 @@
 	<?php echo CHtml::encode($data->Nivel->nombre); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('formula')); ?>:</b>
+	<?php echo CHtml::encode($data->formula); ?>
+	<br />
+
 	<?php /*
 
 
@@ -54,10 +58,6 @@
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('codigo')); ?>:</b>
 	<?php echo CHtml::encode($data->codigo); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('formula')); ?>:</b>
-	<?php echo CHtml::encode($data->formula); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('ponderacion')); ?>:</b>

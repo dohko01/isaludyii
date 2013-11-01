@@ -18,6 +18,12 @@
 		<?php echo $form->error($model,'id_cat_periodicidad'); ?>
 	</div>
 
+    <div class="row">
+		<?php echo $form->labelEx($model,'es_actualizacion_incremental'); ?>
+		<?php echo $form->checkBox($model, 'es_actualizacion_incremental', array('value'=>1, 'uncheckValue'=>0)); ?>
+		<?php echo $form->error($model,'es_actualizacion_incremental'); ?>
+	</div>
+
 	<div class="row">
 		<?php echo $form->labelEx($model,'responsable'); ?>
 		<?php echo $form->textField($model,'responsable',array('size'=>45,'maxlength'=>45)); ?>
