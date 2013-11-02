@@ -23,8 +23,9 @@ $this->menu=array(
 	'attributes'=>array(
 		'nombre',
         array(
-            'label'=>'Fuente de datos',
-            'value' => $model->FuenteDatos->nombre,
+            'name'=>'id_fuente_datos',
+            'value' => CHtml::link(CHtml::encode($model->FuenteDatos->nombre), array('fuentedatos/view', 'id'=>$model->FuenteDatos->id)),
+            'type' => 'html'
         ),
         array(
             'label'=>'Campo',
