@@ -37,6 +37,10 @@
 	<?php echo CHtml::encode($data->formula); ?>
 	<br />
 
+    <b><?php echo CHtml::encode($data->getAttributeLabel('es_acumulable')); ?>:</b>
+	<?php echo CHtml::encode($data->es_acumulable ? 'Si' : 'No'); ?>
+	<br />
+
 	<?php /*
 
 

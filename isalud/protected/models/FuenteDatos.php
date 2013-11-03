@@ -13,6 +13,7 @@
  * @property string $sentencia_sql
  * @property string $archivo
  * @property string $ultima_lectura
+ * @property booblean $es_actualizacion_incremental
  *
  * The followings are the available model relations:
  * @property TblDatosOrigen[] $tblDatosOrigens
@@ -123,5 +124,21 @@ class FuenteDatos extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+    /**
+	 * Devuelve todos los campos que no sean variables
+	 */
+	public function getOnlyCampos()
+	{
+        $campos = $this->Campos;
+
+        foreach ($campos as $index => $campo) {
+            if($campo->Variable) { // Si el campo es una variable
+                unset($campos[$index]); // Lo eliminamos del arreglo
+            }
+        }
+
+        return $campos;
 	}
 }

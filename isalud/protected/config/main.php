@@ -99,6 +99,30 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'webmaster@example.com',
+        // Ruta al directorio donde se suben los archivos de las fuentes de datos
         'pathUploads'=>'application.data.uploads',
+        // Prefijo para las tablas de los indicadores
+        'prefixTblIndicador'=>'ind_',
+        // Prefijo para las tablas de las variables
+        'prefixTblVariable'=>'var_',
+        // Orden de aparicion de los campos que contienen lugares
+        'orderedColumLugar'=>array(
+            'id_estado',
+            'id_institucion',
+            'id_jurisdiccion',
+            'id_municipio',
+            'clues',
+        ),
+        // Orden de aparicion de los campos que contienen tiempo
+        'orderedColumTiempo'=>array(
+            'anio',
+            'semestre',
+            'cuatrimestre',
+            'trimestre',
+            'bimestre',
+            'mes',
+            'quincena',
+            'semana',
+        ),
 	),
 );

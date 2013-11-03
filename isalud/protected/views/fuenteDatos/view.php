@@ -46,7 +46,11 @@ $this->widget('zii.widgets.CDetailView', array(
             'value'=>$model->ConexionBDatos ? CHtml::link(CHtml::encode($model->ConexionBDatos->nombre), array('conexionbdatos/view', 'id'=>$model->ConexionBDatos->id)) : "",
             'type'=>'html',
         ),
-		'sentencia_sql',
+        array(
+            'name'=>'sentencia_sql',
+            'value'=> nl2br(str_replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;', str_replace(' ', '&nbsp;', $model->sentencia_sql))),
+            'type'=>'html',
+        ),
 		'archivo',
 		'ultima_lectura',
 	),

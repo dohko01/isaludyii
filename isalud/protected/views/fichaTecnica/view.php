@@ -66,6 +66,10 @@ $this->menu=array(
         ),
 		'codigo',
 		'formula',
+        array(
+            'name'=>'es_acumulable',
+            'value' => $model->es_acumulable ? 'Si' : 'No',
+        ),
 		'ponderacion',
 		'unidad_medida',
 		'meta',

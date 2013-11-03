@@ -417,7 +417,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionValidarArchivo()
 	{
-        $directorio = opendir(Yii::getPathOfAlias('application').DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR);
+        $directorio = opendir(YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR);
         $archivoSubir = explode(DIRECTORY_SEPARATOR, $_POST['archivo']);
         // El ultimo segmento del arreglo contiene el nombre del archivo
         $archivoSubir = $archivoSubir[count($archivoSubir)-1];
@@ -490,7 +490,6 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionCargarDatos()
 	{
-        $res = '';
         $cadenaInsert = '';
         $respuesta = array('error'=>false, 'msjerror'=>'');
 
