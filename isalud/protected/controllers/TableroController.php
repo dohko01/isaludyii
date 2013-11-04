@@ -26,7 +26,6 @@ class TableroController extends Controller
             print_r($respuesta);
 
             die();
-
         }
 
 		$this->render('index',array(
