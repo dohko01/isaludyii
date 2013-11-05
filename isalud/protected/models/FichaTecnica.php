@@ -182,7 +182,7 @@ class FichaTecnica extends CActiveRecord
     /**
 	 * Crear la tabla para el indicador
 	 */
-    public function crearIndicador()
+    public function crearIndicador($reconstruirTabla = false)
     {
         $respuesta = array('error'=>false, 'msjerror'=>'');
         $nombreTablaIndicador = Yii::app()->params['prefixTblIndicador'].$this->id;
@@ -193,12 +193,16 @@ class FichaTecnica extends CActiveRecord
         $joinVariables = ''; // Guarda la sentencia sql que une todas las tablas temparales que contienen las variables
         $arregloCampos = array(); // Contendra un arreglo bidimensional de los campos con el nombre de la variable de la formula como indice
         $arregloFuentesDatos = array(); // Contendra los IDs de las fuentes de datos de las diferentes variables
+        $variableUnica = '';
 
         $strVariables = '';
         $strCamposComunes = '';
 
         try {
-            Yii::app()->db->createCommand('SELECT COUNT(*) FROM '.$nombreTablaIndicador)->query();
+            if($reconstruirTabla)
+                Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->query();
+            else
+                Yii::app()->db->createCommand('SELECT COUNT(*) FROM '.$nombreTablaIndicador)->query();
         } catch (Exception $e) {
             $existeTabla = false;
         }
@@ -206,7 +210,7 @@ class FichaTecnica extends CActiveRecord
         // Si la tabla existe ya no la creamos
         if($existeTabla) {
             $respuesta['msjerror'] = 'La tabla del indicador ya existe';
-            return $respuesta;
+            //return $respuesta;
         }
         
         $transaction = Yii::app()->db->beginTransaction();
@@ -224,6 +228,7 @@ class FichaTecnica extends CActiveRecord
 
                 // El nombre de la tabla temporal que se creara sera determinado por el nombre de la variable para formula
                 $tblFuenteVariable = strtolower($variable->ini_formula);
+                $variableUnica = strtolower($variable->ini_formula);
                 $sql .= 'CREATE TEMP TABLE IF NOT EXISTS '.$tblFuenteVariable .' ( ';
                 $select = 'SELECT ';
 
@@ -244,10 +249,10 @@ class FichaTecnica extends CActiveRecord
                 // Eliminamos la ultima coma y se agrega el cierre de la sentencia
                 $select = trim($select, ', ').' FROM tbl_datos_origen WHERE 
                             id_fuente_datos = '.$fuenteDatos->id.' AND '.
-                            'CAST(datos->\''.$campoVariable->nombre.'\' AS INTEGER) > 0; '.PHP_EOL;
+                            'CAST(datos->\''.$campoVariable->nombre.'\' AS INTEGER) > 0; '.PHP_EOL.PHP_EOL;
 
                 // Eliminamos la ultima coma y se agrega el cierre de la sentencia
-                $sql = trim($sql, ', ') . '); '.PHP_EOL;
+                $sql = trim($sql, ', ') . '); '.PHP_EOL.PHP_EOL;
 
                 $sql .= 'INSERT INTO '.$tblFuenteVariable.' '.$select;
             }
@@ -255,8 +260,11 @@ class FichaTecnica extends CActiveRecord
             $arregloFuentesDatos = array_unique($arregloFuentesDatos);
 
             // Si todas las variables son de la misma fuente de datos
-            if(count($arregloFuentesDatos) == 1) {
+            if(count($arregloFuentesDatos) == 1 && count($variables) == 1) {
                 // Se toma la fuente de datos y apartir de ella se crea la tabla del indicador
+                $createIndicador = ' SELECT * INTO '.$nombreTablaIndicador.
+                                    ' FROM '.$variableUnica.' WHERE '.$variableUnica.' > 0; ';
+                $sql .= $createIndicador;
             } else {
                 // Devuelve los campos comunes de todas las fuentes de datos donde se encuentran las variables
                 // Los campos deben ser igual tanto en significado como en tipo
@@ -275,7 +283,7 @@ class FichaTecnica extends CActiveRecord
                     $createVariable = ' SELECT '.$strCamposComunes.', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula.'
                                         INTO TEMP '.$tblVariable.'
                                         FROM '.$variable->ini_formula.'
-                                        GROUP BY '.$strCamposComunes.'; '.PHP_EOL;
+                                        GROUP BY '.$strCamposComunes.'; '.PHP_EOL.PHP_EOL;
                     
                     $sql .= $createVariable;
                 }
@@ -296,7 +304,7 @@ class FichaTecnica extends CActiveRecord
                 $sql .= $joinVariables;
             }
             
-            //echo $sql;
+            //echo nl2br($sql);
             //die();
             $this->executeMultipleSql($sql);
 
@@ -313,10 +321,12 @@ class FichaTecnica extends CActiveRecord
     /**
 	 * Crear la tabla para el indicador
 	 */
-    public function calcularIndicador($dimension, $filtros, $orden)
+    public function calcularIndicador($dimension, $filtros, $orden = null)
     {
         $respuesta = array('error'=>false, 'msjerror'=>'');
         $nombreTablaIndicador = Yii::app()->params['prefixTblIndicador'].$this->id;
+        $strColumnas = '';
+        $orderBy = '';
         $operacionIndicador = 'ROUND(('.$this->formula.'), 1) AS indicador';
 
         $columnas = $this->getColumsIndicador();
@@ -339,11 +349,34 @@ class FichaTecnica extends CActiveRecord
             }
         }
 
-        //$strColumnas = implode(', ', $columnas);
-        $strColumnas = implode(', ', $camposFiltro).', '.$dimension;
-        $groupBy = ' GROUP BY '.$strColumnas;
-        $orderBy = ' ORDER BY '.$orden;
+        // Revisar si la dimensión hace referencia a un catalogo
+        $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$dimension));
+        $innerJoin = '';
+
+        // Si la dimension es un catalogo
+        if($objDimension->catalogo) {
+            // La columna nombre es fija en todos los catalogos y contiene la descripcion del id al que hace referencia
+            $strColumnas = 'nombre AS '.$objDimension->catalogo;
+            // Todos los catalogos tienen como prefijo tblc_
+            $innerJoin = ' INNER JOIN tblc_'.$objDimension->catalogo.' USING('.$objDimension->llave_primaria.') ';
+
+            // Si la forma de ordenar es la misma que la dimension,
+            // entonces ordenamos por la descripcion del catalogo
+            // en este caso siempre sera la columna nombre
+            if($orden == $dimension)
+                $orden = 'nombre';
+
+            // Agregamos a la dimension el campo nombre, ya que es requerido en el group by
+            $dimension .= ', nombre';
+        } else {
+            $strColumnas = $dimension;
+        }
+        
+        $groupBy = ' GROUP BY '.implode(', ', $camposFiltro).', '.$dimension;
         $where = ' WHERE 1=1 ';
+        
+        if($orden)
+            $orderBy = ' ORDER BY '.$orden;
 
         foreach ($camposFiltro as $campFil) {
             $where .= ' AND '.$campFil.' = \''.$filtros[$campFil].'\'';
@@ -359,9 +392,12 @@ class FichaTecnica extends CActiveRecord
                                     );
         }
 
-        echo 'SELECT '.$strColumnas.', '.$operacionIndicador.' FROM '.$nombreTablaIndicador.$where.$groupBy.$orderBy;
+        $sql = 'SELECT '.$strColumnas.', '.$operacionIndicador.' FROM '.$nombreTablaIndicador.
+                $innerJoin.$where.$groupBy.$orderBy;
         
-        die();
+         $result = Yii::app()->db->createCommand($sql)->query()->readAll();
+         
+         return $result;
     }
 
     /**
@@ -428,9 +464,11 @@ class FichaTecnica extends CActiveRecord
         $result = Yii::app()->db->createCommand($query)->queryRow();
         $colums = array_keys($result);
         $variables = $this->Variables;
+        
         // Elimina de la lista de columnas, aquellas que son variables
         foreach ($variables as $variable) {
-            unset($colums[ array_search($variable->ini_formula, $colums) ]);
+            if(in_array($variable->ini_formula, $colums))
+                unset($colums[ array_search($variable->ini_formula, $colums) ]);
         }
 
         return $colums;

@@ -7,7 +7,6 @@ $this->breadcrumbs=array(
 ?>
 <pre>
 <?php
-print_r($model);
-//print_r($variables);
+print_r($respuesta);
 ?>
 </pre>
