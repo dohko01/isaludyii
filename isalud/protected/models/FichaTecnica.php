@@ -61,7 +61,7 @@ class FichaTecnica extends CActiveRecord
 			array('id_cat_tipo_indicador, id_cat_clasificacion, id_escala_evaluacion, id_cat_periodicidad, id_ficha_tecnica_padre, id_cat_direccion, id_cat_subdireccion, id_cat_coordinacion, id_cat_programa_accion, id_cat_nivel, es_acumulable', 'numerical', 'integerOnly'=>true),
 			array('ponderacion', 'numerical'),
 			array('nombre, formula', 'length', 'max'=>200),
-			array('codigo', 'length', 'max'=>15),
+			array('codigo', 'length', 'max'=>40),
 			array('unidad_medida, meta', 'length', 'max'=>20),
 			array('definicion, fundamento, utilidad', 'safe'),
 			// The following rule is used by search().
@@ -83,7 +83,7 @@ class FichaTecnica extends CActiveRecord
 			'EscalaEvaluacion' => array(self::BELONGS_TO, 'EscalaEvaluacion', 'id_escala_evaluacion'),
 			'Periodicidad' => array(self::BELONGS_TO, 'Periodicidad', 'id_cat_periodicidad'),
 			'FichaTecnicaPadre' => array(self::BELONGS_TO, 'FichaTecnica', 'id_ficha_tecnica_padre'),
-			'FichasTecnicas' => array(self::HAS_MANY, 'FichaTecnica', 'id_ficha_tecnica_padre'),
+			'FichasTecnicasHijas' => array(self::HAS_MANY, 'FichaTecnica', 'id_ficha_tecnica_padre'),
 			'Direccion' => array(self::BELONGS_TO, 'Direccion', 'id_cat_direccion'),
 			'Subdireccion' => array(self::BELONGS_TO, 'Subdireccion', 'id_cat_subdireccion'),
 			'Coordinacion' => array(self::BELONGS_TO, 'Coordinacion', 'id_cat_coordinacion'),
@@ -180,10 +180,29 @@ class FichaTecnica extends CActiveRecord
 	}
 
     /**
+	 * Crear el codigo para el indicador
+	 */
+    public function crearCodigo()
+    {
+        $nombre = explode(' ', $this->nombre);
+        $nombre = array_filter($nombre);
+        $codigo = '';
+
+        // El codigo se formara por las tres primeras letras de cada
+        // palabra del nombre concatenados con un guion bajo (_)
+        foreach ($nombre as $palabra) {
+            $codigo .= substr(trim($palabra), 0, 3).'_';
+        }
+
+        $this->codigo = substr(substr($codigo, 0, -1), 0, 40);
+    }
+
+    /**
 	 * Crear la tabla para el indicador
 	 */
     public function crearIndicador($reconstruirTabla = false)
     {
+        //echo 'Indicador Actual: '.$this->id.' - '.$this->nombre.'<br />';
         $respuesta = array('error'=>false, 'msjerror'=>'');
         $nombreTablaIndicador = Yii::app()->params['prefixTblIndicador'].$this->id;
         $existeTabla = true;
@@ -198,121 +217,162 @@ class FichaTecnica extends CActiveRecord
         $strVariables = '';
         $strCamposComunes = '';
 
-        try {
-            if($reconstruirTabla)
-                Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->query();
-            else
-                Yii::app()->db->createCommand('SELECT COUNT(*) FROM '.$nombreTablaIndicador)->query();
-        } catch (Exception $e) {
-            $existeTabla = false;
-        }
+        // Si la ficha tecnica esta compuesta por otras fichas tecnicas
+        // No tendra formula ni variables asociadas
+        // la formula se formara por la suma del producto de cada indicador
+        // por su ponderacion
+        if(empty($this->formula)) {
+            echo 'Indicador Padre: '.$this->id.' - '.$this->nombre.'<br />';
+            $indicadoresHijos = $this->FichasTecnicasHijas;
+            $arregloCamposIndicadores = null;
+            $sqlIndicadoresHijos = '';
+            $createVarIndicador = '';
+            $selectVarIndicador = '';
 
-        // Si la tabla existe ya no la creamos
-        if($existeTabla) {
-            $respuesta['msjerror'] = 'La tabla del indicador ya existe';
-            //return $respuesta;
-        }
-        
-        $transaction = Yii::app()->db->beginTransaction();
-        
-        try {
-            $variables = $this->Variables;
-            // Se obtienen todas las variable que forman el indicador
-            foreach ($variables as $variable) {
-                $fuenteDatos = $variable->FuenteDatos;
-                array_push($arregloFuentesDatos, $fuenteDatos->id);
+            foreach ($indicadoresHijos as $indicadorHijo) {
+                echo 'Indicador Hijo: '.$indicadorHijo->id.' - '.$indicadorHijo->nombre.'<br />';
+                $indicadorHijo->crearIndicador($reconstruirTabla);
+                $arregloCamposIndicadores[$indicadorHijo->id] = $indicadorHijo->getColumsIndicador();
+                echo $indicadorHijo->formula;
 
-                // Dado a que una fuente de datos puede tener muchas variables
-                // se obtienen solo los campos que no son variables
-                $campos = $fuenteDatos->getOnlyCampos();
+                // Pendiente
+                $createVariable = ' SELECT '.$strCamposComunes.', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula.'
+                                    INTO TEMP '.$tblVariable.'
+                                    FROM '.$variable->ini_formula.'
+                                    GROUP BY '.$strCamposComunes.'; '.PHP_EOL.PHP_EOL;
 
-                // El nombre de la tabla temporal que se creara sera determinado por el nombre de la variable para formula
-                $tblFuenteVariable = strtolower($variable->ini_formula);
-                $variableUnica = strtolower($variable->ini_formula);
-                $sql .= 'CREATE TEMP TABLE IF NOT EXISTS '.$tblFuenteVariable .' ( ';
-                $select = 'SELECT ';
+                $sql .= $createVariable;
 
-                // Para cada variable se obtiene sus campos
-                foreach ($campos as $campo) {
-                    $sql .= $campo->SignificadoCampo->codigo.' '.$campo->TipoCampo->codigo.', ';
-                    $select .= ' CAST(datos->\''.$campo->nombre.'\' AS '.$campo->TipoCampo->codigo.') AS '.$campo->SignificadoCampo->codigo.', ';
+                var_dump($indicadorHijo->getVariablesIndicador());
 
-                    $arregloCampos[$variable->ini_formula][$campo->SignificadoCampo->codigo] = $campo->TipoCampo->codigo;
-                }
+                //die();
+            }
+            $arregloCamposIndicadores[10] = array('id_estado','id_jurisdiccion');
+            var_dump($arregloCamposIndicadores);
+            var_dump($this->array_intersect_assoc_multi($arregloCamposIndicadores, false));
 
-                // Al final se obtiene el campo al que corresponde la variable
-                $campoVariable = $variable->Campo;
-                
-                $sql .= $variable->ini_formula.' '.$campoVariable->TipoCampo->codigo.', ';
-                $select .= ' CAST(datos->\''.$campoVariable->nombre.'\' AS '.$campoVariable->TipoCampo->codigo.') AS '.$variable->ini_formula.', ';
+            //return false; //
+            die();
+        } else {
+            //return false; //
 
-                // Eliminamos la ultima coma y se agrega el cierre de la sentencia
-                $select = trim($select, ', ').' FROM tbl_datos_origen WHERE 
-                            id_fuente_datos = '.$fuenteDatos->id.' AND '.
-                            'CAST(datos->\''.$campoVariable->nombre.'\' AS INTEGER) > 0; '.PHP_EOL.PHP_EOL;
-
-                // Eliminamos la ultima coma y se agrega el cierre de la sentencia
-                $sql = trim($sql, ', ') . '); '.PHP_EOL.PHP_EOL;
-
-                $sql .= 'INSERT INTO '.$tblFuenteVariable.' '.$select;
+            try {
+                if($reconstruirTabla)
+                    Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->query();
+                else
+                    Yii::app()->db->createCommand('SELECT COUNT(*) FROM '.$nombreTablaIndicador)->query();
+            } catch (Exception $e) {
+                $existeTabla = false;
             }
 
-            $arregloFuentesDatos = array_unique($arregloFuentesDatos);
+            // Si la tabla existe ya no la creamos
+            if($existeTabla) {
+                $respuesta['msjerror'] = 'La tabla del indicador ya existe';
+                return $respuesta;
+            }
 
-            // Si todas las variables son de la misma fuente de datos
-            if(count($arregloFuentesDatos) == 1 && count($variables) == 1) {
-                // Se toma la fuente de datos y apartir de ella se crea la tabla del indicador
-                $createIndicador = ' SELECT * INTO '.$nombreTablaIndicador.
-                                    ' FROM '.$variableUnica.' WHERE '.$variableUnica.' > 0; ';
-                $sql .= $createIndicador;
-            } else {
-                // Devuelve los campos comunes de todas las fuentes de datos donde se encuentran las variables
-                // Los campos deben ser igual tanto en significado como en tipo
-                // El arreglo devuelto es asociativo de la forma significadoCampo => tipoCampo
-                $camposComunes = $this->array_intersect_assoc_multi($arregloCampos);
-                $strCamposComunes = implode(', ', array_keys($camposComunes));
+            $transaction = Yii::app()->db->beginTransaction();
 
-                $arrayVariables = array_keys($arregloCampos);
-                $strVariables = implode(', ', $arrayVariables);
-
-                // Recorre nuevamente las variables para crear las tablas de las variables
-                // a partir de los campos comunes
+            try {
+                $variables = $this->Variables;
+                // Se obtienen todas las variable que forman el indicador
                 foreach ($variables as $variable) {
-                    $tblVariable = Yii::app()->params['prefixTblVariable'].strtolower($variable->ini_formula);
+                    $fuenteDatos = $variable->FuenteDatos;
+                    array_push($arregloFuentesDatos, $fuenteDatos->id);
 
-                    $createVariable = ' SELECT '.$strCamposComunes.', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula.'
-                                        INTO TEMP '.$tblVariable.'
-                                        FROM '.$variable->ini_formula.'
-                                        GROUP BY '.$strCamposComunes.'; '.PHP_EOL.PHP_EOL;
-                    
-                    $sql .= $createVariable;
+                    // Dado a que una fuente de datos puede tener muchas variables
+                    // se obtienen solo los campos que no son variables
+                    $campos = $fuenteDatos->getOnlyCampos();
+
+                    // El nombre de la tabla temporal que se creara sera determinado por el nombre de la variable para formula
+                    $tblFuenteVariable = strtolower($variable->ini_formula);
+                    $variableUnica = strtolower($variable->ini_formula);
+                    $sql .= 'CREATE TEMP TABLE IF NOT EXISTS '.$tblFuenteVariable .' ( ';
+                    $select = 'SELECT ';
+
+                    // Para cada variable se obtiene sus campos
+                    foreach ($campos as $campo) {
+                        $sql .= $campo->SignificadoCampo->codigo.' '.$campo->TipoCampo->codigo.', ';
+                        $select .= ' CAST(datos->\''.$campo->nombre.'\' AS '.$campo->TipoCampo->codigo.') AS '.$campo->SignificadoCampo->codigo.', ';
+
+                        $arregloCampos[$variable->ini_formula][$campo->SignificadoCampo->codigo] = $campo->TipoCampo->codigo;
+                    }
+
+                    // Al final se obtiene el campo al que corresponde la variable
+                    $campoVariable = $variable->Campo;
+
+                    $sql .= $variable->ini_formula.' '.$campoVariable->TipoCampo->codigo.', ';
+                    $select .= ' CAST(datos->\''.$campoVariable->nombre.'\' AS '.$campoVariable->TipoCampo->codigo.') AS '.$variable->ini_formula.', ';
+
+                    // Eliminamos la ultima coma y se agrega el cierre de la sentencia
+                    $select = trim($select, ', ').' FROM tbl_datos_origen WHERE
+                                id_fuente_datos = '.$fuenteDatos->id.' AND '.
+                                'CAST(datos->\''.$campoVariable->nombre.'\' AS INTEGER) > 0; '.PHP_EOL.PHP_EOL;
+
+                    // Eliminamos la ultima coma y se agrega el cierre de la sentencia
+                    $sql = trim($sql, ', ') . '); '.PHP_EOL.PHP_EOL;
+
+                    $sql .= 'INSERT INTO '.$tblFuenteVariable.' '.$select;
                 }
 
-                $primeraVariable = array_shift($arrayVariables);
-                $joinVariables = 'SELECT '.$strCamposComunes.', '.$strVariables. ' INTO '.
-                                    $nombreTablaIndicador. ' FROM '.Yii::app()->params['prefixTblVariable'].$primeraVariable;
-                $whereJoin = 'WHERE '.$primeraVariable.' > 0';
+                $arregloFuentesDatos = array_unique($arregloFuentesDatos);
 
-                foreach ($arrayVariables as $var) {
-                    $joinVariables .= ' FULL OUTER JOIN '.Yii::app()->params['prefixTblVariable'].$var.
-                                        ' USING ('.$strCamposComunes.') ';
-                    $whereJoin .= ' AND '.$var.' > 0';
+                // Si todas las variables son de la misma fuente de datos
+                // y la formula contiene solo una variable
+                if(count($arregloFuentesDatos) == 1 && count($variables) == 1) {
+                    // Se toma la fuente de datos y apartir de ella se crea la tabla del indicador
+                    $createIndicador = ' SELECT * INTO '.$nombreTablaIndicador.
+                                        ' FROM '.$variableUnica.' WHERE '.$variableUnica.' > 0; ';
+                    $sql .= $createIndicador;
+                } else {
+                    // Devuelve los campos comunes de todas las fuentes de datos donde se encuentran las variables
+                    // Los campos deben ser igual tanto en significado como en tipo
+                    // El arreglo devuelto es asociativo de la forma significadoCampo => tipoCampo
+                    $camposComunes = $this->array_intersect_assoc_multi($arregloCampos);
+                    $strCamposComunes = implode(', ', array_keys($camposComunes));
+
+                    $arrayVariables = array_keys($arregloCampos);
+                    $strVariables = implode(', ', $arrayVariables);
+
+                    // Recorre nuevamente las variables para crear las tablas de las variables
+                    // a partir de los campos comunes
+                    foreach ($variables as $variable) {
+                        $tblVariable = Yii::app()->params['prefixTblVariable'].strtolower($variable->ini_formula);
+
+                        $createVariable = ' SELECT '.$strCamposComunes.', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula.'
+                                            INTO TEMP '.$tblVariable.'
+                                            FROM '.$variable->ini_formula.'
+                                            GROUP BY '.$strCamposComunes.'; '.PHP_EOL.PHP_EOL;
+
+                        $sql .= $createVariable;
+                    }
+
+                    $primeraVariable = array_shift($arrayVariables);
+                    $joinVariables = 'SELECT '.$strCamposComunes.', '.$strVariables. ' INTO '.
+                                        $nombreTablaIndicador. ' FROM '.Yii::app()->params['prefixTblVariable'].$primeraVariable;
+                    $whereJoin = 'WHERE '.$primeraVariable.' > 0';
+
+                    foreach ($arrayVariables as $var) {
+                        $joinVariables .= ' FULL OUTER JOIN '.Yii::app()->params['prefixTblVariable'].$var.
+                                            ' USING ('.$strCamposComunes.') ';
+                        $whereJoin .= ' AND '.$var.' > 0';
+                    }
+
+                    $joinVariables = $joinVariables.$whereJoin.'; ';
+
+                    $sql .= $joinVariables;
                 }
 
-                $joinVariables = $joinVariables.$whereJoin.'; ';
+                //echo nl2br($sql);
+                //die();
+                $this->executeMultipleSql($sql);
 
-                $sql .= $joinVariables;
+                $transaction->commit();
+            } catch (Exception $e) {
+                $transaction->rollback();
+                $respuesta['error']=true;
+                $respuesta['msjerror']='Error la tabla del indicador. '.$e->getMessage();
             }
-            
-            //echo nl2br($sql);
-            //die();
-            $this->executeMultipleSql($sql);
-
-            $transaction->commit();
-        } catch (Exception $e) {
-            $transaction->rollback();
-            $respuesta['error']=true;
-            $respuesta['msjerror']='Error la tabla del indicador. '.$e->getMessage();
         }
 
         return $respuesta;
@@ -403,20 +463,20 @@ class FichaTecnica extends CActiveRecord
     /**
      * Calcula la interseccion de los arreglos internos de una arreglo bidimensional
      */
-    public function array_intersect_assoc_multi($arreglo)
+    public function array_intersect_assoc_multi($arreglo,$assoc=true)
     {
         if(!is_array($arreglo))
             return $arreglo;
         
         // Si el arreglo contiene mas de un conjunto de valores
         if(count($arreglo)>1) {
-            $interseccion = null;
-            $primero = array_shift($arreglo);
+            $interseccion = array_shift($arreglo);
 
             foreach ($arreglo as $actual) {
-                $interseccion = array_intersect_assoc($primero, $actual);
-
-                $primero = $actual;
+                if($assoc)
+                    $interseccion = array_intersect_assoc($interseccion, $actual);
+                else
+                    $interseccion = array_intersect($interseccion, $actual);
             }
 
             return $interseccion;
@@ -472,6 +532,22 @@ class FichaTecnica extends CActiveRecord
         }
 
         return $colums;
+    }
+
+    /**
+     * Obtiene la lista de variables de la tabla del indicador
+     */
+    public function getVariablesIndicador()
+    {
+        $variables = array();
+        $objsVariables = $this->Variables;
+
+        // Elimina de la lista de columnas, aquellas que son variables
+        foreach ($objsVariables as $variable) {
+            $variables[] = $variable->ini_formula;
+        }
+
+        return $variables;
     }
 
     /**

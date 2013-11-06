@@ -10,17 +10,18 @@ class TableroController extends Controller
     public function actionView($id)
 	{
         $respuesta = null;
+        $modelFicha = null;
         try {
             $modelFicha = FichaTecnica::model()->findByPk($id);
 
-            $respuesta = $modelFicha->crearIndicador(true);
+            $respuesta = $modelFicha->crearIndicador();
             if($respuesta['error']) throw new Exception($respuesta['msjerror']);
 
             $dimension = 'id_municipio';
             $filtro = array('id_estado'=>7, 'id_jurisdiccion'=>1, 'anio'=>2013);
             $orden = 'id_municipio';
 
-            $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
+            //$respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
             if($respuesta['error']) throw new Exception($respuesta['msjerror']);
         } catch (Exception $e) {
             $respuesta['error'] = true;

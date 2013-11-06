@@ -96,6 +96,11 @@ class FichaTecnicaController extends Controller
 
             try {
                 $model->attributes=$_POST['FichaTecnica'];
+
+                // Si el usuario no asigno un codigo
+                if(empty($model->codigo))
+                    $model->crearCodigo (); // Se forma el codigo a partir del nombre
+                
                 $transaction = Yii::app()->db->beginTransaction();
 
                 $this->validateVariables($model);
@@ -282,12 +287,25 @@ class FichaTecnicaController extends Controller
         array_walk_recursive($vars_formula, $trimVars);
         array_walk_recursive($vars_select, $trimVars);
 
+        print_r($vars_formula[0]);
+        print_r($vars_select);
+
         // Revisar si existe alguna variable que esta en la formula y que no este seleccionada
         $difVars = array_diff($vars_formula[0], $vars_select);
+        $difVars = array_filter($difVars);
 
         if(count($difVars)) {
             $model->addError('Variables', 'Debe seleccionar todas las variables a utilizar en la formula');
             $model->addError('formula', 'La formula contiene variables que no estan seleccionadas');
+            throw new Exception();
+        }
+
+        // Revisar si existe alguna variable que esta seleccionada pero que no aparece en la formula
+        $difVars = array_diff($vars_select, $vars_formula[0]);
+        $difVars = array_filter($difVars);
+
+        if(count($difVars)) {
+            $model->addError('Variables', 'Existen variables seleccionadas que no se utilizan en la formula');
             throw new Exception();
         }
     }
