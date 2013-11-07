@@ -65,7 +65,10 @@ $this->menu=array(
             'value' => $model->Nivel->nombre,
         ),
 		'codigo',
-		'formula',
+        array(
+            'name'=>'formula',
+            'value' => $model->formula ? $model->formula : $model->creaFormulaIndicador(),
+        ),
         array(
             'name'=>'es_acumulable',
             'value' => $model->es_acumulable ? 'Si' : 'No',

@@ -34,7 +34,7 @@
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('formula')); ?>:</b>
-	<?php echo CHtml::encode($data->formula); ?>
+	<?php echo CHtml::encode($data->formula ? $data->formula : $data->creaFormulaIndicador()); ?>
 	<br />
 
     <b><?php echo CHtml::encode($data->getAttributeLabel('es_acumulable')); ?>:</b>

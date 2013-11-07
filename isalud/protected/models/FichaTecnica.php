@@ -186,17 +186,47 @@ class FichaTecnica extends CActiveRecord
 	 */
     public function crearCodigo()
     {
-        $nombre = explode(' ', $this->nombre);
+        // Eliminar todos los acentos
+        $nombre = strtolower(str_replace(
+                            array('á', 'é', 'í', 'ó', 'ú', 'ñ',  'Á', 'É', 'Í', 'Ó', 'Ú', 'Ñ'),
+                            array('a', 'e', 'i', 'o', 'u', 'ni', 'A', 'E', 'I', 'O', 'U', 'NI'),
+                            $this->nombre));
+        // Dividir el nombre en todas sus palabras
+        $nombre = explode(' ', $nombre);
+        // Eliminar cualquier elemento vacio del arreglo
         $nombre = array_filter($nombre);
         $codigo = '';
 
         // El codigo se formara por las tres primeras letras de cada
         // palabra del nombre concatenados con un guion bajo (_)
         foreach ($nombre as $palabra) {
+            // Eliminar cualquier caracter no alfanumerico
+            $palabra = preg_replace('/\W+/', '', $palabra);
             $codigo .= substr(trim($palabra), 0, 3).'_';
         }
 
+        // La longitud maxima del codigo sera 40 caracteres
         $this->codigo = substr(substr($codigo, 0, -1), 0, 40);
+    }
+
+    /**
+	 * Crea la formula para los indicadores que estan formados por indicadores
+     * Se utiliza en las vistas
+	 */
+    public function creaFormulaIndicador()
+    {
+        // Es un indicador compuesto, su formula se forma a partir de
+        // la suma del producto de cada indicador por su % ponderacion
+        $varIndicadores = $this->FichasTecnicasHijas;
+        $formula = array();
+
+        foreach ($varIndicadores as $varInd) {
+            $formula[] = '( '.$varInd->nombre.' * '.$varInd->ponderacion.'% )';
+        }
+
+        $operacionIndicador = implode(' + ', $formula);
+
+        return $operacionIndicador;
     }
 
     /**
@@ -204,7 +234,6 @@ class FichaTecnica extends CActiveRecord
 	 */
     public function crearIndicador($reconstruirTabla = false)
     {
-        //echo 'Indicador Actual: '.$this->id.' - '.$this->nombre.'<br />';
         $respuesta = array('error'=>false, 'msjerror'=>'');
         $nombreTablaIndicador = Yii::app()->params['prefixTblIndicador'].$this->id;
         $existeTabla = true;
@@ -212,9 +241,9 @@ class FichaTecnica extends CActiveRecord
         $select = ''; // Contendra la seleccion de los datos del HSTORE
         $createVariable = ''; // Contendra la sentencia para crear las tablas temporales de las variables
         $joinVariables = ''; // Guarda la sentencia sql que une todas las tablas temparales que contienen las variables
-        $arregloCampos = array(); // Contendra un arreglo bidimensional de los campos con el nombre de la variable de la formula como indice
+        $arregloCampos = array(); // Contendra un arreglo bidimensional de los campos de cada fuente de datos con el nombre de la variable de la formula como indice
         $arregloFuentesDatos = array(); // Contendra los IDs de las fuentes de datos de las diferentes variables
-        $variableUnica = '';
+        $tblFuenteVariable = '';  // Guarda el nombre de la tabla que se crea a partir de la variable
 
         $strVariables = '';
         $strCamposComunes = '';
@@ -224,41 +253,136 @@ class FichaTecnica extends CActiveRecord
         // la formula se formara por la suma del producto de cada indicador
         // por su ponderacion
         if(empty($this->formula)) {
-            echo 'Indicador Padre: '.$this->id.' - '.$this->nombre.'<br />';
             $indicadoresHijos = $this->FichasTecnicasHijas;
-            $arregloCamposIndicadores = null;
-            $sqlIndicadoresHijos = '';
-            $createVarIndicador = '';
-            $selectVarIndicador = '';
+            $arregloCamposIndicadores = array(); // Guarda un arreglo bidimensional de los campos de cada indicador con el id de la ficha tecnica como indice
+            $arregloTblVarsIndicadores = array(); // Guarda un arreglo con los nombres de las tablas temporales de cada indicador hijo
+            $arregloCamposVarsInds = array(); // Guarda un arreglo con los nombres de los codigos de cada indicador hijo
+            $sqlIndicadoresHijos = ''; // Guarda todas las consultas para formar el indicador padre
+            $createTblVarIndicador = ''; // Guarda la sentencia para crear la tabla temporal de cada indicador
 
-            foreach ($indicadoresHijos as $indicadorHijo) {
-                echo 'Indicador Hijo: '.$indicadorHijo->id.' - '.$indicadorHijo->nombre.'<br />';
-                $indicadorHijo->crearIndicador($reconstruirTabla);
-                $arregloCamposIndicadores[$indicadorHijo->id] = $indicadorHijo->getColumsIndicador();
-                echo $indicadorHijo->formula;
+            try {
+                try {
+                    if($reconstruirTabla)
+                        Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->query();
+                    else
+                        Yii::app()->db->createCommand('SELECT COUNT(*) FROM '.$nombreTablaIndicador)->query();
+                } catch (Exception $e) {
+                    $existeTabla = false;
+                }
 
-                // Pendiente
-                $createVariable = ' SELECT '.$strCamposComunes.', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula.'
-                                    INTO TEMP '.$tblVariable.'
-                                    FROM '.$variable->ini_formula.'
-                                    GROUP BY '.$strCamposComunes.'; '.PHP_EOL.PHP_EOL;
+                // Si la tabla existe ya no la creamos
+                if($existeTabla) {
+                    $respuesta['msjerror'] = 'La tabla del indicador '.$this->nombre.' ya existe';
+                    return $respuesta;
+                }
+                
+                // Asegurarse que todos los indicadores esten construidos
+                foreach ($indicadoresHijos as $indicadorHijo) {
+                    // esto agrega soporte para tener varios niveles de
+                    // dependencias entre indicadoes
+                    $respuesta = $indicadorHijo->crearIndicador($reconstruirTabla);
 
-                $sqlIndicadoresHijos .= $createVariable;
+                    if($respuesta['error']) throw new Exception($respuesta['msjerror']);
 
-                var_dump($indicadorHijo->getVariablesIndicador());
+                    $arregloCamposIndicadores[$indicadorHijo->id] = $indicadorHijo->getColumsIndicador();
+                }
 
+                // Obtener los campos comunes de todos los indicadores relacionados con el indicador padre
+                $camposComunesIndicadores = $this->array_intersect_assoc_multi($arregloCamposIndicadores, false);
+                $camposComunesIndicadores = implode(', ', $camposComunesIndicadores);
+
+                // Recorrer todos los indicadores que forman el indicador actual
+                foreach ($indicadoresHijos as $indicadorHijo) {
+                    $tblInidicador = Yii::app()->params['prefixTblIndicador'].$indicadorHijo->id;
+                    $tblVarIndicador = Yii::app()->params['prefixTblVariable'].$tblInidicador;
+
+                    array_push($arregloTblVarsIndicadores, $tblVarIndicador);
+
+                    // Si el indicador no tiene codigo, asignarle uno
+                    if(empty($indicadorHijo->codigo))
+                        $indicadorHijo->crearCodigo();
+
+                    $operacionIndicador = '';
+
+                    array_push($arregloCamposVarsInds, $indicadorHijo->codigo);
+
+                    // Construir la formula del indicador hijo
+                    // Si no tiene formula
+                    if(empty($indicadorHijo->formula)) {
+                        // Es un indicador compuesto, su formula se forma a partir de
+                        // la suma del producto de cada indicador por su % ponderacion
+                        $varIndicadores = $indicadorHijo->FichasTecnicasHijas;
+                        $formula = array();
+
+                        foreach ($varIndicadores as $varInd) {
+                            if(empty($varInd->codigo))
+                                $varInd->crearCodigo();
+
+                            $formula[] = ' (SUM('.$varInd->codigo.') * '.$varInd->ponderacion.' / 100) ';
+                        }
+
+                        // El codigo del indicador sirve para asignarle el nombre a la
+                        // columna que contiene el calculo del indicador
+                        $operacionIndicador = 'ROUND(('.implode(' + ', $formula).'), 1) AS '.$indicadorHijo->codigo;
+                    } else {
+                        // El codigo del indicador sirve para asignarle el nombre a la
+                        // columna que contiene el calculo del indicador
+                        $operacionIndicador = 'ROUND(('.$indicadorHijo->formula.'), 1) AS '.$indicadorHijo->codigo;
+
+                        // Es un indicador formado por variables
+                        foreach ($indicadorHijo->Variables as $variable) {
+                            // Remplazar cada variable por la funcion SUM que es interpretada por el DBMS
+                            $operacionIndicador = str_replace('['.$variable->ini_formula.']',
+                                                       'SUM('.$variable->ini_formula.')',
+                                                        $operacionIndicador
+                                                    );
+                        }
+                    }
+
+                    // Crear la tabla temporal que guarda el calculo del indicador
+                    $createTblVarIndicador = ' SELECT '.$camposComunesIndicadores.', '.$operacionIndicador.'
+                                        INTO TEMP '.$tblVarIndicador.'
+                                        FROM '.$tblInidicador.'
+                                        GROUP BY '.$camposComunesIndicadores.'; '.PHP_EOL.PHP_EOL;
+
+                    $sqlIndicadoresHijos .= $createTblVarIndicador;
+                }
+
+                $strCamposVarsInds = implode(', ', $arregloCamposVarsInds);
+                $varInd = array_shift($arregloTblVarsIndicadores);
+                $CampVarInd = array_shift($arregloCamposVarsInds);
+
+                // Construir la tabla del indicador padre
+                // a partir de todos indicadores hijos
+                $joinVariablesIndicadores = 'SELECT '.$camposComunesIndicadores.', '.$strCamposVarsInds. ' INTO '.
+                                    $nombreTablaIndicador. ' FROM '.$varInd;
+                $whereJoinVarsInds = 'WHERE '.$CampVarInd.' > 0';
+
+                foreach ($arregloTblVarsIndicadores as $varInd) {
+                    $CampVarInd = array_shift($arregloCamposVarsInds);
+                    $joinVariablesIndicadores .= ' FULL OUTER JOIN '.$varInd.'
+                                         USING ('.$camposComunesIndicadores.') ';
+                    $whereJoinVarsInds .= ' AND '.$CampVarInd.' > 0';
+                }
+
+                $joinVariablesIndicadores = $joinVariablesIndicadores.$whereJoinVarsInds.'; ';
+
+                $sqlIndicadoresHijos .= $joinVariablesIndicadores;
+
+                //echo '<br><br>'.$this->id.' - '.$this->nombre.'<br><br>';
+                //echo nl2br($sqlIndicadoresHijos);
                 //die();
+                $transaction = Yii::app()->db->beginTransaction();
+                
+                $this->executeMultipleSql($sqlIndicadoresHijos);
+
+                $transaction->commit();
+            } catch (Exception $e) {
+                $transaction->rollback();
+                $respuesta['error']=true;
+                $respuesta['msjerror']='Error la tabla del indicador. '.$e->getMessage();
             }
-
-            
-
-            var_dump($this->array_intersect_assoc_multi($arregloCamposIndicadores, false));
-
-            //return false; //
-            die();
         } else {
-            //return false; //
-
             try {
                 if($reconstruirTabla)
                     Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->query();
@@ -270,7 +394,7 @@ class FichaTecnica extends CActiveRecord
 
             // Si la tabla existe ya no la creamos
             if($existeTabla) {
-                $respuesta['msjerror'] = 'La tabla del indicador ya existe';
+                $respuesta['msjerror'] = 'La tabla del indicador '.$this->nombre.' ya existe';
                 return $respuesta;
             }
 
@@ -289,7 +413,6 @@ class FichaTecnica extends CActiveRecord
 
                     // El nombre de la tabla temporal que se creara sera determinado por el nombre de la variable para formula
                     $tblFuenteVariable = strtolower($variable->ini_formula);
-                    $variableUnica = strtolower($variable->ini_formula);
                     $sql .= 'CREATE TEMP TABLE IF NOT EXISTS '.$tblFuenteVariable .' ( ';
                     $select = 'SELECT ';
 
@@ -325,7 +448,7 @@ class FichaTecnica extends CActiveRecord
                 if(count($arregloFuentesDatos) == 1 && count($variables) == 1) {
                     // Se toma la fuente de datos y apartir de ella se crea la tabla del indicador
                     $createIndicador = ' SELECT * INTO '.$nombreTablaIndicador.
-                                        ' FROM '.$variableUnica.' WHERE '.$variableUnica.' > 0; ';
+                                        ' FROM '.$tblFuenteVariable.' WHERE '.$tblFuenteVariable.' > 0; ';
                     $sql .= $createIndicador;
                 } else {
                     // Devuelve los campos comunes de todas las fuentes de datos donde se encuentran las variables
@@ -390,7 +513,7 @@ class FichaTecnica extends CActiveRecord
         $nombreTablaIndicador = Yii::app()->params['prefixTblIndicador'].$this->id;
         $strColumnas = '';
         $orderBy = '';
-        $operacionIndicador = 'ROUND(('.$this->formula.'), 1) AS indicador';
+        $operacionIndicador = '';
 
         $columnas = $this->getColumsIndicador();
 
@@ -410,6 +533,25 @@ class FichaTecnica extends CActiveRecord
 
                 return $respuesta;
             }
+        }
+        
+        // Si no tiene formula
+        if(empty($this->formula)) {
+            // Es un indicador compuesto, su formula se forma a partir de 
+            // la suma del producto de cada indicador por su % ponderacion
+            $varIndicadores = $this->FichasTecnicasHijas;
+            $formula = array();
+            
+            foreach ($varIndicadores as $varInd) {
+                if(empty($varInd->codigo))
+                    $varInd->crearCodigo();
+
+                $formula[] = ' (SUM('.$varInd->codigo.') * '.$varInd->ponderacion.' / 100) ';
+            }
+
+            $operacionIndicador = 'ROUND(('.implode(' + ', $formula).'), 1) AS indicador';
+        } else {
+            $operacionIndicador = 'ROUND(('.$this->formula.'), 1) AS indicador';
         }
 
         // Revisar si la dimensión hace referencia a un catalogo
@@ -457,10 +599,10 @@ class FichaTecnica extends CActiveRecord
 
         $sql = 'SELECT '.$strColumnas.', '.$operacionIndicador.' FROM '.$nombreTablaIndicador.
                 $innerJoin.$where.$groupBy.$orderBy;
-        
-         $result = Yii::app()->db->createCommand($sql)->query()->readAll();
+
+        $result = Yii::app()->db->createCommand($sql)->query()->readAll();
          
-         return $result;
+        return $result;
     }
 
     /**
@@ -598,6 +740,22 @@ class FichaTecnica extends CActiveRecord
     }
 
     /**
+     * Obtiene la anterior dimension lugar de un dimension dada
+     */
+    public function getPrevDimLugar($dimActual)
+    {
+        $colums = $this->getColumsIndicador();
+        $dims = Yii::app()->params['orderedColumLugar'];
+
+        $index = array_search($dimActual, $colums);
+
+        if(isset($colums[$index-1]))
+            return $colums[$index-1];
+        else
+            return null;
+    }
+
+    /**
      * Obtiene la dimension tiempo mayor
      */
     public function getMaxDimTiempo() 
@@ -637,6 +795,22 @@ class FichaTecnica extends CActiveRecord
 
         if(isset($colums[$index+1]))
             return $colums[$index+1];
+        else
+            return null;
+    }
+
+    /**
+     * Obtiene la anterior dimension tiempo de un dimension dada
+     */
+    public function getPrevDimTiempo($dimActual)
+    {
+        $colums = $this->getColumsIndicador();
+        $dims = Yii::app()->params['orderedColumTiempo'];
+
+        $index = array_search($dimActual, $colums);
+
+        if(isset($colums[$index-1]))
+            return $colums[$index-1];
         else
             return null;
     }

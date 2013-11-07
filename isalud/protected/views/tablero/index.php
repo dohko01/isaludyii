@@ -7,8 +7,8 @@ $this->breadcrumbs=array(
 ?>
 <pre>
 <?php
-var_dump($model->FichaTecnicaPadre);
-var_dump($model->FichasTecnicasHijas);
+//var_dump($model->FichaTecnicaPadre);
+//var_dump($model->FichasTecnicasHijas);
 print_r($respuesta);
 ?>
 </pre>
