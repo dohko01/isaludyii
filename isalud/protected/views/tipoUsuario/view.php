@@ -8,20 +8,20 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List TipoUsuario', 'url'=>array('index')),
-	array('label'=>'Create TipoUsuario', 'url'=>array('create')),
-	array('label'=>'Update TipoUsuario', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Delete TipoUsuario', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-	array('label'=>'Manage TipoUsuario', 'url'=>array('admin')),
+	array('label'=>'Listar Tipo de Usuario', 'url'=>array('index')),
+	array('label'=>'Crear Tipo de Usuario', 'url'=>array('create')),
+	array('label'=>'Actualizar Tipo de Usuario', 'url'=>array('update', 'id'=>$model->id)),
+	array('label'=>'Eliminar Tipo de Usuario', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Está seguro que desea eliminar este registro?')),
+	array('label'=>'Administrar Tipo de Usuario', 'url'=>array('admin')),
 );
 ?>
 
-<h1>View TipoUsuario #<?php echo $model->id; ?></h1>
+<h1>View Tipo de Usuario #<?php echo $model->id; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id',
+		//'id',
 		'nombre',
 		'activo',
 	),

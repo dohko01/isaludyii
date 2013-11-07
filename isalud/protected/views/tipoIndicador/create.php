@@ -3,16 +3,16 @@
 /* @var $model TipoIndicador */
 
 $this->breadcrumbs=array(
-	'Tipo Indicadors'=>array('index'),
-	'Create',
+	'Tipo de Indicadores'=>array('index'),
+	'Crear',
 );
 
 $this->menu=array(
-	array('label'=>'List TipoIndicador', 'url'=>array('index')),
-	array('label'=>'Manage TipoIndicador', 'url'=>array('admin')),
+	array('label'=>'Listar Tipo de Indicador', 'url'=>array('index')),
+	array('label'=>'Administrar Tipo de Indicador', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Create TipoIndicador</h1>
+<h1>Crear Tipo de Indicador</h1>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

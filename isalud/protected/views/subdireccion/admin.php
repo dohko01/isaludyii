@@ -38,13 +38,18 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 	'model'=>$model,
 )); ?>
 </div><!-- search-form -->
-
+<?php $list = CHtml::listData(Direccion::model()->findAll(), 'nombre', 'nombre'); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'subdireccion-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
 	'columns'=>array(
-		'id_cat_direccion',
+		//'id_cat_direccion',
+		array(
+		'header'=>'Direccion',
+		'value'=>'($data->idCatDireccion!=null) ? $data->idCatDireccion->nombre : null',
+		'filter'=>CHtml::activeDropDownList($model,'direccion_search',$list),
+		),
 		'nombre',
 		'responsable',
 		'comentario',

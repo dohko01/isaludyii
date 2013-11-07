@@ -3,25 +3,25 @@
 /* @var $model TipoIndicador */
 
 $this->breadcrumbs=array(
-	'Tipo Indicadors'=>array('index'),
+	'Tipo Indicadores'=>array('index'),
 	$model->id,
 );
 
 $this->menu=array(
-	array('label'=>'List TipoIndicador', 'url'=>array('index')),
-	array('label'=>'Create TipoIndicador', 'url'=>array('create')),
-	array('label'=>'Update TipoIndicador', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Delete TipoIndicador', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-	array('label'=>'Manage TipoIndicador', 'url'=>array('admin')),
+	array('label'=>'Listar Tipo de Indicador', 'url'=>array('index')),
+	array('label'=>'Crear Tipo de Indicador', 'url'=>array('create')),
+	array('label'=>'Actualizar Tipo de Indicador', 'url'=>array('update', 'id'=>$model->id)),
+	array('label'=>'Eliminar Tipo de Indicador', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Esta seguro que desea eliminar éste elemento?')),
+	array('label'=>'Administrar Tipo de Indicador', 'url'=>array('admin')),
 );
 ?>
 
-<h1>View TipoIndicador #<?php echo $model->id; ?></h1>
+<h1>Ver Tipo de Indicador #<?php echo $model->id; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id',
+		//'id',
 		'nombre',
 		'comentario',
 	),

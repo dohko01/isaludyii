@@ -7,8 +7,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Create TipoUsuario', 'url'=>array('create')),
-	array('label'=>'Manage TipoUsuario', 'url'=>array('admin')),
+	array('label'=>'Crear TipoUsuario', 'url'=>array('create')),
+	array('label'=>'Administrar TipoUsuario', 'url'=>array('admin')),
 );
 ?>
 

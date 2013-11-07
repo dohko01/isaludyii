@@ -21,6 +21,9 @@ class Subdireccion extends CActiveRecord
 	/**
 	 * @return string the associated database table name
 	 */
+	
+	public $direccion_search;
+	
 	public function tableName()
 	{
 		return 'tblc_subdireccion';
@@ -40,7 +43,7 @@ class Subdireccion extends CActiveRecord
 			array('comentario', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, id_cat_direccion, nombre, responsable, comentario', 'safe', 'on'=>'search'),
+			array('id, id_cat_direccion, direccion_search, nombre, responsable, comentario', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -96,6 +99,9 @@ class Subdireccion extends CActiveRecord
 		$criteria->compare('nombre',$this->nombre,true);
 		$criteria->compare('responsable',$this->responsable,true);
 		$criteria->compare('comentario',$this->comentario,true);
+		// Se crea el apuntador al campo que se va a buscar de la tabla a la que pertenece la llave foranea
+		$criteria->with=array('idCatDireccion');
+		$criteria->compare('"idCatDireccion"."nombre"',$this->direccion_search, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

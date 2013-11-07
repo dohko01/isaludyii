@@ -3,16 +3,16 @@
 /* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(
-	'Tipo Indicadors',
+	'Tipo de Indicadores',
 );
 
 $this->menu=array(
-	array('label'=>'Create TipoIndicador', 'url'=>array('create')),
-	array('label'=>'Manage TipoIndicador', 'url'=>array('admin')),
+	array('label'=>'Crear Tipo de Indicador', 'url'=>array('create')),
+	array('label'=>'Administrar Tipo de Indicador', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Tipo Indicadors</h1>
+<h1>Tipo de Indicadores</h1>
 
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,
