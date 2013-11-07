@@ -8,20 +8,20 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Nivel', 'url'=>array('index')),
-	array('label'=>'Create Nivel', 'url'=>array('create')),
-	array('label'=>'Update Nivel', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Delete Nivel', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?')),
-	array('label'=>'Manage Nivel', 'url'=>array('admin')),
+	array('label'=>'Listar Nivel', 'url'=>array('index')),
+	array('label'=>'Crear Nivel', 'url'=>array('create')),
+	array('label'=>'Actualizar Nivel', 'url'=>array('update', 'id'=>$model->id)),
+	array('label'=>'Eliminar Nivel', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Está seguro de que desea eliminar este Nivel?')),
+	array('label'=>'Administrar Nivel', 'url'=>array('admin')),
 );
 ?>
 
-<h1>View Nivel #<?php echo $model->id; ?></h1>
+<h1>Ver Nivel #<?php echo $model->id; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id',
+		//'id',
 		'nombre',
 	),
 )); ?>

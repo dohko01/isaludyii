@@ -18,10 +18,11 @@
 	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
 
 	<?php echo $form->errorSummary($model); ?>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'id_cat_coordinacion'); ?>
-		<?php echo $form->textField($model,'id_cat_coordinacion'); ?>
+    
+    <div class="row">
+		<?php echo $form->labelEx($model,'Coordinación'); ?>
+		<?php $list = CHTml::listData(Coordinacion::model()->findAll(), 'id','nombre');?>
+		<?php echo $form->dropDownList($model,'id_cat_coordinacion', $list); ?>
 		<?php echo $form->error($model,'id_cat_coordinacion'); ?>
 	</div>
 

@@ -16,6 +16,7 @@
  */
 class ProgramaAccion extends CActiveRecord
 {
+	public $coordinacion_search;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -39,7 +40,7 @@ class ProgramaAccion extends CActiveRecord
 			array('comentario', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, id_cat_coordinacion, nombre, responsable, comentario', 'safe', 'on'=>'search'),
+			array('id, id_cat_coordinacion, coordinacion_search nombre, responsable, comentario', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,8 +52,8 @@ class ProgramaAccion extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'idCatCoordinacion' => array(self::BELONGS_TO, 'TblcCoordinacion', 'id_cat_coordinacion'),
-			'tblFichaTecnicas' => array(self::HAS_MANY, 'TblFichaTecnica', 'id_cat_programa_accion'),
+			'idCatCoordinacion' => array(self::BELONGS_TO, 'Coordinacion', 'id_cat_coordinacion'),
+			'tblFichaTecnicas' => array(self::HAS_MANY, 'FichaTecnica', 'id_cat_programa_accion'),
 		);
 	}
 
@@ -93,6 +94,9 @@ class ProgramaAccion extends CActiveRecord
 		$criteria->compare('nombre',$this->nombre,true);
 		$criteria->compare('responsable',$this->responsable,true);
 		$criteria->compare('comentario',$this->comentario,true);
+		// Se crea el apuntador al campo que se va a buscar de la tabla a la que pertenece la llave foranea
+		$criteria->with=array('idCatCoordinacion');
+		$criteria->compare('"idCatCoordinacion"."nombre"',$this->coordinacion_search, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

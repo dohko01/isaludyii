@@ -21,7 +21,11 @@ $this->menu=array(
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id_cat_coordinacion',
+		//'id_cat_coordinacion',
+		array(
+			'label'=>'Periodicidad de actualización',
+            'value' => $model->idCatCoordinacion->nombre,
+		),
 		'nombre',
 		'responsable',
 		'comentario',

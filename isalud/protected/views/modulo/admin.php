@@ -47,7 +47,10 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 		//'id_cat_tipo_usuario',
 		'nombre',
 		'url',
-		'activo',
+		array(
+			'header'=>'Activo',
+			'value'=>'($data->activo) ? "Si" : "No"',
+		),
 		array(
 			'header'=>'Parent',
 			'value'=>'($data->parent!=null) ? $data->parent->nombre : null',

@@ -7,8 +7,8 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'Create Nivel', 'url'=>array('create')),
-	array('label'=>'Manage Nivel', 'url'=>array('admin')),
+	array('label'=>'Crear Nivel', 'url'=>array('create')),
+	array('label'=>'Administrar Nivel', 'url'=>array('admin')),
 );
 ?>
 
