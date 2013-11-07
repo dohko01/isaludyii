@@ -125,6 +125,12 @@
 		<?php echo $form->error($model,'es_acumulable'); ?>
 	</div>
 
+    <div class="row">
+		<?php echo $form->labelEx($model,'es_publico'); ?>
+		<?php echo $form->checkBox($model, 'es_publico', array('value'=>1, 'uncheckValue'=>0)); ?>
+		<?php echo $form->error($model,'es_publico'); ?>
+	</div>
+
 	<div class="row">
 		<?php echo $form->labelEx($model,'ponderacion'); ?>
 		<?php echo $form->numberField($model,'ponderacion', array('class'=>'span7', 'min'=>'0')); ?>

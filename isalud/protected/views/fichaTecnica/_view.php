@@ -41,6 +41,10 @@
 	<?php echo CHtml::encode($data->es_acumulable ? 'Si' : 'No'); ?>
 	<br />
 
+    <b><?php echo CHtml::encode($data->getAttributeLabel('es_publico')); ?>:</b>
+	<?php echo CHtml::encode($data->es_publico ? 'Si' : 'No'); ?>
+	<br />
+
 	<?php /*
 
 

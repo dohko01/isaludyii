@@ -70,6 +70,10 @@ $this->menu=array(
             'name'=>'es_acumulable',
             'value' => $model->es_acumulable ? 'Si' : 'No',
         ),
+        array(
+            'name'=>'es_publico',
+            'value' => $model->es_publico ? 'Si' : 'No',
+        ),
 		'ponderacion',
 		'unidad_medida',
 		'meta',

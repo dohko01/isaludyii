@@ -19,6 +19,7 @@
  * @property string $codigo
  * @property string $formula
  * @property boolean $es_acumulable
+ * @property boolean $es_publico
  * @property double $ponderacion
  * @property string $unidad_medida
  * @property string $meta
@@ -58,7 +59,7 @@ class FichaTecnica extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('id_cat_tipo_indicador, id_cat_clasificacion, id_escala_evaluacion, id_cat_periodicidad, id_cat_direccion, id_cat_nivel, nombre, unidad_medida', 'required'),
-			array('id_cat_tipo_indicador, id_cat_clasificacion, id_escala_evaluacion, id_cat_periodicidad, id_ficha_tecnica_padre, id_cat_direccion, id_cat_subdireccion, id_cat_coordinacion, id_cat_programa_accion, id_cat_nivel, es_acumulable', 'numerical', 'integerOnly'=>true),
+			array('id_cat_tipo_indicador, id_cat_clasificacion, id_escala_evaluacion, id_cat_periodicidad, id_ficha_tecnica_padre, id_cat_direccion, id_cat_subdireccion, id_cat_coordinacion, id_cat_programa_accion, id_cat_nivel, es_acumulable, es_publico', 'numerical', 'integerOnly'=>true),
 			array('ponderacion', 'numerical'),
 			array('nombre, formula', 'length', 'max'=>200),
 			array('codigo', 'length', 'max'=>40),
@@ -115,6 +116,7 @@ class FichaTecnica extends CActiveRecord
 			'codigo' => 'Código',
 			'formula' => 'Formula',
             'es_acumulable' => '¿Es acumulable?',
+            'es_publico' => '¿La informacion se puede difundir a la población en general?',
 			'ponderacion' => 'Ponderación (%)',
 			'unidad_medida' => 'Unidad de medida',
 			'meta' => 'Meta institucional',
@@ -241,14 +243,15 @@ class FichaTecnica extends CActiveRecord
                                     FROM '.$variable->ini_formula.'
                                     GROUP BY '.$strCamposComunes.'; '.PHP_EOL.PHP_EOL;
 
-                $sql .= $createVariable;
+                $sqlIndicadoresHijos .= $createVariable;
 
                 var_dump($indicadorHijo->getVariablesIndicador());
 
                 //die();
             }
-            $arregloCamposIndicadores[10] = array('id_estado','id_jurisdiccion');
-            var_dump($arregloCamposIndicadores);
+
+            
+
             var_dump($this->array_intersect_assoc_multi($arregloCamposIndicadores, false));
 
             //return false; //
