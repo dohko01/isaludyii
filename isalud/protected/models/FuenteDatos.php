@@ -127,6 +127,136 @@ class FuenteDatos extends CActiveRecord
 	}
 
     /**
+	 * Limpia la cadena de cualquier caracter no alfanumerico,
+     * elimina los acentos y espacios
+	 */
+    public function limpiarCadena($cadena)
+    {
+        $strLimpia = preg_replace('/\s+/', ' ', trim($cadena));
+        // Eliminar todos los acentos y espacios
+        $strLimpia = strtolower(str_replace(
+                            array('á', 'é', 'í', 'ó', 'ú', 'ñ',  'Á', 'É', 'Í', 'Ó', 'Ú', 'Ñ', ' '),
+                            array('a', 'e', 'i', 'o', 'u', 'ni', 'A', 'E', 'I', 'O', 'U', 'NI', '_'),
+                            $strLimpia));
+        
+        $strLimpia = preg_replace('/\W+/', '', $strLimpia);
+     
+        return $strLimpia;
+    }
+
+    /**
+	 * Carga datos desde la fuente de datos
+	 */
+	public function cargarDatos($recargar=false)
+	{
+        $cadenaInsert = '';
+        $respuesta = array('error'=>false, 'msjerror'=>'');
+
+        $transaction = null;
+        try {
+            $transaction = Yii::app()->db->beginTransaction();
+
+            // Si la opcion es recargar
+            // Debemos eliminar los datos actuales de la fuente de datos
+            if($recargar) {
+                $delete = 'DELETE FROM tbl_datos_origen WHERE id_fuente_datos='.$this->id;
+                $command = Yii::app()->db->createCommand($delete);
+                $command->execute();
+            }
+
+            // Cargar todos los campos
+            // ****************************
+            //   Desde una base de datos
+            // ****************************
+            if($this->id_conexion_bdatos) {
+                $DBConec = ConexionBDatos::model()->getConexion($this->id_conexion_bdatos);
+
+                $rsDatos = ConexionBDatos::model()->getQueryResult($DBConec, $this->sentencia_sql);
+
+                if(empty($rsDatos))
+                    throw new Exception('No se pudieron obtener los datos desde la consulta.');
+
+                foreach ($rsDatos as $fila) {
+                    $cadenaInsert .= '('.$this->id.',\'';
+                    foreach ($fila as $campo => $valor) {
+                        // no se aceptaran espacios ni caracteres especiales en el nombre de los campos
+                        $campo = $this->limpiarCadena($campo);
+
+                        // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
+                        $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
+                        $cadenaInsert .= $campo.'=>"'.$valor.'",';
+                    }
+                    // Eliminar la ultima coma (,)
+                    $cadenaInsert = substr($cadenaInsert, 0, -1);
+                    $cadenaInsert .= '\'),';
+                }
+
+                // Eliminar la ultima coma (,)
+                $cadenaInsert = substr($cadenaInsert, 0, -1);
+
+                $sqlInsert = 'INSERT INTO tbl_datos_origen(id_fuente_datos, datos) VALUES '.$cadenaInsert;
+                $command = Yii::app()->db->createCommand($sqlInsert);
+                $command->execute();
+            }
+            // ***********************
+            //     Desde un archivo
+            // ***********************
+            else if($this->archivo) {
+                // Fuente: https://github.com/marcovtwout/yii-phpexcel
+                Yii::import('ext.phpexcel.XPHPExcel');
+                XPHPExcel::init();
+
+                $archivo = YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR.$this->archivo;
+
+                $inputFileType = PHPExcel_IOFactory::identify($archivo);
+                $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+                $objReader->setReadDataOnly(true);
+                $objPHPExcel = $objReader->load($archivo);
+
+                // La primera fila del archivo contiene el nombre de los campos
+                $datos = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
+
+                if(empty($datos))
+                    throw new Exception('No se pudieron obtener los datos desde el archivo.');
+
+                $nombreCampo = array_shift($datos);
+
+                // no se aceptaran espacios ni caracteres especiales en el nombre de los campos
+                foreach($nombreCampo as $key => $value) {
+                    $nombreCampo[$key] = $this->limpiarCadena($value);
+                }
+
+                foreach ($datos as $fila) {
+                    $cadenaInsert .= '('.$this->id.',\'';
+                    foreach ($fila as $campo => $valor) {
+                        // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
+                        $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
+                        $cadenaInsert .= $nombreCampo[$campo].'=>"'.$valor.'",';
+                    }
+                    // Eliminar la ultima coma (,)
+                    $cadenaInsert = substr($cadenaInsert, 0, -1);
+                    $cadenaInsert .= '\'),';
+                }
+
+                // Eliminar la ultima coma (,)
+                $cadenaInsert = substr($cadenaInsert, 0, -1);
+
+                $sqlInsert = 'INSERT INTO tbl_datos_origen(id_fuente_datos, datos) VALUES '.$cadenaInsert;
+                $command = Yii::app()->db->createCommand($sqlInsert);
+                $command->execute();
+            }
+
+            $transaction->commit();
+        } catch (Exception $e) {
+            $transaction->rollback();
+            $respuesta['error']=true;
+            $respuesta['msjerror']=$e->getMessage();
+        }
+		
+        return $respuesta;
+	}
+
+    /**
 	 * Devuelve todos los campos que no sean variables
 	 */
 	public function getOnlyCampos()
@@ -140,5 +270,38 @@ class FuenteDatos extends CActiveRecord
         }
 
         return $campos;
+	}
+
+    /**
+	 * Obtiene el numero total de registros de la fuente de datos
+	 */
+	public function getCountDatos()
+	{
+        $sqlCountDatos = 'SELECT COUNT(id) as totalDatos FROM tbl_datos_origen WHERE id_fuente_datos='.$this->id;
+        $countDatos = Yii::app()->db->createCommand($sqlCountDatos)->queryScalar();
+
+		return $countDatos;
+	}
+
+    /**
+	 * Obtiene el sql para mostrar todos los datos de una fuente de datos
+     * Se utiliza para el CSqlDataProvider
+	 */
+	public function getSQLDatos()
+	{
+        $sqlAllDatos = 'SELECT ';
+        $campos = $this->Campos;
+
+        // Construye el sql a partir de todos los campos
+        foreach ($campos as $campo) {
+            $sqlAllDatos .= ' CAST(datos->\''.$campo->nombre.'\' AS '.$campo->TipoCampo->codigo.') AS '.$campo->nombre.', ';
+        }
+
+        // Eliminamos la ultima coma
+        $sqlAllDatos = trim($sqlAllDatos, ', ');
+
+        $sqlAllDatos .= ' FROM tbl_datos_origen WHERE id_fuente_datos='.$this->id;
+
+        return $sqlAllDatos;
 	}
 }

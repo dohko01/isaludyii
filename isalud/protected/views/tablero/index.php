@@ -5,10 +5,5 @@ $this->breadcrumbs=array(
 	'Tablero',
 );
 ?>
-<pre>
-<?php
-//var_dump($model->FichaTecnicaPadre);
-//var_dump($model->FichasTecnicasHijas);
-print_r($respuesta);
-?>
-</pre>
+
+<h2> Pantalla de inicio principal </h2>

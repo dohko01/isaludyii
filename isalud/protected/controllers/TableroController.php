@@ -4,7 +4,7 @@ class TableroController extends Controller
 {
 	public function actionIndex()
 	{
-		$this->render('view');
+		$this->render('index');
 	}
 
     public function actionView($id)
@@ -28,7 +28,7 @@ class TableroController extends Controller
             $respuesta['msjerror'] = $e->getMessage();
         }
 
-		$this->render('index',array(
+		$this->render('view',array(
 			'model'=> $modelFicha,
             'respuesta'=> $respuesta,
             )

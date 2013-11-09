@@ -124,5 +124,7 @@ return array(
             'quincena',
             'semana',
         ),
+        // Numero de filas a mostrar por pagina en el CGridView
+        'filasPorPagina'=>25,
 	),
 );

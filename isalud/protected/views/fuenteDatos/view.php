@@ -73,6 +73,13 @@ $this->widget('zii.widgets.jui.CJuiButton',array(
     'htmlOptions'=>array('id'=>$model->id)
 ));
 
+$this->widget('zii.widgets.jui.CJuiButton',array(
+    'buttonType'=>'button',
+    'name'=>'verDatos',
+    'caption'=>'Ver Datos Cargados',
+    'onclick'=>new CJavaScriptExpression('function(){ location.href="'.Yii::app()->createUrl("/fuentedatos/verdatos", array("id" => $model->id)).'"} '),
+));
+
 echo '</p>';
 
 // Para la validacion CSRF

@@ -42,7 +42,7 @@ class FuenteDatosController extends Controller
 	{
 		return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','validararchivo','configurarcampo', 'cargardatos', 'ObtenerCampos'),
+				'actions'=>array('index','view','create','update','admin','delete','validararchivo','configurarcampo', 'cargardatos', 'obtenercampos', 'verdatos', 'recargardatos'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),
 			/*array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -127,7 +127,7 @@ class FuenteDatosController extends Controller
                         foreach ($nombresCampo as $strCampo) {
                             $objCampo = new Campo;
                             $objCampo->id_fuente_datos = $model->id;
-                            $objCampo->nombre = $strCampo;
+                            $objCampo->nombre = $model->limpiarCadena($strCampo);
 
                             $objCampo->save();
                         }
@@ -154,7 +154,7 @@ class FuenteDatosController extends Controller
                         foreach ($datos[1] as $strCampo) {
                             $objCampo = new Campo;
                             $objCampo->id_fuente_datos = $model->id;
-                            $objCampo->nombre = $strCampo;
+                            $objCampo->nombre = $model->limpiarCadena($strCampo);
 
                             $objCampo->save();
                         }
@@ -232,6 +232,11 @@ class FuenteDatosController extends Controller
                         // Campos enviados desde la sentencia SQL
                         $nombresCampo = array_keys($rsDatos[0]);
 
+                        // no se aceptaran espacios ni caracteres especiales en el nombre de los campos
+                        foreach($nombresCampo as $key => $value) {
+                            $nombresCampo[$key] = $model->limpiarCadena($value);
+                        }
+
                         // Campos que actualmente estan en la base de datos
                         $camposExistentes = CHtml::listData($model->Campos, 'id', 'nombre');
                         $camposEliminar = array();
@@ -260,7 +265,7 @@ class FuenteDatosController extends Controller
                             foreach ($camposNuevos as $strCampo) {
                                 $objCampo = new Campo;
                                 $objCampo->id_fuente_datos = $model->id;
-                                $objCampo->nombre = $strCampo;
+                                $objCampo->nombre = $model->limpiarCadena($strCampo);
 
                                 $objCampo->save();
                             }
@@ -287,6 +292,11 @@ class FuenteDatosController extends Controller
                         // Campos obtenidos desde el archivo
                         $nombresCampo = $datos[1];
 
+                        // no se aceptaran espacios ni caracteres especiales en el nombre de los campos
+                        foreach($nombresCampo as $key => $value) {
+                            $nombresCampo[$key] = $model->limpiarCadena($value);
+                        }
+
                         // Campos que actualmente estan en la base de datos
                         $camposExistentes = CHtml::listData($model->Campos, 'id', 'nombre');
                         $camposEliminar = array();
@@ -315,7 +325,7 @@ class FuenteDatosController extends Controller
                             foreach ($camposNuevos as $strCampo) {
                                 $objCampo = new Campo;
                                 $objCampo->id_fuente_datos = $model->id;
-                                $objCampo->nombre = $strCampo;
+                                $objCampo->nombre = $model->limpiarCadena($strCampo);
 
                                 $objCampo->save();
                             }
@@ -488,103 +498,21 @@ class FuenteDatosController extends Controller
     /**
 	 * Carga datos desde la fuente de datos
 	 */
-	public function actionCargarDatos()
+	public function actionCargarDatos($recargar=false)
 	{
         $cadenaInsert = '';
         $respuesta = array('error'=>false, 'msjerror'=>'');
 
 		if(isset($_POST['id_FuenteDatos']))
 		{
-            $model=$this->loadModel($_POST['id_FuenteDatos']);
-            
-            $transaction = null;
-            try {
-                $transaction = Yii::app()->db->beginTransaction();
-
-                // Cargar todos los campos
-                // ****************************
-                //   Desde una base de datos
-                // ****************************
-                if($model->id_conexion_bdatos) {
-                    $DBConec = ConexionBDatos::model()->getConexion($model->id_conexion_bdatos);
-
-                    $rsDatos = ConexionBDatos::model()->getQueryResult($DBConec, $model->sentencia_sql);
-
-                    if(empty($rsDatos))
-                        throw new Exception('No se pudieron obtener los datos desde la consulta.');
-
-                    foreach ($rsDatos as $fila) {
-                        $cadenaInsert .= '('.$model->id.',\'';
-                        foreach ($fila as $campo => $valor) {
-                            // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
-                            $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
-                            $cadenaInsert .= $campo.'=>"'.$valor.'",';
-                        }
-                        // Eliminar la ultima coma (,)
-                        $cadenaInsert = substr($cadenaInsert, 0, -1);
-                        $cadenaInsert .= '\'),';
-                    }
-
-                    // Eliminar la ultima coma (,)
-                    $cadenaInsert = substr($cadenaInsert, 0, -1);
-
-                    $sqlInsert = 'INSERT INTO tbl_datos_origen(id_fuente_datos, datos) VALUES '.$cadenaInsert;
-                    $command = Yii::app()->db->createCommand($sqlInsert);
-                    $command->execute();
-
-                    //$respuesta['insert'] = $sqlInsert;
-                }
-                // ***********************
-                //     Desde un archivo
-                // ***********************
-                else if($model->archivo) {
-                    // Fuente: https://github.com/marcovtwout/yii-phpexcel
-                    Yii::import('ext.phpexcel.XPHPExcel');
-                    XPHPExcel::init();
-
-                    $archivo = YiiBase::getPathOfAlias(Yii::app()->params['pathUploads']).DIRECTORY_SEPARATOR.$model->archivo;
-
-                    $inputFileType = PHPExcel_IOFactory::identify($archivo);
-                    $objReader = PHPExcel_IOFactory::createReader($inputFileType);
-                    $objReader->setReadDataOnly(true);
-                    $objPHPExcel = $objReader->load($archivo);
-                    // La primera fila del archivo contiene el nombre de los campos
-                    $datos = $objPHPExcel->getActiveSheet()->toArray(null,true,true,true);
-                    
-                    if(empty($datos))
-                        throw new Exception('No se pudieron obtener los datos desde el archivo.');
-                    
-                    $nombreCampo = array_shift($datos);
-
-                    foreach ($datos as $fila) {
-                        $cadenaInsert .= '('.$model->id.',\'';
-                        foreach ($fila as $campo => $valor) {
-                            // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
-                            $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
-                            $cadenaInsert .= $nombreCampo[$campo].'=>"'.$valor.'",';
-                        }
-                        // Eliminar la ultima coma (,)
-                        $cadenaInsert = substr($cadenaInsert, 0, -1);
-                        $cadenaInsert .= '\'),';
-                    }
-
-                    // Eliminar la ultima coma (,)
-                    $cadenaInsert = substr($cadenaInsert, 0, -1);
-
-                    $sqlInsert = 'INSERT INTO tbl_datos_origen(id_fuente_datos, datos) VALUES '.$cadenaInsert;
-                    $command = Yii::app()->db->createCommand($sqlInsert);
-                    $command->execute();
-                }
-
-                $transaction->commit();
-            } catch (Exception $e) {
-                $transaction->rollback();
-                $respuesta['error']=true;
-                $respuesta['msjerror']='Error al cargar los datos de la fuente de datos. '.$e->getMessage();
-            }
+            $model = $this->loadModel($_POST['id_FuenteDatos']);
+            $respuesta = $model->cargarDatos($recargar);
 		}
 
-        echo json_encode($respuesta);
+        if($recargar)
+            return $respuesta;
+        else
+            echo json_encode($respuesta);
 	}
 
     /**
@@ -610,6 +538,63 @@ class FuenteDatosController extends Controller
         }
         else
             return false;
+	}
+
+    /**
+	 * Muestra los datos cargados desde el origen de datos
+	 */
+	public function actionVerDatos($id)
+	{
+		$this->pageTitle = $this->title_sin.' - Ver';
+
+        $fuenteDatos = $this->loadModel($id);
+        $countDatos = $fuenteDatos->getCountDatos();
+        $sqlAllDatos = $fuenteDatos->getSQLDatos();
+        
+		$this->render('viewDatos',array(
+			'model'=>$fuenteDatos,
+            'countDatos' => $countDatos,
+            'sqlAllDatos' => $sqlAllDatos,
+		));
+	}
+
+    /**
+	 * Elimina todos los datos y los vuelve a cargar desde el origen de datos
+	 */
+	public function actionRecargarDatos()
+	{
+        $respuesta = array('error'=>false, 'msjerror'=>'');
+
+        if(isset($_POST['id_FuenteDatos']) && Yii::app()->request->isAjaxRequest)
+		{
+            $fuenteDatos = $this->loadModel($_POST['id_FuenteDatos']);
+
+            try {
+                $respuesta = $fuenteDatos->cargarDatos(true);
+
+                if($respuesta['error'])
+                    throw new Exception($respuesta['msjerror']);
+
+                $variables = $fuenteDatos->Variables;
+
+                // Reconstruir todos los indicadores que estan asociado con la fuente de datos
+                // La relacion se establece a traves de la variable
+                if(count($variables)) {
+                    foreach ($variables as $variable) {
+                        if(count($variable->FichasTecnicas)) {
+                            foreach ($variable->FichasTecnicas as $indicador) {
+                                $indicador->crearIndicador(true);
+                            }
+                        }
+                    }
+                }
+            } catch(Exception $e) {
+                $respuesta['error'] = true;
+                $respuesta['msjerror'] = $e->getMessage();
+            }
+        }
+
+        echo json_encode($respuesta);
 	}
 
 }
