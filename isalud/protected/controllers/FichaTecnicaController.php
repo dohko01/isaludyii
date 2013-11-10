@@ -42,7 +42,7 @@ class FichaTecnicaController extends Controller
 	{
 		return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete', 'verdatos'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),
 			/*array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -213,7 +213,7 @@ class FichaTecnicaController extends Controller
 	{
 		$this->pageTitle = $this->title_sin.' - Inicio';
         
-		$dataProvider=new CActiveDataProvider('FichaTecnica');
+		$dataProvider=new CActiveDataProvider('FichaTecnica', array('criteria'=>array('order'=>'nombre ASC')) );
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -309,4 +309,22 @@ class FichaTecnicaController extends Controller
             throw new Exception();
         }
     }
+
+    /**
+	 * Muestra los datos cargados desde el origen de datos
+	 */
+	public function actionVerDatos($id)
+	{
+		$this->pageTitle = $this->title_sin.' - Ver';
+
+        $fichaTecnica = $this->loadModel($id);
+        $countDatos = $fichaTecnica->getCountDatos();
+        $sqlAllDatos = $fichaTecnica->getSQLDatos();
+
+		$this->render('viewDatos',array(
+			'model'=>$fichaTecnica,
+            'countDatos' => $countDatos,
+            'sqlAllDatos' => $sqlAllDatos,
+		));
+	}
 }

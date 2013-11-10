@@ -371,7 +371,7 @@ class FuenteDatosController extends Controller
 	{
 		$this->pageTitle = $this->title_sin.' - Inicio';
         
-		$dataProvider=new CActiveDataProvider('FuenteDatos');
+		$dataProvider=new CActiveDataProvider('FuenteDatos', array('criteria'=>array('order'=>'nombre ASC')) );
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));

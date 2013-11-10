@@ -89,6 +89,20 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 		'fundamento',
 		'utilidad',
 		*/
+        array(
+            // Utilizamos la nueva clase extendida para poder evaluar el id en el array options
+			'class'=>'ButtonColumn',
+            'template' => '{verDatos}',
+            'evaluateID'=>true, // Variable que define si será evaluado el id en el array options
+            'buttons' => array(
+                'verDatos' => array(
+                    'label'=>'Ver datos cargados',
+                    'caption'=>'Ver datos cargados',
+                    'url'=>'Yii::app()->createUrl("/fichatecnica/verdatos", array("id" => $data->id))',
+                    'imageUrl'=>Yii::app()->request->baseUrl.'/images/view.png',
+                ),
+            ),
+		),
 		array(
 			'class'=>'CButtonColumn',
 		),

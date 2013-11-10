@@ -24,6 +24,12 @@
 		<?php echo $form->error($model,'es_actualizacion_incremental'); ?>
 	</div>
 
+    <div class="row">
+		<?php echo $form->labelEx($model,'tolerancia_actualizacion'); ?>
+		<?php echo $form->numberField($model,'tolerancia_actualizacion', array('class'=>'span7', 'min'=>'0', 'max'=>'29')); ?>
+		<?php echo $form->error($model,'tolerancia_actualizacion'); ?>
+	</div>
+
 	<div class="row">
 		<?php echo $form->labelEx($model,'responsable'); ?>
 		<?php echo $form->textField($model,'responsable',array('size'=>45,'maxlength'=>45)); ?>

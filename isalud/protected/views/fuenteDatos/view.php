@@ -39,6 +39,7 @@ $this->widget('zii.widgets.CDetailView', array(
             'name'=>'es_actualizacion_incremental',
             'value' => $model->es_actualizacion_incremental ? 'Si' : 'No',
         ),
+        'tolerancia_actualizacion',
         'responsable',
 		'descripcion',
         array(

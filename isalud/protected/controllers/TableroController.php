@@ -14,15 +14,20 @@ class TableroController extends Controller
         try {
             $modelFicha = FichaTecnica::model()->findByPk($id);
 
-            $respuesta = $modelFicha->crearIndicador();
-            if($respuesta['error']) throw new Exception($respuesta['msjerror']);
+            if($modelFicha) {
+                $respuesta = $modelFicha->crearIndicador();
+                if($respuesta['error']) throw new Exception($respuesta['msjerror']);
 
-            $dimension = 'id_jurisdiccion';
-            $filtro = array('id_estado'=>7, 'anio'=>2013);
-            $orden = 'id_jurisdiccion';
+                $dimension = 'id_jurisdiccion';
+                $filtro = array('id_estado'=>7, 'anio'=>2013);
+                $orden = 'id_jurisdiccion';
 
-            $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
-            if($respuesta['error']) throw new Exception($respuesta['msjerror']);
+                $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
+                if($respuesta['error']) throw new Exception($respuesta['msjerror']);
+            } else {
+                $respuesta['error'] = true;
+                $respuesta['msjerror'] = 'No se encuentra el indicador especificado';
+            }
         } catch (Exception $e) {
             $respuesta['error'] = true;
             $respuesta['msjerror'] = $e->getMessage();

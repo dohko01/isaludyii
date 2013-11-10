@@ -9,6 +9,7 @@
  * @property integer $id_cat_periodicidad
  * @property string $nombre
  * @property string $responsable
+ * @property integer $tolerancia_actualizacion
  * @property string $descripcion
  * @property string $sentencia_sql
  * @property string $archivo
@@ -41,7 +42,7 @@ class FuenteDatos extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('id_cat_periodicidad, nombre, responsable', 'required'),
-			array('id_conexion_bdatos, id_cat_periodicidad, es_actualizacion_incremental', 'numerical', 'integerOnly'=>true),
+			array('id_conexion_bdatos, id_cat_periodicidad, es_actualizacion_incremental, tolerancia_actualizacion', 'numerical', 'integerOnly'=>true),
 			array('nombre, responsable', 'length', 'max'=>45),
 			array('descripcion, sentencia_sql, ultima_lectura, archivo', 'safe'),
             array('archivo', 'file', 'types'=>'xls, xlsx, csv, txt', 'allowEmpty'=>true),
@@ -77,6 +78,7 @@ class FuenteDatos extends CActiveRecord
 			'id_cat_periodicidad' => 'Periodicidad de actualización',
 			'nombre' => 'Nombre',
 			'responsable' => 'Responsable',
+            'tolerancia_actualizacion' => '¿Días de tolerancia para actualizacion?',
 			'descripcion' => 'Descripción',
 			'sentencia_sql' => 'Sentencia SQL',
 			'archivo' => 'Archivo',
@@ -109,6 +111,7 @@ class FuenteDatos extends CActiveRecord
 		$criteria->compare('LOWER(nombre)',strtolower($this->nombre),true);
 		$criteria->compare('LOWER(responsable)',strtolower($this->responsable),true);
 		$criteria->compare('ultima_lectura',$this->ultima_lectura,true);
+        $criteria->order = 'nombre ASC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -155,6 +158,21 @@ class FuenteDatos extends CActiveRecord
         $transaction = null;
         try {
             $transaction = Yii::app()->db->beginTransaction();
+            
+            // validar que todos los campos este configurados correctamente
+            $campos = $this->Campos;
+
+            foreach ($campos as $campo) {
+                if(!$campo->SignificadoCampo) {
+                    throw new Exception('Los campos no estan configurados correctamente. El campo '.
+                                             $campo->nombre.' no tiene asignado un significado.');
+                }
+
+                if(!$campo->TipoCampo) {
+                    throw new Exception('Los campos no estan configurados correctamente. El campo '.
+                                             $campo->nombre.' no tiene asignado un tipo de dato.');
+                }
+            }
 
             // Si la opcion es recargar
             // Debemos eliminar los datos actuales de la fuente de datos
@@ -246,6 +264,8 @@ class FuenteDatos extends CActiveRecord
                 $command->execute();
             }
 
+            Yii::app()->db->createCommand('UPDATE tbl_fuente_datos SET ultima_lectura=\''.date('Y-m-d H:m:s').'\' WHERE id='.$this->id)->execute();
+
             $transaction->commit();
         } catch (Exception $e) {
             $transaction->rollback();
@@ -279,6 +299,12 @@ class FuenteDatos extends CActiveRecord
 	{
         $sqlCountDatos = 'SELECT COUNT(id) as totalDatos FROM tbl_datos_origen WHERE id_fuente_datos='.$this->id;
         $countDatos = Yii::app()->db->createCommand($sqlCountDatos)->queryScalar();
+
+        try {
+            $countDatos = Yii::app()->db->createCommand($sqlCountDatos)->queryScalar();
+        } catch (Exception $e) {
+            $countDatos = 0;
+        }
 
 		return $countDatos;
 	}

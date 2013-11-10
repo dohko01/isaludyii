@@ -98,6 +98,7 @@ class Variable extends CActiveRecord
 		$criteria->compare('LOWER(nombre)',strtolower($this->nombre),true);
 		$criteria->compare('LOWER(ini_formula)',strtolower($this->ini_formula),true);
 		$criteria->compare('LOWER(comentario)',strtolower($this->comentario),true);
+        $criteria->order = 'nombre ASC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

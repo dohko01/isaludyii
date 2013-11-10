@@ -18,9 +18,10 @@ $this->menu=array(
 );
 ?>
 
-<h1>Datos cargados de la <?php echo $this->title_sin.' '.$model->nombre; ?> </h1>
+<h1>Datos de la <?php echo $this->title_sin.' '.$model->nombre; ?> </h1>
 
 <?php
+
 if($countDatos == 0) {
     echo '<div class="errorSummary"><strong>No se encontraron datos en la '.$this->title_sin.'</strong></div>';
 }
@@ -61,7 +62,7 @@ else {
                 'primary'=>'ui-icon-document',
             )
         ),
-        'url'=>Yii::app()->createUrl("/fuentedatos/verdatos", array("id" => $model->id)).'?grid_mode=export',
+        'url'=>Yii::app()->createUrl("/fichatecnica/verdatos", array("id" => $model->id)).'?grid_mode=export',
         'onclick'=>new CJavaScriptExpression('fnExportarDatos'),
     ));
 }

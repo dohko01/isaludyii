@@ -133,6 +133,7 @@ class Usuario extends CActiveRecord
 		$criteria->compare('username',$this->username,true);
 		$criteria->compare('pass',$this->pass,true);
 		$criteria->compare('activo',$this->activo);
+        $criteria->order = 'nombre ASC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

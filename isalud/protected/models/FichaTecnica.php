@@ -164,6 +164,7 @@ class FichaTecnica extends CActiveRecord
 		$criteria->compare('LOWER(definicion)',strtolower($this->definicion),true);
 		$criteria->compare('LOWER(fundamento)',strtolower($this->fundamento),true);
 		$criteria->compare('LOWER(utilidad)',strtolower($this->utilidad),true);
+        $criteria->order = 'nombre ASC';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -814,4 +815,30 @@ class FichaTecnica extends CActiveRecord
         else
             return null;
     }
+
+    /**
+	 * Obtiene el numero total de registros de la fuente de datos
+	 */
+	public function getCountDatos()
+	{
+        $sqlCountDatos = 'SELECT COUNT(*) as totalDatos FROM ind_'.$this->id;
+        try {
+            $countDatos = Yii::app()->db->createCommand($sqlCountDatos)->queryScalar();
+        } catch (Exception $e) {
+            $countDatos = 0;
+        }
+
+		return $countDatos;
+	}
+
+    /**
+	 * Obtiene el sql para mostrar todos los datos de una fuente de datos
+     * Se utiliza para el CSqlDataProvider
+	 */
+	public function getSQLDatos()
+	{
+        $sqlAllDatos = 'SELECT * FROM ind_'.$this->id;
+
+        return $sqlAllDatos;
+	}
 }
