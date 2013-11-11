@@ -38,6 +38,10 @@
             });
         });
     });
+
+    function mostrarCargando(){
+        $('body').prepend('<div class="loading"></div>');
+    }
 </script>
 
 <?php
@@ -89,6 +93,7 @@
             'name'=>'btnEnviarForm',
             'value'=>'1',
             'caption'=>($model->isNewRecord ? 'Guardar' : 'Actualizar'),
+            'onclick'=>new CJavaScriptExpression('mostrarCargando'),
             )
         );
         ?>
