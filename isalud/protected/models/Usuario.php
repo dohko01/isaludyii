@@ -68,13 +68,13 @@ class Usuario extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'idCatJurisdiccion' => array(self::BELONGS_TO, 'TblcJurisdiccion', 'id_cat_jurisdiccion'),
-			'idCatEstado' => array(self::BELONGS_TO, 'TblcJurisdiccion', 'id_cat_estado'),
-			'idCatDireccion' => array(self::BELONGS_TO, 'TblcDireccion', 'id_cat_direccion'),
-			'idCatSubdireccion' => array(self::BELONGS_TO, 'TblcSubdireccion', 'id_cat_subdireccion'),
-			'idCatCoordinacion' => array(self::BELONGS_TO, 'TblcCoordinacion', 'id_cat_coordinacion'),
-			'idCatTipoUsuario' => array(self::BELONGS_TO, 'TblcTipoUsuario', 'id_cat_tipo_usuario'),
-			'idCatInstitucion' => array(self::BELONGS_TO, 'TblcInstitucion', 'id_cat_institucion'),
+			'idCatJurisdiccion' => array(self::BELONGS_TO, 'Jurisdiccion', 'id_cat_jurisdiccion'),
+			'idCatEstado' => array(self::BELONGS_TO, 'Estado', 'id_cat_estado'),
+			'idCatDireccion' => array(self::BELONGS_TO, 'Direccion', 'id_cat_direccion'),
+			'idCatSubdireccion' => array(self::BELONGS_TO, 'Subdireccion', 'id_cat_subdireccion'),
+			'idCatCoordinacion' => array(self::BELONGS_TO, 'Coordinacion', 'id_cat_coordinacion'),
+			'idCatTipoUsuario' => array(self::BELONGS_TO, 'TipoUsuario', 'id_cat_tipo_usuario'),
+			'idCatInstitucion' => array(self::BELONGS_TO, 'Institucion', 'id_cat_institucion'),
 		);
 	}
 
@@ -85,18 +85,18 @@ class Usuario extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'id_cat_estado' => 'Id Cat Estado',
-			'id_cat_jurisdiccion' => 'Id Cat Jurisdiccion',
-			'id_cat_direccion' => 'Id Cat Direccion',
-			'id_cat_subdireccion' => 'Id Cat Subdireccion',
-			'id_cat_coordinacion' => 'Id Cat Coordinacion',
-			'id_cat_tipo_usuario' => 'Id Cat Tipo Usuario',
-			'id_cat_institucion' => 'Id Cat Institucion',
+			'id_cat_estado' => 'Estado',
+			'id_cat_jurisdiccion' => 'Jurisdicción',
+			'id_cat_direccion' => 'Direccion',
+			'id_cat_subdireccion' => 'Subdirección',
+			'id_cat_coordinacion' => 'Coordinación',
+			'id_cat_tipo_usuario' => 'Tipo Usuario',
+			'id_cat_institucion' => 'Institución',
 			'nombre' => 'Nombre',
-			'email' => 'Email',
-			'telefono' => 'Telefono',
-			'username' => 'Username',
-			'pass' => 'Pass',
+			'email' => 'E-Mail',
+			'telefono' => 'Teléfono',
+			'username' => 'Usuario',
+			'pass' => 'Contraseña',
 			'activo' => 'Activo',
 		);
 	}

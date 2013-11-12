@@ -42,7 +42,7 @@ class UsuarioController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete','updateJurisdicciones','updateDirecciones'),
 				//'users'=>array('*'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),/*
@@ -90,6 +90,7 @@ class UsuarioController extends Controller
 
 		if(isset($_POST['Usuario']))
 		{
+			$_POST['Usuario']['pass'] = md5($_POST['Usuario']['pass']);
 			$model->attributes=$_POST['Usuario'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
@@ -116,6 +117,7 @@ class UsuarioController extends Controller
 
 		if(isset($_POST['Usuario']))
 		{
+			$_POST['Usuario']['pass'] = md5($_POST['Usuario']['pass']);
 			$model->attributes=$_POST['Usuario'];
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));

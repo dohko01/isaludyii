@@ -21,18 +21,42 @@ $this->menu=array(
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id_cat_estado',
-		'id_cat_jurisdiccion',
-		'id_cat_direccion',
-		'id_cat_subdireccion',
-		'id_cat_coordinacion',
-		'id_cat_tipo_usuario',
-		'id_cat_institucion',
+		array(
+			'name'=>'id_cat_estado',
+			'value'=>$model->idCatEstado->nombre,
+		),
+		array(
+			'name'=>'id_cat_jurisdiccion',
+			'value'=>$model->idCatJurisdiccion->nombre,
+		),
+		array(
+			'name'=>'id_cat_institucion',
+			'value'=>$model->idCatInstitucion->nombre,
+		),
+		array(
+			'name'=>'id_cat_direccion',
+			'value'=>$model->idCatDireccion->nombre,
+		),
+		array(
+			'name'=>'id_cat_subdireccion',
+			'value'=>$model->idCatSubdireccion->nombre,
+		),
+		array(
+			'name'=>'id_cat_coordinacion',
+			'value'=>$model->idCatCoordinacion->nombre,
+		),
+		array(
+			'name'=>'id_cat_tipo_usuario',
+			'value'=>$model->idCatTipoUsuario->nombre,
+		),
 		'nombre',
 		'email',
 		'telefono',
 		'username',
-		'pass',
-		'activo',
+		//'pass',
+		array(
+			'name'=>'activo',
+			'value'=>($model->activo) ? "Si":"No",
+		),
 	),
 )); ?>

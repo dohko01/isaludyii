@@ -51,13 +51,20 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 		'id_cat_coordinacion',
 		'id_cat_tipo_usuario',*/
 		
-		'id_cat_institucion',
+		//'id_cat_institucion',
 		'nombre',
 		'email',
 		'telefono',
 		'username',
-		'pass',
-		'activo',
+		array(
+			'name'=>'id_cat_tipo_usuario',
+			'value'=>'($data->idCatTipoUsuario!=null) ? $data->idCatTipoUsuario->nombre : null',
+		),
+		//'pass',
+		array(
+			'name'=>'activo',
+			'value'=>'($data->activo) ? "Si" : "No"',
+		),
 		
 		array(
 			'class'=>'CButtonColumn',

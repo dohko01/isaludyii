@@ -298,6 +298,7 @@ class FuenteDatos extends CActiveRecord
 	public function getCountDatos()
 	{
         $sqlCountDatos = 'SELECT COUNT(id) as totalDatos FROM tbl_datos_origen WHERE id_fuente_datos='.$this->id;
+		//die($sqlCountDatos);
         $countDatos = Yii::app()->db->createCommand($sqlCountDatos)->queryScalar();
 
         try {
@@ -315,7 +316,7 @@ class FuenteDatos extends CActiveRecord
 	 */
 	public function getSQLDatos()
 	{
-        $sqlAllDatos = 'SELECT ';
+        $sqlAllDatos = 'SELECT id, ';
         $campos = $this->Campos;
 
         // Construye el sql a partir de todos los campos
@@ -327,7 +328,7 @@ class FuenteDatos extends CActiveRecord
         $sqlAllDatos = trim($sqlAllDatos, ', ');
 
         $sqlAllDatos .= ' FROM tbl_datos_origen WHERE id_fuente_datos='.$this->id;
-
+		//die($sqlAllDatos);
         return $sqlAllDatos;
 	}
 }

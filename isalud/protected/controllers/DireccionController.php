@@ -42,7 +42,7 @@ class DireccionController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete','getDirecciones'),
 				//'users'=>array('*'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),/*
@@ -197,6 +197,20 @@ class DireccionController extends Controller
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
+		}
+	}
+	
+	public function actionGetDirecciones()
+	{
+		$data = Direccion::model()->findAll('"id_cat_institucion"=:id_institucion',
+												array(':id_institucion'=>(int)$_POST['Usuario']['id_cat_institucion'])
+												);
+		$data = CHtml::listData($data,'id','nombre');
+		
+		echo CHtml::tag('option', array('value'=>'empty'),CHtml::encode('Seleccionar'),true);
+		foreach($data as $value => $name)
+		{
+			echo CHtml::tag('option', array('value'=>$value),CHtml::encode($name),true);
 		}
 	}
 }
