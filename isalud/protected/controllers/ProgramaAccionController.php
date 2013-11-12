@@ -42,7 +42,7 @@ class ProgramaAccionController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete','getProgramaAccion'),
 				//'users'=>array('*'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),/*
@@ -197,6 +197,26 @@ class ProgramaAccionController extends Controller
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
+		}
+	}
+	
+	public function actionGetProgramaAccion()
+	{
+		$datosPost = array();
+		foreach($_POST as $key => $value)
+		{
+			$datosPost[] = $value;
+		}
+		
+		$data = ProgramaAccion::model()->findAll('"id_cat_coordinacion"=:id_coordinacion',
+												array(':id_coordinacion'=>(int)$datosPost[1]['id_cat_coordinacion'])
+												);
+		$data = CHtml::listData($data,'id','nombre');
+		
+		echo CHtml::tag('option', array('value'=>'empty'),CHtml::encode('Seleccionar'),true);
+		foreach($data as $value => $name)
+		{
+			echo CHtml::tag('option', array('value'=>$value),CHtml::encode($name),true);
 		}
 	}
 }

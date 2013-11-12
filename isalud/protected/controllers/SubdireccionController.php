@@ -202,8 +202,14 @@ class SubdireccionController extends Controller
 	
 	public function actionGetSubDirecciones()
 	{
+		$datosPost = array();
+		foreach($_POST as $key => $value)
+		{
+			$datosPost[] = $value;
+		}
+
 		$data = Subdireccion::model()->findAll('"id_cat_direccion"=:id_direccion',
-												array(':id_direccion'=>(int)$_POST['Usuario']['id_cat_direccion'])
+												array(':id_direccion'=>(int)$datosPost[1]['id_cat_direccion'])
 												);
 		$data = CHtml::listData($data,'id','nombre');
 		

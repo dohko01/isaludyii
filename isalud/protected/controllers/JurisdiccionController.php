@@ -4,8 +4,14 @@ class JurisdiccionController extends Controller
 {
 	public function actionGetJurisdicciones()
 	{
+		$datosPost = array();
+		foreach($_POST as $key => $value)
+		{
+			$datosPost[] = $value;
+		}
+		
 		$data = Jurisdiccion::model()->findAll('"id_estado"=:id_estado',
-												array(':id_estado'=>(int)$_POST['Usuario']['id_cat_estado'])
+												array(':id_estado'=>(int)$datosPost[1]['id_cat_estado'])
 												);
 		$data = CHtml::listData($data,'id_jurisdiccion','nombre');
 		

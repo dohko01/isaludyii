@@ -202,8 +202,14 @@ class CoordinacionController extends Controller
 	
 	public function actionGetCoordinaciones()
 	{
+		$datosPost = array();
+		foreach($_POST as $key => $value)
+		{
+			$datosPost[] = $value;
+		}
+		
 		$data = Coordinacion::model()->findAll('"id_cat_subdireccion"=:id_subdireccion',
-												array(':id_subdireccion'=>(int)$_POST['Usuario']['id_cat_subdireccion'])
+												array(':id_subdireccion'=>(int)$datosPost[1]['id_cat_subdireccion'])
 												);
 		$data = CHtml::listData($data,'id','nombre');
 		

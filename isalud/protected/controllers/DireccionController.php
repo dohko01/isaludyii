@@ -202,8 +202,14 @@ class DireccionController extends Controller
 	
 	public function actionGetDirecciones()
 	{
+		$datosPost = array();
+		foreach($_POST as $key => $value)
+		{
+			$datosPost[] = $value;
+		}
+		
 		$data = Direccion::model()->findAll('"id_cat_institucion"=:id_institucion',
-												array(':id_institucion'=>(int)$_POST['Usuario']['id_cat_institucion'])
+												array(':id_institucion'=>(int)$datosPost[1]['id_cat_institucion'])
 												);
 		$data = CHtml::listData($data,'id','nombre');
 		
