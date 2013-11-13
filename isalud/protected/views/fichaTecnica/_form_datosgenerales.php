@@ -71,7 +71,7 @@
             ),
             'options' => array(
                 'header'=> 'Elije las variables a utilizar en la formula',
-                'minWidth'=>350,
+                'minWidth'=>550,
                 'filter'=>true,
                 'noneSelectedText'=>'Seleccionar...',
                 'selectedText'=> 'js:function(numChecked, numTotal, checkedItems){
