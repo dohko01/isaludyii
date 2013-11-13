@@ -55,7 +55,7 @@
 	</div>
 </div>
 
-<!--div class="subnav navbar navbar-top">
+<div class="subnav navbar navbar-top">
     <div class="navbar-inner">
     	<div class="container">
         
@@ -67,12 +67,12 @@
                 <a href="javascript:chooseStyle('style5', 60)"><span class="style" style="background-color:#d85515;"></span></a>
                 <a href="javascript:chooseStyle('style6', 60)"><span class="style" style="background-color:#a00a69;"></span></a>
                 <a href="javascript:chooseStyle('style7', 60)"><span class="style" style="background-color:#a30c22;"></span></a>
-          	</div->
+          	</div-->
            <form class="navbar-search pull-right" action="">
            	 
-           <!--input type="text" class="search-query span2" placeholder="Search"->
+           <!--input type="text" class="search-query span2" placeholder="Search"-->
            
            </form>
-    	</div><!-- container ->
-    </div><!-- navbar-inner ->
+    	</div><!-- container -->
+    </div><!-- navbar-inner -->
 </div><!-- subnav -->

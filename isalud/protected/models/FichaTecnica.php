@@ -245,9 +245,113 @@ class FichaTecnica extends CActiveRecord
         $arregloCampos = array(); // Contendra un arreglo bidimensional de los campos de cada fuente de datos con el nombre de la variable de la formula como indice
         $arregloFuentesDatos = array(); // Contendra los IDs de las fuentes de datos de las diferentes variables
         $tblFuenteVariable = '';  // Guarda el nombre de la tabla que se crea a partir de la variable
+        $dropTabla = '';
 
         $strVariables = '';
         $strCamposComunes = '';
+
+        // Validar si las fuentes de datos estan mas actualizadas
+        // que la informacion de la tabla del indicador
+        // si es asi, es necesario reconstruir la tabla del indicador
+        if(!$reconstruirTabla) {
+            // Si no tiene formula, es un indicador compuesto
+            if(empty($this->formula)) {
+                // Si la tabla padre no tiene fecha de creacion
+                // no es necesario hacer el drop
+                if($this->fecha_tbl_indicador != '') {
+                    $tmpIndsHijos = $this->FichasTecnicasHijas;
+
+                    $fechaPadre = new DateTime($this->fecha_tbl_indicador);
+                    $fechaHijo = '';
+                    
+                    // se recorren todos sus indicadores hijos
+                    foreach ($tmpIndsHijos as $indicadorHijo) {
+                        if($indicadorHijo->fecha_tbl_indicador != '') {
+                            $fechaHijo = new DateTime($indicadorHijo->fecha_tbl_indicador);
+
+                            if($fechaHijo > $fechaPadre) {
+                                $reconstruirTabla = true;
+                                break;
+                            }
+
+                            $tmpVariables = $indicadorHijo->Variables;
+
+                            foreach ($tmpVariables as $variable) {
+                                $fuenteDatos = $variable->FuenteDatos;
+
+                                if($fuenteDatos->ultima_lectura == '') {
+                                    $respuesta['error']=true;
+                                    $respuesta['msjerror']='La fuente de datos '.$fuenteDatos->nombre.' no contiene datos, primero cargue datos y despues consulte el indicador';
+                                    return $respuesta;
+                                }
+
+                                $fechaFuentaDatos = new DateTime($fuenteDatos->ultima_lectura);
+                                $fechaTablaIndicador = new DateTime($indicadorHijo->fecha_tbl_indicador);
+
+                                if($fechaFuentaDatos > $fechaTablaIndicador) {
+                                    $reconstruirTabla = true;
+                                    break;
+                                }   
+                            }
+
+                            if($reconstruirTabla)
+                                break;
+                        }
+                    }
+                }
+            } else {
+                $tmpVariables = $this->Variables;
+                // Se obtienen todas las variable que forman el indicador
+                foreach ($tmpVariables as $variable) {
+                    // para cada variable se obtiene su fuente de datos
+                    $fuenteDatos = $variable->FuenteDatos;
+
+                    // Si no existe la fecha de ultima lectura de la fuente de datos
+                    // significa que no se han cargado datos
+                    if($fuenteDatos->ultima_lectura == '') {
+                        $respuesta['error']=true;
+                        $respuesta['msjerror']='La fuente de datos '.$fuenteDatos->nombre.' no contiene datos, primero cargue datos y despues consulte el indicador';
+                        return $respuesta;
+                    }
+
+                    $fechaFuentaDatos = new DateTime($fuenteDatos->ultima_lectura);
+
+                    // Si no se tiene fecha de construccion del indicador
+                    // significa que todavia no se ha construido la tabla del indicador
+                    // por lo tanto no es necesario eliminar una tabla inexistente
+                    if($this->fecha_tbl_indicador == '') {
+                        $fechaTablaIndicador = new DateTime($this->fecha_tbl_indicador);
+
+                        // Si la fecha de ultima lectura de la fuente de datos
+                        // es mas reciente que la fecha de construccion del indicador
+                        // significa que la informacion de la tabla del indicador debe ser actualizada
+                        // por lo que es necesario regenerar la tabla indicador
+                        if($fechaFuentaDatos > $fechaTablaIndicador) {
+                            $reconstruirTabla = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        try {
+            if($reconstruirTabla) {
+                $dropTabla = 'DROP TABLE IF EXISTS '.$nombreTablaIndicador;
+                //Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->execute();
+                $existeTabla = false;
+            } else {
+                Yii::app()->db->createCommand('SELECT COUNT(*) FROM '.$nombreTablaIndicador)->query();
+            }
+        } catch (Exception $e) {
+            $existeTabla = false;
+        }
+
+        // Si la tabla existe ya no la creamos
+        if($existeTabla) {
+            $respuesta['msjerror'] = 'La tabla del indicador '.$this->nombre.' ya existe';
+            return $respuesta;
+        }
 
         // Si la ficha tecnica esta compuesta por otras fichas tecnicas
         // No tendra formula ni variables asociadas
@@ -262,21 +366,6 @@ class FichaTecnica extends CActiveRecord
             $createTblVarIndicador = ''; // Guarda la sentencia para crear la tabla temporal de cada indicador
 
             try {
-                try {
-                    if($reconstruirTabla)
-                        Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->query();
-                    else
-                        Yii::app()->db->createCommand('SELECT COUNT(*) FROM '.$nombreTablaIndicador)->query();
-                } catch (Exception $e) {
-                    $existeTabla = false;
-                }
-
-                // Si la tabla existe ya no la creamos
-                if($existeTabla) {
-                    $respuesta['msjerror'] = 'La tabla del indicador '.$this->nombre.' ya existe';
-                    return $respuesta;
-                }
-                
                 // Asegurarse que todos los indicadores esten construidos
                 foreach ($indicadoresHijos as $indicadorHijo) {
                     // esto agrega soporte para tener varios niveles de
@@ -287,7 +376,7 @@ class FichaTecnica extends CActiveRecord
 
                     $arregloCamposIndicadores[$indicadorHijo->id] = $indicadorHijo->getColumsIndicador();
                 }
-
+               
                 // Obtener los campos comunes de todos los indicadores relacionados con el indicador padre
                 $camposComunesIndicadores = $this->array_intersect_assoc_multi($arregloCamposIndicadores, false);
                 $camposComunesIndicadores = implode(', ', $camposComunesIndicadores);
@@ -369,6 +458,7 @@ class FichaTecnica extends CActiveRecord
                 $joinVariablesIndicadores = $joinVariablesIndicadores.$whereJoinVarsInds.'; ';
 
                 $sqlIndicadoresHijos .= $joinVariablesIndicadores;
+                $sqlIndicadoresHijos = $dropTabla.$sqlIndicadoresHijos;
 
                 //echo '<br><br>'.$this->id.' - '.$this->nombre.'<br><br>';
                 //echo nl2br($sqlIndicadoresHijos);
@@ -384,21 +474,6 @@ class FichaTecnica extends CActiveRecord
                 $respuesta['msjerror']='Error la tabla del indicador. '.$e->getMessage();
             }
         } else {
-            try {
-                if($reconstruirTabla)
-                    Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->query();
-                else
-                    Yii::app()->db->createCommand('SELECT COUNT(*) FROM '.$nombreTablaIndicador)->query();
-            } catch (Exception $e) {
-                $existeTabla = false;
-            }
-
-            // Si la tabla existe ya no la creamos
-            if($existeTabla) {
-                $respuesta['msjerror'] = 'La tabla del indicador '.$this->nombre.' ya existe';
-                return $respuesta;
-            }
-
             $transaction = Yii::app()->db->beginTransaction();
 
             try {
@@ -407,7 +482,7 @@ class FichaTecnica extends CActiveRecord
                 foreach ($variables as $variable) {
                     $fuenteDatos = $variable->FuenteDatos;
                     array_push($arregloFuentesDatos, $fuenteDatos->id);
-
+                    
                     // Dado a que una fuente de datos puede tener muchas variables
                     // se obtienen solo los campos que no son variables
                     $campos = $fuenteDatos->getOnlyCampos();
@@ -490,6 +565,7 @@ class FichaTecnica extends CActiveRecord
                     $sql .= $joinVariables;
                 }
 
+                $sql = $dropTabla.$sql;
                 //echo nl2br($sql);
                 //die();
                 $this->executeMultipleSql($sql);
@@ -500,6 +576,13 @@ class FichaTecnica extends CActiveRecord
                 $respuesta['error']=true;
                 $respuesta['msjerror']='Error la tabla del indicador. '.$e->getMessage();
             }
+        }
+
+        // Si no hay error, significa que se construyo la tabla exitosamente
+        if(!$respuesta['error']) {
+            // el campo fecha_tbl_indicador almacena la fecha de la
+            // construccion de la tabla del indicador
+            Yii::app()->db->createCommand('UPDATE tbl_ficha_tecnica SET fecha_tbl_indicador=\''.date('Y-m-d H:m:s').'\' WHERE id='.$this->id)->execute();
         }
 
         return $respuesta;
