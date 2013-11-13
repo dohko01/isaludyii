@@ -316,7 +316,7 @@ class FuenteDatos extends CActiveRecord
 	 */
 	public function getSQLDatos()
 	{
-        $sqlAllDatos = 'SELECT id, ';
+        $sqlAllDatos = 'SELECT ROW_NUMBER() OVER () AS id, ';
         $campos = $this->Campos;
 
         // Construye el sql a partir de todos los campos

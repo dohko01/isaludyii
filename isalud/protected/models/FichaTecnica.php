@@ -920,7 +920,7 @@ class FichaTecnica extends CActiveRecord
 	 */
 	public function getSQLDatos()
 	{
-        $sqlAllDatos = 'SELECT * FROM ind_'.$this->id;
+        $sqlAllDatos = 'SELECT ROW_NUMBER() OVER () AS id, * FROM ind_'.$this->id;
 
         return $sqlAllDatos;
 	}
