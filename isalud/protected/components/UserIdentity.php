@@ -32,6 +32,7 @@ class UserIdentity extends CUserIdentity
 		{  
 			$this->_id = $record->activo;
 			$this->setState('tipoUsuario', $record->id_cat_tipo_usuario);
+			$this->setState('id_cat_institucion', $record->id_cat_institucion);
 			//$this->setState('activo', $record->activo);
 			$this->setState('title', $record->nombre);
 			$this->errorCode=self::ERROR_NONE;		
