@@ -22,7 +22,6 @@
 	margin: 3px 3px 3px 0;
 	padding: 1px;
 	float: left;
-	min-width: 470px;
 	height: auto;
 }
 
@@ -35,7 +34,28 @@
 	-moz-transition: border-color 0.3s;
 	transition: border-color 0.3s;
     min-height: 450px;
+    min-width: 470px;
 }
+
+/* Fuente: http://css-tricks.com/snippets/css/media-queries-for-standard-devices/ */
+/* Desktops and laptops ----------- */
+@media only screen 
+and (min-width : 1224px) {
+    .sDashboardWidget {
+        min-height: 550px;
+        min-width: 570px;
+    }
+}
+
+/* Large screens ----------- */
+@media only screen 
+and (min-width : 1824px) {
+    .sDashboardWidget {
+        min-height: 650px;
+        min-width: 700px;
+    }
+}
+
 .sDashboardWidget:hover {
 	border: 1px solid #AFAFAF;
 	-webkit-transition: border-color 0.3s;
@@ -62,7 +82,7 @@
 .sDashboardWidgetContent {
 	margin: 0.3em;
 	padding: 0.4em;
-	height: 180px;
+	/*height: 180px;*/
 	overflow-x: hidden;
 	overflow-y: auto;
 }
