@@ -23,27 +23,27 @@ $this->menu=array(
 	'attributes'=>array(
 		array(
 			'name'=>'id_cat_estado',
-			'value'=>$model->idCatEstado->nombre,
+			'value'=>($model->idCatEstado != NULL) ? $model->idCatEstado->nombre : "",
 		),
 		array(
 			'name'=>'id_cat_jurisdiccion',
-			'value'=>$model->idCatJurisdiccion->nombre,
+			'value'=>($model->idCatJurisdiccion != NULL) ? $model->idCatJurisdiccion->nombre : "",
 		),
 		array(
 			'name'=>'id_cat_institucion',
-			'value'=>$model->idCatInstitucion->nombre,
+			'value'=>($model->idCatInstitucion != NULL) ? $model->idCatInstitucion->nombre : "",
 		),
 		array(
 			'name'=>'id_cat_direccion',
-			'value'=>$model->idCatDireccion->nombre,
+			'value'=>($model->idCatDireccion != NULL) ? $model->idCatDireccion->nombre : "",
 		),
 		array(
 			'name'=>'id_cat_subdireccion',
-			'value'=>$model->idCatSubdireccion->nombre,
+			'value'=>($model->idCatSubdireccion != NULL) ? $model->idCatSubdireccion->nombre : "",
 		),
 		array(
 			'name'=>'id_cat_coordinacion',
-			'value'=>$model->idCatCoordinacion->nombre,
+			'value'=>($model->idCatCoordinacion != NULL) ? $model->idCatCoordinacion->nombre : "",
 		),
 		array(
 			'name'=>'id_cat_tipo_usuario',

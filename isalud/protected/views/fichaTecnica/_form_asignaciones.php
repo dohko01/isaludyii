@@ -5,10 +5,9 @@
 ?>
 
 	<div class="row">
-    	<?php
-			$list = array();
-			if($model->id_cat_direccion)
-				 $list = CHtml::listData(Direccion::model()->findAll(), 'id', 'nombre');
+    	<?php 
+			$list = CHtml::listData(Direccion::model()->findAll('"id_cat_institucion"=:id_institucion',
+												array(':id_institucion'=>(int)Yii::app()->user->id_cat_institucion)), 'id', 'nombre');
 		?>
 		<?php echo $form->labelEx($model,'id_cat_direccion'); ?>
 		<?php echo $form->dropDownList($model,'id_cat_direccion',$list,

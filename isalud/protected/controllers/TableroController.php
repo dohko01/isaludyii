@@ -24,8 +24,11 @@ class TableroController extends Controller
                 $filtro = array('id_estado'=>7, 'anio'=>2013);
                 $orden = 'id_jurisdiccion';
 
-                $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden, true);
-                if($respuesta['error']) throw new Exception($respuesta['msjerror']);
+                $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
+								
+                if(isset($respuesta['error']))
+					if($respuesta['error']) throw new Exception($respuesta['msjerror']);
+
             } else {
                 $respuesta['error'] = true;
                 $respuesta['msjerror'] = 'No se encuentra el indicador especificado';
