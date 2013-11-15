@@ -42,6 +42,11 @@ class TableroController extends Controller
         );
 
 	}
+	
+	public function actionSample()
+	{
+		$this->render('sample');
+	}
 
 	// Uncomment the following methods and override them if needed
 	/*
