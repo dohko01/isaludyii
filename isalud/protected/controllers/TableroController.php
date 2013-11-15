@@ -4,7 +4,9 @@ class TableroController extends Controller
 {
 	public function actionIndex()
 	{
-		$this->render('index');
+		$this->render('index', array(
+            'indicadores' => CHtml::listData(FichaTecnica::model()->findAll(), 'id', 'nombre')
+        ));
 	}
 
     public function actionView($id)
@@ -22,7 +24,7 @@ class TableroController extends Controller
                 $filtro = array('id_estado'=>7, 'anio'=>2013);
                 $orden = 'id_jurisdiccion';
 
-                $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
+                $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden, true);
                 if($respuesta['error']) throw new Exception($respuesta['msjerror']);
             } else {
                 $respuesta['error'] = true;
@@ -40,8 +42,36 @@ class TableroController extends Controller
         );
 
 	}
+    
+    public function actionGetIndicador() {
+        $respuesta = null;
+        $modelFicha = null;
+        try {
+            $modelFicha = FichaTecnica::model()->findByPk($_POST['id']);
 
-	// Uncomment the following methods and override them if needed
+            if($modelFicha) {
+                $respuesta = $modelFicha->crearIndicador();
+                if($respuesta['error']) throw new Exception($respuesta['msjerror']);
+
+                $dimension = 'id_jurisdiccion';
+                $filtro = array('id_estado'=>7, 'anio'=>2013);
+                $orden = 'id_jurisdiccion';
+
+                $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden, true);
+                if(isset($respuesta['error'])) throw new Exception($respuesta['msjerror']);
+            } else {
+                $respuesta['error'] = true;
+                $respuesta['msjerror'] = 'No se encuentra el indicador especificado';
+            }
+        } catch (Exception $e) {
+            $respuesta['error'] = true;
+            $respuesta['msjerror'] = $e->getMessage();
+        }
+
+		echo json_encode($respuesta);
+    }
+
+    // Uncomment the following methods and override them if needed
 	/*
 	public function filters()
 	{

@@ -58,7 +58,7 @@ class SignificadoCampo extends CActiveRecord
 		return array(
 			'descripcion' => 'Descripción',
 			'codigo' => 'Código',
-			'catalogo' => 'Catalogo',
+			'catalogo' => 'Catálogo',
 		);
 	}
 

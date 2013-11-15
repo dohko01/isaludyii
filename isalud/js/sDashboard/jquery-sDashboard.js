@@ -238,6 +238,9 @@
 				widgetContainer.append(widgetHeader);
 				//add widgetContent to widgetContainer
 				widgetContainer.append(widgetContent);
+                
+                // p4scu41
+                //widgetContainer.resizable();
 
 				//append the widgetContainer to the widget
 				widget.append(widgetContainer);

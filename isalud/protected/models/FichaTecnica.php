@@ -337,7 +337,7 @@ class FichaTecnica extends CActiveRecord
 
         try {
             if($reconstruirTabla) {
-                $dropTabla = 'DROP TABLE IF EXISTS '.$nombreTablaIndicador;
+                $dropTabla = 'DROP TABLE IF EXISTS '.$nombreTablaIndicador.'; '.PHP_EOL.PHP_EOL;
                 //Yii::app()->db->createCommand('DROP TABLE IF EXISTS '.$nombreTablaIndicador)->execute();
                 $existeTabla = false;
             } else {
@@ -591,13 +591,17 @@ class FichaTecnica extends CActiveRecord
     /**
 	 * Crear la tabla para el indicador
 	 */
-    public function calcularIndicador($dimension, $filtros, $orden = null)
+    public function calcularIndicador($dimension, $filtros, $orden = null, $metadatos=null)
     {
         $respuesta = array('error'=>false, 'msjerror'=>'');
         $nombreTablaIndicador = Yii::app()->params['prefixTblIndicador'].$this->id;
         $strColumnas = '';
         $orderBy = '';
         $operacionIndicador = '';
+        $resultado = null;
+        $fuentes = array();
+        $campoEtiqueta = '';
+        $subtitulo = '';
 
         $columnas = $this->getColumsIndicador();
 
@@ -607,10 +611,14 @@ class FichaTecnica extends CActiveRecord
 
             return $respuesta;
         }
+        
+        foreach($filtros as $keyFil => $campFil) {
+            $subtitulo .= $keyFil.' = '.$campFil.', ';
+        }
 
         $camposFiltro = array_keys($filtros);
 
-        foreach ($camposFiltro as $campFil) {
+        foreach ($camposFiltro as $keyFil => $campFil) {
             if(!in_array($campFil, $columnas)) {
                 $respuesta['error']=true;
                 $respuesta['msjerror']='El filtro '.$campFil.' no es válido';
@@ -631,11 +639,18 @@ class FichaTecnica extends CActiveRecord
                     $varInd->crearCodigo();
 
                 $formula[] = ' (SUM('.$varInd->codigo.') * '.$varInd->ponderacion.' / 100) ';
+                
+                $fuentes[$varInd->id]= $varInd->nombre;
             }
 
             $operacionIndicador = 'ROUND(('.implode(' + ', $formula).'), 1) AS indicador';
         } else {
             $operacionIndicador = 'ROUND(('.$this->formula.'), 1) AS indicador';
+        }
+        
+        // El orden por default sera el de la dimension a mostrar
+        if($orden == null) {
+            $orden = $dimension;
         }
 
         // Revisar si la dimensión hace referencia a un catalogo
@@ -657,9 +672,13 @@ class FichaTecnica extends CActiveRecord
 
             // Agregamos a la dimension el campo nombre, ya que es requerido en el group by
             $dimension .= ', nombre';
+            $campoEtiqueta = $objDimension->catalogo;
         } else {
             $strColumnas = $dimension;
+            $campoEtiqueta = $dimension;
         }
+        
+        $subtitulo .= $campoEtiqueta;
         
         $groupBy = ' GROUP BY '.implode(', ', $camposFiltro).', '.$dimension;
         $where = ' WHERE 1=1 ';
@@ -679,14 +698,32 @@ class FichaTecnica extends CActiveRecord
                                        'SUM('.$variable->ini_formula.')',
                                         $operacionIndicador
                                     );
+            $fuente = $variable->FuenteDatos;
+            $fuentes[$fuente->id]= $fuente->nombre;
         }
 
         $sql = 'SELECT '.$strColumnas.', '.$operacionIndicador.' FROM '.$nombreTablaIndicador.
                 $innerJoin.$where.$groupBy.$orderBy;
 
-        $result = Yii::app()->db->createCommand($sql)->query()->readAll();
+        if($metadatos) {
+            $resultado['datos'] = Yii::app()->db->createCommand($sql)->query()->readAll();
+            $resultado['titulo'] = $this->nombre;
+            $resultado['subtitulo'] = $subtitulo;
+            $resultado['fuentes'] = implode(', ', $fuentes);
+            $fecha = new DateTime($this->fecha_tbl_indicador);
+            $resultado['fecha'] = $fecha->format('d-m-Y');
+            $resultado['valores'] = array();
+            $resultado['etiquetas'] = array();
+            
+            foreach($resultado['datos'] as $fila) {
+                array_push($resultado['valores'], $fila['indicador']);
+                array_push($resultado['etiquetas'], $fila[$campoEtiqueta]);
+            }
+        } else {
+            $resultado = Yii::app()->db->createCommand($sql)->query()->readAll();
+        }
          
-        return $result;
+        return $resultado;
     }
 
     /**
