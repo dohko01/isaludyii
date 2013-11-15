@@ -26,7 +26,7 @@
 
     <div class="row">
 		<?php echo $form->labelEx($model,'tolerancia_actualizacion'); ?>
-		<?php echo $form->numberField($model,'tolerancia_actualizacion', array('class'=>'span7', 'min'=>'0', 'max'=>'29')); ?>
+		<?php echo $form->numberField($model,'tolerancia_actualizacion', array('min'=>'0')); ?>
 		<?php echo $form->error($model,'tolerancia_actualizacion'); ?>
 	</div>
 

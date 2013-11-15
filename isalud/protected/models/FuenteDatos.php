@@ -154,6 +154,7 @@ class FuenteDatos extends CActiveRecord
 	{
         $cadenaInsert = '';
         $respuesta = array('error'=>false, 'msjerror'=>'');
+        $arrayCampos = array();
 
         $transaction = null;
         try {
@@ -172,11 +173,14 @@ class FuenteDatos extends CActiveRecord
                     throw new Exception('Los campos no estan configurados correctamente. El campo '.
                                              $campo->nombre.' no tiene asignado un tipo de dato.');
                 }
+                
+                $arrayCampos[$campo->SignificadoCampo->codigo] = $campo->nombre;
             }
-
+            
             // Si la opcion es recargar
+            // o la actualizacion no es incremental
             // Debemos eliminar los datos actuales de la fuente de datos
-            if($recargar) {
+            if($recargar || !$this->es_actualizacion_incremental) {
                 $delete = 'DELETE FROM tbl_datos_origen WHERE id_fuente_datos='.$this->id;
                 $command = Yii::app()->db->createCommand($delete);
                 $command->execute();
@@ -188,33 +192,108 @@ class FuenteDatos extends CActiveRecord
             // ****************************
             if($this->id_conexion_bdatos) {
                 $DBConec = ConexionBDatos::model()->getConexion($this->id_conexion_bdatos);
+                
+                $sql = '';
+                if($this->es_actualizacion_incremental) {
+                    $where = 'WHERE 1=1 ';
+                    $ordenTiempo = Yii::app()->params['orderedColumTiempo'];
+                    
+                    $maxCampoSuperior = '';
+                    $maxValorSuperior = null;
+                    $sqlCampoSuperior = '';
+                    
+                    $maxCampoInferior = '';
+                    $maxValorInferior = null;
+                    $sqlCampoInferior = '';
 
-                $rsDatos = ConexionBDatos::model()->getQueryResult($DBConec, $this->sentencia_sql);
+                    foreach ($ordenTiempo as $tiempo) {
+                        if(empty($maxCampoSuperior)) {
+                            if(array_key_exists($tiempo, $arrayCampos)) {
+                                $maxCampoSuperior = $tiempo;
+                                $sqlCampoSuperior = $arrayCampos[$tiempo];
+                            }
+                        }
 
-                if(empty($rsDatos))
-                    throw new Exception('No se pudieron obtener los datos desde la consulta.');
-
-                foreach ($rsDatos as $fila) {
-                    $cadenaInsert .= '('.$this->id.',\'';
-                    foreach ($fila as $campo => $valor) {
-                        // no se aceptaran espacios ni caracteres especiales en el nombre de los campos
-                        $campo = $this->limpiarCadena($campo);
-
-                        // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
-                        $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
-                        $cadenaInsert .= $campo.'=>"'.$valor.'",';
+                        if(array_key_exists($tiempo, $arrayCampos)) {
+                            $maxCampoInferior = $tiempo;
+                            $sqlCampoInferior = $arrayCampos[$tiempo];
+                        }
                     }
+
+                    $sqlAux = 'SELECT 
+                                MAX(CAST(datos->\''.$maxCampoSuperior.'\' AS INTEGER)) AS val_superior,
+                                MAX(CAST(datos->\''.$maxCampoInferior.'\' AS INTEGER)) AS val_inferior
+                            FROM tbl_datos_origen WHERE id_fuente_datos = '.$this->id;
+
+                    $result = Yii::app()->db->createCommand($sqlAux)->queryRow();
+
+                    if( !empty($result) ) {
+                        $maxValorSuperior = $result['val_superior'];
+                        $maxValorInferior = $result['val_inferior'];
+
+                        if($maxCampoSuperior == 'anio' && $maxCampoInferior == 'mes' && $maxValorInferior == 12) {
+                            $maxValorInferior = 0;
+                        } else if($maxCampoSuperior == 'anio' && $maxCampoInferior == 'semana' && $maxValorInferior == 52) {
+                            $maxValorInferior = 0;
+                        } else if($maxCampoSuperior == 'anio' && $maxCampoInferior == 'quincena' && $maxValorInferior == 26) {
+                            $maxValorInferior = 0;
+                        } else if($maxCampoSuperior == 'anio' && $maxCampoInferior == 'bimestre' && $maxValorInferior == 6) {
+                            $maxValorInferior = 0;
+                        } else if($maxCampoSuperior == 'anio' && $maxCampoInferior == 'trimestre' && $maxValorInferior == 4) {
+                            $maxValorInferior = 0;
+                        } else if($maxCampoSuperior == 'anio' && $maxCampoInferior == 'cuatrimestre' && $maxValorInferior == 3) {
+                            $maxValorInferior = 0;
+                        } else if($maxCampoSuperior == 'anio' && $maxCampoInferior == 'semestre' && $maxValorInferior == 2) {
+                            $maxValorInferior = 0;
+                        }
+
+                        if($maxCampoSuperior == $maxCampoInferior) {
+                            $maxCampoInferior = null;
+                            $maxValorInferior = null;
+                        }
+                    }
+                    
+                    if(!empty($maxValorSuperior))
+                        $where .= ' AND '.$sqlCampoSuperior.'>'.$maxValorSuperior;
+
+                    if(!empty($maxValorInferior)) {
+                        $where .= ' OR ('.$sqlCampoSuperior.'='.$maxValorSuperior.' AND '
+                                .$sqlCampoInferior.'>'.$maxValorInferior.')';
+                    }
+                    
+                    $sql = 'SELECT * FROM (' . $this->sentencia_sql . ') AS sqlOriginal '.$where;
+                } else {
+                    $sql = $this->sentencia_sql;
+                }
+                
+                $rsDatos = ConexionBDatos::model()->getQueryResult($DBConec, $sql);
+
+               /* if(empty($rsDatos))
+                    throw new Exception('No se pudieron obtener los datos desde la consulta.');*/
+
+                if(!empty($rsDatos)) {
+                    foreach ($rsDatos as $fila) {
+                        $cadenaInsert .= '('.$this->id.',\'';
+                        foreach ($fila as $campo => $valor) {
+                            // no se aceptaran espacios ni caracteres especiales en el nombre de los campos
+                            $campo = $this->limpiarCadena($campo);
+
+                            // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
+                            $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
+                            $cadenaInsert .= $campo.'=>"'.$valor.'",';
+                        }
+                        // Eliminar la ultima coma (,)
+                        $cadenaInsert = substr($cadenaInsert, 0, -1);
+                        $cadenaInsert .= '\'),';
+                    }
+
                     // Eliminar la ultima coma (,)
                     $cadenaInsert = substr($cadenaInsert, 0, -1);
-                    $cadenaInsert .= '\'),';
+
+                    $sqlInsert = 'INSERT INTO tbl_datos_origen(id_fuente_datos, datos) VALUES '.$cadenaInsert;
+                    $command = Yii::app()->db->createCommand($sqlInsert);
+                    $command->execute();
                 }
-
-                // Eliminar la ultima coma (,)
-                $cadenaInsert = substr($cadenaInsert, 0, -1);
-
-                $sqlInsert = 'INSERT INTO tbl_datos_origen(id_fuente_datos, datos) VALUES '.$cadenaInsert;
-                $command = Yii::app()->db->createCommand($sqlInsert);
-                $command->execute();
             }
             // ***********************
             //     Desde un archivo
