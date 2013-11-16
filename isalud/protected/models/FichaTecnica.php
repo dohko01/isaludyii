@@ -591,7 +591,7 @@ class FichaTecnica extends CActiveRecord
     /**
 	 * Crear la tabla para el indicador
 	 */
-    public function calcularIndicador($dimension, $filtros, $orden = null, $metadatos=null)
+    public function calcularIndicador($dimension, $filtros, $orden = null, $metadatos = true)
     {
         $respuesta = array('error'=>false, 'msjerror'=>'');
         $nombreTablaIndicador = Yii::app()->params['prefixTblIndicador'].$this->id;
@@ -599,25 +599,25 @@ class FichaTecnica extends CActiveRecord
         $orderBy = '';
         $operacionIndicador = '';
         $resultado = null;
-        $fuentes = array();
-        $campoEtiqueta = '';
+        $fuentes = array(); // Guarda la lista de todas las fuentes de datos
+        $campoEtiqueta = ''; // Guarda la la etiqueta del campo dimension que se esta mostrando
         $subtitulo = '';
+        $significados = CHtml::listData(SignificadoCampo::model()->findAll(), 'codigo', 'descripcion');
 
         $columnas = $this->getColumsIndicador();
 
+        // Validar que la dimension sea una columna del indicador
+        // Una dimensión es un campo/columna de la tabla indicador
         if(!in_array($dimension, $columnas)) {
             $respuesta['error']=true;
             $respuesta['msjerror']='La dimensión '.$dimension.' no es válida';
 
             return $respuesta;
         }
-        
-        foreach($filtros as $keyFil => $campFil) {
-            $subtitulo .= $keyFil.' = '.$campFil.', ';
-        }
 
         $camposFiltro = array_keys($filtros);
 
+        // Validar que todos los filtros sean un campo del indicador
         foreach ($camposFiltro as $keyFil => $campFil) {
             if(!in_array($campFil, $columnas)) {
                 $respuesta['error']=true;
@@ -634,17 +634,24 @@ class FichaTecnica extends CActiveRecord
             $varIndicadores = $this->FichasTecnicasHijas;
             $formula = array();
             
+            // Recorrer todos los indicadores hijos
             foreach ($varIndicadores as $varInd) {
                 if(empty($varInd->codigo))
                     $varInd->crearCodigo();
 
+                // Multiplicar cada indicador por su ponderacion
                 $formula[] = ' (SUM('.$varInd->codigo.') * '.$varInd->ponderacion.' / 100) ';
+                // El codigo del indicador es el nombre de la columna en la tabla indicador padre
+                $strColumnas .= ', SUM('.$varInd->codigo.') AS '.$varInd->codigo;
                 
+                // Agregar el indicador como fuente de datos
                 $fuentes[$varInd->id]= $varInd->nombre;
             }
 
+            // La columna indicador es fija y contiene el resultado de la formula
             $operacionIndicador = 'ROUND(('.implode(' + ', $formula).'), 1) AS indicador';
         } else {
+            // La columna indicador contiene el valor a mostrar en la grafica
             $operacionIndicador = 'ROUND(('.$this->formula.'), 1) AS indicador';
         }
         
@@ -672,32 +679,63 @@ class FichaTecnica extends CActiveRecord
 
             // Agregamos a la dimension el campo nombre, ya que es requerido en el group by
             $dimension .= ', nombre';
-            $campoEtiqueta = $objDimension->catalogo;
+            $campoEtiqueta = $objDimension->codigo;
         } else {
             $strColumnas = $dimension;
             $campoEtiqueta = $dimension;
         }
         
-        $subtitulo .= $campoEtiqueta;
+        // Agregar los filtros al subtitulo
+        foreach($filtros as $campFil => $valFil) {
+            // Revisar si cada filtro hace referencia a un catalogo
+            $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$campFil));
+            
+            // Si la dimension es un catalogo
+            if($objDimension->catalogo) {
+                // Obtener los campos de la llave primaria del catalogo
+                $llavePrimaria = explode(',', $objDimension->llave_primaria);
+                // Construir el sql para obtener la descripcion del ID del catalogo
+                $sqlCatalogo = 'SELECT nombre FROM tblc_'.$objDimension->catalogo.' WHERE 1=1 ';
+                
+                // Todos los campos de la llave primaria deben estar en el campo filtro
+                foreach ($llavePrimaria as $pk) {
+                    $sqlCatalogo .= ' AND '.$pk.'='.$filtros[$pk];
+                }
+                
+                // Obtener la descripcion del filtro dentro de la tabla catalogo
+                $descripcion = Yii::app()->db->createCommand($sqlCatalogo)->queryRow();
+                
+                $subtitulo .= $significados[$campFil].' = '.$descripcion['nombre'].', ';
+            } else {
+                $subtitulo .= $significados[$campFil].' = '.$valFil.', ';
+            }
+        }
+        
+        // Agregamos la descripcion de la dimension que se esta mostrando al subtitulo
+        $subtitulo = 'Por '.$significados[$campoEtiqueta].', para '.trim($subtitulo,', ');
         
         $groupBy = ' GROUP BY '.implode(', ', $camposFiltro).', '.$dimension;
         $where = ' WHERE 1=1 ';
-        
-        if($orden)
-            $orderBy = ' ORDER BY '.$orden;
+        $orderBy = ' ORDER BY '.$orden;
 
+        // Agregar todos los filtros la consulta
         foreach ($camposFiltro as $campFil) {
             $where .= ' AND '.$campFil.' = \''.$filtros[$campFil].'\'';
         }
 
         $variables = $this->Variables;
         
+        // Reemplazamos las variables por su respectiva operacion en formato SQL
         foreach ($variables as $variable) {
+            // Operacion para el calculo de la columna
             $strColumnas .= ', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula;
+            // Operacion para el calculo del indicador
             $operacionIndicador = str_replace('['.$variable->ini_formula.']',
                                        'SUM('.$variable->ini_formula.')',
                                         $operacionIndicador
                                     );
+            
+            // Guardar la fuente de datos de cada variable
             $fuente = $variable->FuenteDatos;
             $fuentes[$fuente->id]= $fuente->nombre;
         }
@@ -715,8 +753,12 @@ class FichaTecnica extends CActiveRecord
             $resultado['valores'] = array();
             $resultado['etiquetas'] = array();
             
+            // Enviar los valores y las etiquetas en un arreglo separado,
+            // es necesario para la construccion de la grafica
             foreach($resultado['datos'] as $fila) {
+                // La columna indicador es fila y contiene el valor del indicador
                 array_push($resultado['valores'], $fila['indicador']);
+                // El campo etiqueta depende de la dimension a mostrar
                 array_push($resultado['etiquetas'], $fila[$campoEtiqueta]);
             }
         } else {

@@ -12,17 +12,20 @@ function obtieneIndicador(url, ind) {
         type: "POST",
         dataType : "json",
         success: function( respuesta ) {
-            //console.log(respuesta);
-            wgIndicador = '<div class="contenedorIndicador">';
-            wgIndicador += '<div class="tituloIndicador">'+respuesta.titulo+'</div>';
-            wgIndicador += '<div class="subtituloIndicador">'+respuesta.subtitulo+'</div>';
-            wgIndicador += '<div class="opcionesIndicador">Barra de opciones</div>';
-            wgIndicador += '<div class="graficoIndicador"></div>';
-            wgIndicador += '<div class="pieIndicador">Fuente: '+respuesta.fuentes+'<br />Última actualización: '+respuesta.fecha+'</div>';
-            wgIndicador += '</div>';
-            
-            agregarIndicador(ind, wgIndicador);
-            //construyeGrafia(ind, datos, etiquetas, tipo);
+            if(respuesta.error) {
+                alert('Error al obtener datos del indicador, revise el mensaje de error. \n\n'+respuesta.msjerror);
+            } else {
+                wgIndicador = '<div class="contenedorIndicador">';
+                wgIndicador += '<div class="tituloIndicador">'+respuesta.titulo+'</div>';
+                wgIndicador += '<div class="subtituloIndicador">'+respuesta.subtitulo+'</div>';
+                wgIndicador += '<div class="opcionesIndicador">Barra de opciones</div>';
+                wgIndicador += '<div class="graficoIndicador"></div>';
+                wgIndicador += '<div class="pieIndicador">Fuente: '+respuesta.fuentes+'<br />Última actualización: '+respuesta.fecha+'</div>';
+                wgIndicador += '</div>';
+
+                agregarIndicador(ind, wgIndicador);
+                //construyeGrafia(ind, datos, etiquetas, tipo);
+            }
         },
         error: function( xhr, status ) {
             alert( "Error al obtener los datos. "+status+" "+xhr.status );

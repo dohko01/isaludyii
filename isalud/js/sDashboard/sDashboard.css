@@ -76,6 +76,14 @@ and (min-width : 1824px) {
 	border-bottom: 1px solid #CBCBCB;
 	color: #000;
 	font-weight: bold;
+    background-color: #F1F1F1;
+	background-image: -moz-linear-gradient(top, #F1F1F1, #DBDBDB);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#F1F1F1), to(#DBDBDB));
+	background-image: -webkit-linear-gradient(top, #F1F1F1, #DBDBDB);
+	background-image: -o-linear-gradient(top, #F1F1F1, #DBDBDB);
+	background-image: linear-gradient(to bottom, #F1F1F1, #DBDBDB);
+	background-repeat: repeat-x;
+	filter: progid:dximagetransform.microsoft.gradient(startColorstr='#ffF1F1F1', endColorstr='#ffDBDBDB', GradientType=0);
 }
 
 /*dashboard widget content css*/
@@ -175,6 +183,13 @@ li.ui-sortable-placeholder {
 	margin: 0 5px 0 5px;
 	float: right;
 	background: url('icon-sprite.PNG') no-repeat;
+	width: 20px;
+	height: 20px;
+}
+
+.sDashboard-icon-fix {
+	margin: 0 5px 0 5px;
+	float: right;
 	width: 20px;
 	height: 20px;
 }

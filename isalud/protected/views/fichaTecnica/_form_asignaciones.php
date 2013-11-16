@@ -57,7 +57,8 @@
 							'type' => 'POST',
 							'url' => CController::createUrl('ProgramaAccion/getProgramaAccion'),
 							'update' => '#FichaTecnica_id_cat_programa_accion',
-							)
+							),
+                    'class'=>'span7',
 				)); ?>
 		<?php echo $form->error($model,'id_cat_coordinacion'); ?>
 	</div>
@@ -69,7 +70,7 @@
 				 $list = CHtml::listData(ProgramaAccion::model()->findAll(), 'id', 'nombre');
 		?>
 		<?php echo $form->labelEx($model,'id_cat_programa_accion'); ?>
-		<?php echo $form->dropDownList($model,'id_cat_programa_accion',$list,array('empty'=>'Seleccionar...')); ?>
+		<?php echo $form->dropDownList($model,'id_cat_programa_accion',$list,array('empty'=>'Seleccionar...','class'=>'span7',)); ?>
 		<?php echo $form->error($model,'id_cat_programa_accion'); ?>
 	</div>
 
