@@ -695,7 +695,7 @@ class FichaTecnica extends CActiveRecord
                 // Obtener los campos de la llave primaria del catalogo
                 $llavePrimaria = explode(',', $objDimension->llave_primaria);
                 // Construir el sql para obtener la descripcion del ID del catalogo
-                $sqlCatalogo = 'SELECT nombre FROM tblc_'.$objDimension->catalogo.' WHERE 1=1 AND ';
+                $sqlCatalogo = 'SELECT nombre FROM tblc_'.$objDimension->catalogo.' WHERE 1=1 ';
                 
                 // Todos los campos de la llave primaria deben estar en el campo filtro
                 foreach ($llavePrimaria as $pk) {
