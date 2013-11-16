@@ -42,7 +42,7 @@ class FichaTecnicaController extends Controller
 	{
 		return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'verdatos'),
+				'actions'=>array('index','view','create','update','admin','delete', 'verdatos', 'getfichatecnica'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),
 			/*array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -326,5 +326,19 @@ class FichaTecnicaController extends Controller
             'countDatos' => $countDatos,
             'sqlAllDatos' => $sqlAllDatos,
 		));
+	}
+    
+    /**
+	 * Obtiene el formulario de la ficha tecnica
+	 */
+	public function actionGetFichaTecnica()
+	{
+        if(Yii::app()->request->isAjaxRequest && isset($_POST['id'])) {
+            $fichaTecnica = $this->loadModel($_POST['id']);
+
+            $this->renderPartial('viewFicha',array(
+                'model'=>$fichaTecnica,
+            ));
+        }
 	}
 }

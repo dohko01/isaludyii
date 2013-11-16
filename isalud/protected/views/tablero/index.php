@@ -2,11 +2,13 @@
 /* @var $this TableroController */
 Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/css/jquery-ui.css');
 Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/sDashboard/sDashboard.css');
+Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/css/tablero.css');
 
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/libs/jquery/jquery-ui.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/libs/flotr2/flotr2.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/libs/touchpunch/jquery.ui.touch-punch.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/jquery-sDashboard.js');
+Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/json-to-table.js');
 
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/tablero.js', CClientScript::POS_END);
 
@@ -53,28 +55,9 @@ $this->breadcrumbs=array(
     
 </ul>
 
-<!--<div class="contenedorIndicador" style="display: none">
-    
-    <div class="tituloIndicador">
-        Titulo del indicador
-    </div>
-    
-    <div class="subtituloIndicador">
-        filtros y dimensi&oacute;n
-    </div>
-    
-    <div class="opcionesIndicador">
-        Barra de opciones
-    </div>
-    
-    <div class="graficoIndicador">
-        Grafico del indicador
-    </div>
-    
-    <div class="pieIndicador">
-        Fuentes del indicador
-    </div>
-    
-</div>-->
-
 <input type="hidden" name="YII_CSRF_TOKEN" id="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
+
+
+<ul id="datosIndicadores" style="display: none;">
+    
+</ul>

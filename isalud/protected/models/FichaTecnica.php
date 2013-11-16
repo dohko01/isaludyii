@@ -705,9 +705,9 @@ class FichaTecnica extends CActiveRecord
                 // Obtener la descripcion del filtro dentro de la tabla catalogo
                 $descripcion = Yii::app()->db->createCommand($sqlCatalogo)->queryRow();
                 
-                $subtitulo .= $significados[$campFil].' = '.$descripcion['nombre'].', ';
+                $subtitulo .= $significados[$campFil].': '.$descripcion['nombre'].', ';
             } else {
-                $subtitulo .= $significados[$campFil].' = '.$valFil.', ';
+                $subtitulo .= $significados[$campFil].': '.$valFil.', ';
             }
         }
         
@@ -752,6 +752,7 @@ class FichaTecnica extends CActiveRecord
             $resultado['fecha'] = $fecha->format('d-m-Y');
             $resultado['valores'] = array();
             $resultado['etiquetas'] = array();
+            $resultado['escalaEvaluacion'] = array();
             
             // Enviar los valores y las etiquetas en un arreglo separado,
             // es necesario para la construccion de la grafica
@@ -760,6 +761,17 @@ class FichaTecnica extends CActiveRecord
                 array_push($resultado['valores'], $fila['indicador']);
                 // El campo etiqueta depende de la dimension a mostrar
                 array_push($resultado['etiquetas'], $fila[$campoEtiqueta]);
+            }
+            
+            $escalaEvaluacion = $this->EscalaEvaluacion;
+            // Obtener todas las escalas de evaluacion
+            foreach ($escalaEvaluacion->CriteriosEscalaEvaluacion as $regla) {
+                $reglaEvaluacion['nombre'] = $regla->CriterioEvaluacion->nombre;
+                $reglaEvaluacion['color'] = $regla->CriterioEvaluacion->color;
+                $reglaEvaluacion['limite_inf'] = $regla->limite_inf;
+                $reglaEvaluacion['limite_sup'] = $regla->limite_sup;
+                
+                array_push($resultado['escalaEvaluacion'], $reglaEvaluacion);
             }
         } else {
             $resultado = Yii::app()->db->createCommand($sql)->query()->readAll();
