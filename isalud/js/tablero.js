@@ -13,7 +13,7 @@ function obtieneIndicador(url, ind) {
         dataType : "json",
         success: function( respuesta ) {
             if(respuesta.error) {
-                alert('Error al obtener datos del indicador, revise el mensaje de error. \n\n'+respuesta.msjerror);
+                showError('Error al obtener datos del indicador, revise el mensaje de error: '+respuesta.msjerror);
             } else {
                 wgIndicador = '<div class="contenedorIndicador">';
                 wgIndicador += '<div class="tituloIndicador">'+respuesta.titulo+'</div>';
@@ -28,7 +28,7 @@ function obtieneIndicador(url, ind) {
             }
         },
         error: function( xhr, status ) {
-            alert( "Error al obtener los datos. "+status+" "+xhr.status );
+            showError( "Error al obtener los datos. "+status+" "+xhr.status );
         }
     });
 }

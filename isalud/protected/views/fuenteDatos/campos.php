@@ -5,7 +5,7 @@
 
             $(this).find('select').each(function(){
                 if( $(this).val() == '') {
-                    alert('ERROR: Debe configurar el tipo y significado para todos los campos');
+                    showError('ERROR: Debe configurar el tipo y significado para todos los campos');
                     resultado = false;
                     return resultado;
                 }

@@ -12,13 +12,13 @@
                 data: $('#fuente-datos-form').serialize(),
             }).done(function(response) {
                 if(response.error) {
-                    alert('ERROR: La prueba de la sentencia SQL no fue exitosa, revise el mensaje de error. \n\n'+response.msjerror);
+                    showError('ERROR: La prueba de la sentencia SQL no fue exitosa, revise el mensaje de error. \n\n'+response.msjerror);
                 } else {
-                    alert('La prueba de la sentencia SQL fue exitosa. Puede ver, en la parte inferior, una muestra de los resultados obtenidos');
+                    showExito('La prueba de la sentencia SQL fue exitosa. Puede ver, en la parte inferior, una muestra de los resultados obtenidos');
                     $('#result_probar_sentencia_sql').html('<h3 align="center">Resultado parcial de la ejecución de la Sentencia SQL</h3>'+ConvertJsonToTable(response));
                 }
             }).fail(function() {
-                alert('ERROR: No se pudo realizar la prueba de la sentencia SQL, intentelo nuevamente o notifiquelo con el administrador del sistema.')
+                showError('ERROR: No se pudo realizar la prueba de la sentencia SQL, intentelo nuevamente o notifiquelo con el administrador del sistema.')
             });
         });
 
@@ -30,11 +30,11 @@
                 data: 'YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val()+'&archivo='+$(this).val(),
             }).done(function(response) {
                 if(response.error) {
-                    alert('ADVERTENCIA: Existe un archivo, previamente cargado al sistema, con el mismo nombre del que esta intentando subir ('+response.archivo+'). Si desea sobreescribirlo puede continuar, de lo contrario se recomienda renombrar el archivo seleccionado.');
+                    showAdvertencia('ADVERTENCIA: Existe un archivo, previamente cargado al sistema, con el mismo nombre del que esta intentando subir ('+response.archivo+'). Si desea sobreescribirlo puede continuar, de lo contrario se recomienda renombrar el archivo seleccionado.');
                 }
                 $('#archivoActual').val('');
             }).fail(function() {
-                alert('ERROR: No se pudo realizar la verificación del archivo, intentelo cargar nuevamente o notifiquelo con el administrador del sistema.')
+                showError('ERROR: No se pudo realizar la verificación del archivo, intentelo cargar nuevamente o notifiquelo con el administrador del sistema.')
             });
         });
     });

@@ -69,7 +69,7 @@ class VariableController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->pageTitle = $this->title_sin.' - Ver';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Ver';
         
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
@@ -82,7 +82,7 @@ class VariableController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$this->pageTitle = $this->title_sin.' - Crear';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Crear';
         
 		$model=new Variable;
 
@@ -108,7 +108,7 @@ class VariableController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$this->pageTitle = $this->title_sin.' - Actualizar';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Actualizar';
         
 		$model=$this->loadModel($id);
 
@@ -134,7 +134,7 @@ class VariableController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$this->pageTitle = $this->title_sin.' - Eliminar';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Eliminar';
         
 		$this->loadModel($id)->delete();
 
@@ -148,7 +148,7 @@ class VariableController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$this->pageTitle = $this->title_sin.' - Inicio';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Inicio';
         
 		$dataProvider=new CActiveDataProvider('Variable', array('criteria'=>array('order'=>'nombre ASC')) );
 		$this->render('index',array(
@@ -161,7 +161,7 @@ class VariableController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$this->pageTitle = $this->title_sin.' - Administración';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Administración';
         
 		$model=new Variable('search');
 		$model->unsetAttributes();  // clear any default values

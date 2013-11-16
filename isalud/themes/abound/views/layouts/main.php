@@ -17,6 +17,11 @@
 	  $baseUrl = Yii::app()->theme->baseUrl; 
 	  $cs = Yii::app()->getClientScript();
 	  Yii::app()->clientScript->registerCoreScript('jquery');
+//      Yii::app()->clientScript->registerCoreScript('jquery.ui');
+//      Yii::app()->clientScript->registerCssFile(
+//            Yii::app()->clientScript->getCoreScriptUrl().
+//            '/jui/css/base/jquery-ui.css'
+//        );
 	?>
     <!-- Fav and Touch and touch icons -->
     <link rel="shortcut icon" href="<?php echo $baseUrl;?>/img/icons/favicon.ico">
@@ -27,21 +32,17 @@
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap.min.css');
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap-responsive.min.css');
 	  $cs->registerCssFile($baseUrl.'/css/abound.css');
+      $cs->registerCssFile('http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css');
 	  //$cs->registerCssFile($baseUrl.'/css/style-blue.css');
 	  ?>
       <!-- styles for style switcher -->
         <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" />
         <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/loading.css" />
       	<link rel="stylesheet" type="text/css" href="<?php echo $baseUrl;?>/css/style-blue.css" />
-        <!-- <link rel="alternate stylesheet" type="text/css" media="screen" title="style2" href="<?php echo $baseUrl;?>/css/style-brown.css" />
-        <link rel="alternate stylesheet" type="text/css" media="screen" title="style3" href="<?php echo $baseUrl;?>/css/style-green.css" />
-        <link rel="alternate stylesheet" type="text/css" media="screen" title="style4" href="<?php echo $baseUrl;?>/css/style-grey.css" />
-        <link rel="alternate stylesheet" type="text/css" media="screen" title="style5" href="<?php echo $baseUrl;?>/css/style-orange.css" />
-        <link rel="alternate stylesheet" type="text/css" media="screen" title="style6" href="<?php echo $baseUrl;?>/css/style-purple.css" />
-        <link rel="alternate stylesheet" type="text/css" media="screen" title="style7" href="<?php echo $baseUrl;?>/css/style-red.css" /> -->
 	  <?php
-	  $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/funciones.js');
       $cs->registerScriptFile($baseUrl.'/js/bootstrap.min.js');
+      $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/jqAlert/jquery.alerts.js', CClientScript::POS_END);
+      $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/funciones.js', CClientScript::POS_END);
 	  //$cs->registerScriptFile($baseUrl.'/js/plugins/jquery.sparkline.js');
 	  //$cs->registerScriptFile($baseUrl.'/js/plugins/jquery.flot.min.js');
 	  //$cs->registerScriptFile($baseUrl.'/js/plugins/jquery.flot.pie.min.js');

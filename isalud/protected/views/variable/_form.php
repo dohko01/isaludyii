@@ -13,7 +13,7 @@
                     return false;
                 }
                 if(response.error) {
-                    alert('ERROR: '+response.msjerror);
+                    showError('ERROR: '+response.msjerror);
                 } else {
                     $('#Variable_id_campo > :not(option[value=""])').remove();
 
@@ -25,7 +25,7 @@
                     });
                 }
             }).fail(function() {
-                alert('ERROR: No se pudo realizar la consulta de los campos de la fuente de datos, intentelo nuevamente o notifiquelo con el administrador del sistema.');
+                showError('ERROR: No se pudo realizar la consulta de los campos de la fuente de datos, intentelo nuevamente o notifiquelo con el administrador del sistema.');
             });
         });
     });

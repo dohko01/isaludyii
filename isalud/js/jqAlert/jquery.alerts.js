@@ -67,7 +67,7 @@
             	closeOnEscape: defaultOptions.allowEscape,
                 resizable: false,
                 height: 'auto',
-                width: 'auto',
+                width: '30%',//'auto',
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
@@ -153,7 +153,7 @@
             	closeOnEscape: defaultOptions.allowEscape,
                 resizable: false,
                 height: 'auto',
-                width: 'auto',
+                width: '30%',//'auto',
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
@@ -247,7 +247,7 @@
             	closeOnEscape: defaultOptions.allowEscape,
                 resizable: false,
                 height: 'auto',
-                width: 'auto',
+                width: '30%',//'auto',
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
@@ -308,7 +308,7 @@
                 defaultOptions = $.extend(defaultOptions, options);
             }
 
-            var dlgWidth = 'auto';
+            var dlgWidth = '30%';//'auto';
 
             var btns = {};
             $.each(defaultOptions.buttons, function(key, val) {

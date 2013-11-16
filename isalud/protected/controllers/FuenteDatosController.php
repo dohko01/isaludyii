@@ -69,7 +69,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->pageTitle = $this->title_sin.' - Ver';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Ver';
         
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
@@ -82,7 +82,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$this->pageTitle = $this->title_sin.' - Crear';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Crear';
 
         $msjError = '';
 		$model = new FuenteDatos;
@@ -185,7 +185,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$this->pageTitle = $this->title_sin.' - Actualizar';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Actualizar';
 
         $msjError = '';
 		$model = $this->loadModel($id);
@@ -355,7 +355,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$this->pageTitle = $this->title_sin.' - Eliminar';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Eliminar';
         
 		$this->loadModel($id)->delete();
 
@@ -369,7 +369,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$this->pageTitle = $this->title_sin.' - Inicio';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Inicio';
         
 		$dataProvider=new CActiveDataProvider('FuenteDatos', array('criteria'=>array('order'=>'nombre ASC')) );
 		$this->render('index',array(
@@ -382,7 +382,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$this->pageTitle = $this->title_sin.' - Administración';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Administración';
         
 		$model=new FuenteDatos('search');
 		$model->unsetAttributes();  // clear any default values
@@ -453,7 +453,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionConfigurarCampo($id)
 	{
-        $this->pageTitle = $this->title_sin.' - Configurar Campos';
+        $this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Configurar Campos';
 
         // Configuracion de campos enviada desde la vista por el metodo POST
         $configCampos = Yii::app()->request->getPost('Campo');
@@ -545,7 +545,7 @@ class FuenteDatosController extends Controller
 	 */
 	public function actionVerDatos($id)
 	{
-		$this->pageTitle = $this->title_sin.' - Ver';
+		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Ver';
 
         $fuenteDatos = $this->loadModel($id);
         $countDatos = $fuenteDatos->getCountDatos();

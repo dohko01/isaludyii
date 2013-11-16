@@ -8,12 +8,12 @@
                 data: $('#conexion-bdatos-form').serialize(),
             }).done(function(response) {
                 if(response.error) {
-                    alert('ERROR: La conexión con la base de datos no fue exitosa, revise el mensaje de error. \n\n'+response.msjerror);
+                    showError('ERROR: La conexión con la base de datos no fue exitosa, revise el mensaje de error. \n\n'+response.msjerror);
                 } else {
-                    alert('La prueba de conexión con la base de datos fue exitosa');
+                    showExito('La prueba de conexión con la base de datos fue exitosa');
                 }
             }).fail(function() {
-                alert('ERROR: No se pudo realizar la prueba de conexión a la base de datos, intentelo nuevamente o notifiquelo con el administrador del sistema.');
+                showError('ERROR: No se pudo realizar la prueba de conexión a la base de datos, intentelo nuevamente o notifiquelo con el administrador del sistema.');
             });
         });
     });
