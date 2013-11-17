@@ -1,26 +1,16 @@
+<?php $baseScriptUrl=Yii::app()->getAssetManager()->publish(Yii::getPathOfAlias('zii.widgets.assets')); ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $baseScriptUrl; ?>/detailview/styles.css" />
+<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/tablestyler.css" />
+
+<div id="contenedorFichaTecnica">
 <?php
 /* @var $this FichaTecnicaController */
 /* @var $model FichaTecnica */
 
-$this->breadcrumbs=array(
-	$this->title_sin=>array('index'),
-	$model->nombre,
-);
+echo '<h1>Datos de la '. $this->title_sin.'</h1>';
 
-$this->menu=array(
-	array('label'=>'Listar '.$this->title_plu, 'url'=>array('index')),
-	array('label'=>'Crear '.$this->title_sin, 'url'=>array('create')),
-	array('label'=>'Actualizar '.$this->title_sin, 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Eliminar '.$this->title_sin, 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'¿Esta seguro que desea eliminar el registro?','csrf'=>true)),
-	array('label'=>'Administrar '.$this->title_plu, 'url'=>array('admin')),
-);
-?>
-
-<h1>Datos del <?php echo $this->title_sin; ?></h1>
-
-<?php 
-
-$tableReglasEvaluacion = '<table id="tableReglasEvaluacion">
+$tableReglasEvaluacion = '<div class="datagrid">
+    <table>
         <thead>
             <tr align="center">
                 <th>Criterio de evaluación</th>
@@ -40,7 +30,7 @@ $tableReglasEvaluacion = '<table id="tableReglasEvaluacion">
                 <td align="center">'.$regla->limite_sup.'</td>
             </tr>';
         }
-$tableReglasEvaluacion .= '</tbody></table>';
+$tableReglasEvaluacion .= '</tbody></table></div>';
 
 $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
@@ -101,7 +91,6 @@ $this->widget('zii.widgets.CDetailView', array(
             'name'=>'es_publico',
             'value' => $model->es_publico ? 'Si' : 'No',
         ),
-        'tolerancia_actualizacion',
 		'ponderacion',
 		'unidad_medida',
 		'meta',
@@ -110,3 +99,4 @@ $this->widget('zii.widgets.CDetailView', array(
 		'utilidad',
 	),
 )); ?>
+</div>

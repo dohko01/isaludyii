@@ -380,7 +380,7 @@
 					var widget = this._constructWidget(widgetDefinition);
                     widget.css('display','none');
 					this.element.prepend(widget);
-                    this.element.find("li#" + widgetDefinition.widgetId).fadeIn(2000);
+                    this.element.find("li#" + widgetDefinition.widgetId).toggle("slide");
 					this._renderChart(widgetDefinition);
 					this._renderTable(widgetDefinition);
 				}

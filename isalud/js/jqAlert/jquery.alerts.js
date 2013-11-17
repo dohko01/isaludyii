@@ -65,9 +65,9 @@
 			var timer;
             $dialog.dialog({
             	closeOnEscape: defaultOptions.allowEscape,
-                resizable: false,
-                height: 'auto',
-                width: '30%',//'auto',
+                resizable: true,
+                height: defaultOptions.maxHeight ? defaultOptions.maxHeight : 'auto',
+                width: '40%',//'auto',
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
@@ -151,9 +151,9 @@
 			var timer;
             $dialog.dialog({
             	closeOnEscape: defaultOptions.allowEscape,
-                resizable: false,
-                height: 'auto',
-                width: '30%',//'auto',
+                resizable: true,
+                height: defaultOptions.maxHeight ? defaultOptions.maxHeight : 'auto',
+                width: '40%',//'auto',
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
@@ -245,9 +245,9 @@
 			var timer;
             $dialog.dialog({
             	closeOnEscape: defaultOptions.allowEscape,
-                resizable: false,
-                height: 'auto',
-                width: '30%',//'auto',
+                resizable: true,
+                height: defaultOptions.maxHeight ? defaultOptions.maxHeight : 'auto',
+                width: '40%',//'auto',
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
@@ -308,7 +308,7 @@
                 defaultOptions = $.extend(defaultOptions, options);
             }
 
-            var dlgWidth = '30%';//'auto';
+            var dlgWidth = '40%';//'auto';
 
             var btns = {};
             $.each(defaultOptions.buttons, function(key, val) {
@@ -348,8 +348,8 @@
             var timer;
             $dialog.dialog({
             	closeOnEscape: defaultOptions.allowEscape,
-                resizable: false,
-                height: 'auto',
+                resizable: true,
+                height: defaultOptions.maxHeight ? defaultOptions.maxHeight : 'auto',
                 width: dlgWidth,
                 title: defaultOptions.title,
 				show: defaultOptions.show,

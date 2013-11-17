@@ -5,6 +5,8 @@
  * https://github.com/ModelN/sDashboard
  */
 
+.ui-dialog { z-index: 1000000 !important ;}
+
 /*dashboard css*/
 .sDashboard {
 	list-style-type: none;
@@ -111,6 +113,20 @@ and (min-width : 1824px) {
 	top: 50%;
 	margin-top: -225px;
 	margin-left: -400px;
+}
+
+@media only screen 
+and (min-width : 1224px) {
+    .sDashboardWidgetContainerMaximized {
+        z-index: 9999;
+        position: fixed;
+        width: 900px;
+        height: 600px;
+        left: 50%;
+        top: 50%;
+        margin-top: -300px;
+        margin-left: -450px;
+    }
 }
 
 

@@ -77,7 +77,6 @@ $this->menu=array(
             'name'=>'es_publico',
             'value' => $model->es_publico ? 'Si' : 'No',
         ),
-        'tolerancia_actualizacion',
 		'ponderacion',
 		'unidad_medida',
 		'meta',

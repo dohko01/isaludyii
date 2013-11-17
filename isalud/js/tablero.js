@@ -69,7 +69,7 @@ function getFichaTecnica(event) {
     id = $(this).data('id');
     
     $.ajax({
-        url: 'http://localhost/salud/isalud/fichatecnica/getfichatecnica/'+id,
+        url: baseUrl+'/fichatecnica/getfichatecnica/'+id,
         data: 'id='+id+'&YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val(),
         type: "POST",
         //dataType : "json",
@@ -80,7 +80,8 @@ function getFichaTecnica(event) {
                 $.alert(respuesta, {
                     icon: '',
                     title: 'Datos del indicador',
-                    allowEscape: true
+                    allowEscape: true,
+                    maxHeight: $(window).height()-100,
                 });
             }
         },

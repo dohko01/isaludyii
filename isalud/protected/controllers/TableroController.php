@@ -5,7 +5,9 @@ class TableroController extends Controller
 	public function actionIndex()
 	{
         $config = CJavaScript::encode(Yii::app()->params['prefixTblIndicador']);
-        Yii::app()->clientScript->registerScript('appConfig', "var prefixTblIndicador = ".$config.";", CClientScript::POS_HEAD);
+        $baseUrl = CJavaScript::encode(Yii::app()->baseUrl);
+        
+        Yii::app()->clientScript->registerScript('appConfig', 'var prefixTblIndicador = '.$config.'; var baseUrl = '.$baseUrl.'; ', CClientScript::POS_HEAD);
     
 		$this->render('index', array(
             'indicadores' => CHtml::listData(FichaTecnica::model()->findAll(), 'id', 'nombre')
