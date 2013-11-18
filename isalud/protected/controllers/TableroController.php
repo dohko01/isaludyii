@@ -31,9 +31,9 @@ class TableroController extends Controller
                     $respuesta = $modelFicha->crearIndicador();
                     if($respuesta['error']) throw new Exception($respuesta['msjerror']);
 
-                    $dimension = 'id_municipio';
-                    $filtro = array('id_estado'=>7, 'id_jurisdiccion'=>2, 'anio'=>2013);
-                    $orden = 'id_municipio';
+                    $dimension = 'id_jurisdiccion';
+                    $filtro = array('id_estado'=>7, 'anio'=>2013);
+                    $orden = 'id_jurisdiccion';
 
                     $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
                     if(isset($respuesta['error'])) throw new Exception($respuesta['msjerror']);

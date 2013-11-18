@@ -679,10 +679,12 @@ class FichaTecnica extends CActiveRecord
 
             // Agregamos a la dimension el campo nombre, ya que es requerido en el group by
             $dimension .= ', nombre';
-            $campoEtiqueta = $objDimension->codigo;
+            $campoEtiqueta = $objDimension->catalogo;
+            $campoSubtitulo = $objDimension->descripcion;
         } else {
             $strColumnas = $dimension;
             $campoEtiqueta = $dimension;
+            $campoSubtitulo = ucfirst($dimension);
         }
         
         // Agregar los filtros al subtitulo
@@ -712,7 +714,7 @@ class FichaTecnica extends CActiveRecord
         }
         
         // Agregamos la descripcion de la dimension que se esta mostrando al subtitulo
-        $subtitulo = 'Por '.$significados[$campoEtiqueta].', para '.trim($subtitulo,', ');
+        $subtitulo = 'Por '.$campoSubtitulo.', para '.trim($subtitulo,', ');
         
         $groupBy = ' GROUP BY '.implode(', ', $camposFiltro).', '.$dimension;
         $where = ' WHERE 1=1 ';
@@ -748,6 +750,7 @@ class FichaTecnica extends CActiveRecord
             $resultado['titulo'] = $this->nombre;
             $resultado['subtitulo'] = $subtitulo;
             $resultado['fuentes'] = implode(', ', $fuentes);
+            $resultado['meta'] = $this->meta;
             $fecha = new DateTime($this->fecha_tbl_indicador);
             $resultado['fecha'] = $fecha->format('d-m-Y');
             $resultado['valores'] = array();
