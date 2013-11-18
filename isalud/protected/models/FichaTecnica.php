@@ -655,10 +655,13 @@ class FichaTecnica extends CActiveRecord
             $operacionIndicador = 'ROUND(('.$this->formula.'), 1) AS indicador';
         }
         
-        // El orden por default sera el de la dimension a mostrar
+        // El orden por default sera el resultado del indicador
         if($orden == null) {
-            $orden = $dimension;
+            $orden = 'indicador';
         }
+        
+        // Respalda la dimension antes de ser modificada
+        $resultado['dimension'] = $dimension;
 
         // Revisar si la dimensión hace referencia a un catalogo
         $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$dimension));
@@ -751,6 +754,7 @@ class FichaTecnica extends CActiveRecord
             $resultado['subtitulo'] = $subtitulo;
             $resultado['fuentes'] = implode(', ', $fuentes);
             $resultado['meta'] = $this->meta;
+            $resultado['filtro'] = $filtros;
             $fecha = new DateTime($this->fecha_tbl_indicador);
             $resultado['fecha'] = $fecha->format('d-m-Y');
             $resultado['valores'] = array();

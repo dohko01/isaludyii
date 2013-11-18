@@ -1,13 +1,20 @@
 <?php
 /* @var $this TableroController */
-Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/css/jquery-ui.css');
+
+Yii::app()->getClientScript()->registerScriptFile(
+      Yii::app()->clientScript->getCoreScriptUrl().
+      '/jui/js/jquery-ui.min.js', CClientScript::POS_END);
+
+Yii::app()->getClientScript()->registerCssFile(
+      Yii::app()->clientScript->getCoreScriptUrl().
+      '/jui/css/base/jquery-ui.css');
+
 Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/sDashboard/sDashboard.css');
 Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/css/tablero.css');
 
-Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/libs/jquery/jquery-ui.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/libs/flotr2/flotr2.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/libs/touchpunch/jquery.ui.touch-punch.js');
-Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/jquery-sDashboard.js');
+Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/jquery-sDashboard.js', CClientScript::POS_END);
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/json-to-table.js');
 
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/tablero.js', CClientScript::POS_END);
@@ -40,24 +47,18 @@ $this->breadcrumbs=array(
                 <i class="icon-th-large"></i> Tablero  <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" id="menuTableros">
-                <li><a href="#">Guardar</a></li>
+                <li><a href="#" id="btnGuardarTablero">Guardar</a></li>
                 <li class="divider"></li>
-                <li><a href="#">Tablero 1</a></li>
-                <li><a href="#">Tablero 2</a></li>
-                <li><a href="#">Tablero 3</a></li>
+                <li><a href="#" class="listaTablero">Tablero 1</a></li>
+                <li><a href="#" class="listaTablero">Tablero 2</a></li>
+                <li><a href="#" class="listaTablero">Tablero 3</a></li>
             </ul>
         </div>
     </div>
 
 </div>
 
-<ul id="tableroPrincipal">
-    
-</ul>
-
 <input type="hidden" name="YII_CSRF_TOKEN" id="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
 
-
-<ul id="datosIndicadores" style="display: none;">
-    
-</ul>
+<ul id="tableroPrincipal"> </ul>
+<ul id="datosIndicadores" style="display: none;"> </ul>

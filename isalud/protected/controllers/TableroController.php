@@ -20,7 +20,7 @@ class TableroController extends Controller
 	}
     
     public function actionGetIndicador() {
-        $respuesta = null;
+        $respuesta = array('error'=>false, 'msjerror'=>'');
         $modelFicha = null;
         
         if(Yii::app()->request->isAjaxRequest && isset($_POST['id'])) {
@@ -41,6 +41,22 @@ class TableroController extends Controller
                     $respuesta['error'] = true;
                     $respuesta['msjerror'] = 'No se encuentra el indicador especificado';
                 }
+            } catch (Exception $e) {
+                $respuesta['error'] = true;
+                $respuesta['msjerror'] = $e->getMessage();
+            }
+
+            echo json_encode($respuesta);
+        }
+    }
+    
+    public function actionGuardarTablero() {
+        $respuesta = array('error'=>false, 'msjerror'=>'');
+        
+        if(Yii::app()->request->isAjaxRequest && isset($_POST['nombre'])) {
+            try {
+                //$respuesta = $_POST['datos'];
+                
             } catch (Exception $e) {
                 $respuesta['error'] = true;
                 $respuesta['msjerror'] = $e->getMessage();

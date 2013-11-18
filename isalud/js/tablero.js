@@ -48,6 +48,11 @@ function obtieneIndicador(url, ind) {
                     tblDatos = ConvertJsonToTable(respuesta.datos);
                     $('#datosIndicadores').append('<li id="datos_'+ind+'">'+tblDatos+'</li>');
                     
+                    // Guarda la dimension y el filtro del indicador
+                    // Se utiliza para guardar el tablero
+                    $('#datosIndicadores').append('<li id="config_dim_'+ind+'">'+respuesta.dimension+'</li>');
+                    $('#datosIndicadores').append('<li id="config_fil_'+ind+'">'+JSON.stringify(respuesta.filtro)+'</li>'); // $.param(jsonObj)
+                    
                     $('#'+prefixTblIndicador+ind+' .verFichaTecnica').click(getFichaTecnica);
                     $('#'+prefixTblIndicador+ind+' .verTablaDatos').click(getTablaDatos);
                     //construyeGrafia(ind, datos, etiquetas, tipo);
@@ -65,6 +70,7 @@ function obtieneIndicador(url, ind) {
 
 function getFichaTecnica(event) {
     event.preventDefault();
+    event.stopPropagation()
         
     id = $(this).data('id');
     
@@ -93,6 +99,7 @@ function getFichaTecnica(event) {
 
 function getTablaDatos(event) {
     event.preventDefault();
+    event.stopPropagation()
         
     id = $(this).data('id');
     
@@ -105,8 +112,67 @@ function getTablaDatos(event) {
     });
 }
 
+function guardarTablero(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    $.prompt('<i class="fa fa-pencil-square-o fa-lg"></i> Proporcione un nombre para guardar el grupo de indicadores del tablero', {
+        icon:'',
+        title:'Guardar grupo de indicadores',
+        buttons:[
+            { title:'Guardar', callback:function() {
+                    $(this).dialog("close"); 
+                    nombreTablero = $(this).find('#result').val();
+                
+                    objTablero = $("#tableroPrincipal").sDashboard("option","dashboardData");
+                    // Define un array JSON vacio
+                    datosTablero = {
+                            "nombre": 'nombre del tablero',
+                            "YII_CSRF_TOKEN": $('[name=YII_CSRF_TOKEN]').val(),
+                            "datos": []
+                        };
+
+                    $.each(objTablero, function(posicion, indicador) {
+                        idInd = indicador.widgetId.replace(prefixTblIndicador,''), // elimina la parte 'ind_'
+
+                        jsonIndicador = {
+                            id: idInd,
+                            dimension: $('#config_dim_'+idInd).text(),
+                            filtro: JSON.parse($('#config_fil_'+idInd).text()),
+                            posicion: posicion+1,
+                            tipo_grafico: '',
+                            configuracion: '' 
+                        };
+
+                        datosTablero["datos"].push(jsonIndicador);
+                    });
+
+                    $.ajax({
+                        url: baseUrl+'/tablero/guardartablero/',
+                        data: datosTablero,
+                        type: "POST",
+                        dataType: "json",
+                        success: function( respuesta ) {
+                            if(respuesta.error) {
+                                showError('Error al obtener datos del indicador, revise el mensaje de error: '+respuesta.msjerror);
+                            } else {
+                                showExito('Tablero guardado exitosamente.');
+                            }
+                        },
+                        error: function( xhr, status ) {
+                            showError( "Error al obtener los datos. "+status+" "+xhr.status );
+                        }
+                    });
+                
+                } 
+            },
+            { title:'Cancelar', callback:function() { $(this).dialog("close"); } }
+        ]
+    });
+}
+
 $(document).ready(function() {
-    var widgetDefinitions = [
+    var widgetDefinitions = [];/*[
         {
             widgetId: "Widget1", //unique id for the widget
             widgetContent: '<div class="contenedorIndicador">\n\
@@ -125,7 +191,7 @@ $(document).ready(function() {
             widgetId: "Widget2", //unique id for the widget
             widgetContent: $('.contenedorIndicador').html() //content for the widget
         }
-    ];
+    ];*/
 
     $("#tableroPrincipal").sDashboard({
         dashboardData : widgetDefinitions
@@ -140,4 +206,6 @@ $(document).ready(function() {
     
     $('#tableroPrincipal .verFichaTecnica').click(getFichaTecnica);
     $('#tableroPrincipal .verTablaDatos').click(getTablaDatos);
+    
+    $('#btnGuardarTablero').click(guardarTablero);
 });
