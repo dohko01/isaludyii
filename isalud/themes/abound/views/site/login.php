@@ -9,22 +9,17 @@ $this->breadcrumbs=array(
 );
 ?>
 <div class="page-header">
-	<h1>Login <small>to your account</small></h1>
+	<h1>Acceso restringido</h1>
 </div>
 <div class="row-fluid">
 	
     <div class="span6 offset3">
 <?php
 	$this->beginWidget('zii.widgets.CPortlet', array(
-		'title'=>"Private access",
+		'title'=>"Iniciar Sesión",
 	));
 	
 ?>
-
-
-
-    <p>Please fill out the following form with your login credentials:</p>
-    
     <div class="form">
     <?php $form=$this->beginWidget('CActiveForm', array(
         'id'=>'login-form',
@@ -33,9 +28,7 @@ $this->breadcrumbs=array(
             'validateOnSubmit'=>true,
         ),
     )); ?>
-    
-        <p class="note">Fields with <span class="required">*</span> are required.</p>
-    
+        
         <div class="row">
             <?php echo $form->labelEx($model,'username'); ?>
             <?php echo $form->textField($model,'username', array('autofocus'=>'autofocus')); ?>
@@ -46,9 +39,6 @@ $this->breadcrumbs=array(
             <?php echo $form->labelEx($model,'password'); ?>
             <?php echo $form->passwordField($model,'password'); ?>
             <?php echo $form->error($model,'password'); ?>
-            <p class="hint">
-                Hint: You may login with <kbd>demo</kbd>/<kbd>demo</kbd> or <kbd>admin</kbd>/<kbd>admin</kbd>.
-            </p>
         </div>
     
         <div class="row rememberMe">
@@ -58,7 +48,7 @@ $this->breadcrumbs=array(
         </div>
     
         <div class="row buttons">
-            <?php echo CHtml::submitButton('Login',array('class'=>'btn btn btn-primary')); ?>
+            <?php echo CHtml::submitButton('Aceptar',array('class'=>'btn btn btn-primary')); ?>
         </div>
     
     <?php $this->endWidget(); ?>
