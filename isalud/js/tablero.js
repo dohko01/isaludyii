@@ -27,34 +27,38 @@ function agregarIndicador(indicador, contenido) {
 
 /**
  * Obtiene los datos del indicador desde el controlador
+ * 
+ * Recibe como parametro un JSON 
  * */
-function obtieneIndicador(ind) {
+function obtieneIndicador(parametros) {
     // Validar que el indicador no este ya agregado al tablero
-    existeIndicador = $('#tableroPrincipal').children('#'+prefixTblIndicador+ind);
+    existeIndicador = $('#tableroPrincipal').children('#'+prefixTblIndicador+parametros.id);
     
     // Si no existe agregarlo al tablero
     if(existeIndicador.length == 0) {
+        $.extend( parametros, {"YII_CSRF_TOKEN": $('[name=YII_CSRF_TOKEN]').val()} );
+         
         $.ajax({
             url: baseUrl+'/tablero/getindicador',
-            data: 'id='+ind+'&YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val(),
+            data: parametros,
             type: "POST",
             dataType : "json",
             success: function( respuesta ) {
                 if(respuesta.error) {
                     showError('Error al obtener datos del indicador, revise el mensaje de error: '+respuesta.msjerror);
                 } else {
-                    agregarIndicador(ind, respuesta);
+                    agregarIndicador(parametros.id, respuesta);
                     
                     tblDatos = ConvertJsonToTable(respuesta.datos);
-                    $('#datosIndicadores').append('<li id="datos_'+ind+'">'+tblDatos+'</li>');
+                    $('#datosIndicadores').append('<li id="datos_'+parametros.id+'">'+tblDatos+'</li>');
                     
                     // Guarda la dimension y el filtro del indicador
                     // Se utiliza para guardar el tablero
-                    $('#datosIndicadores').append('<li id="config_dim_'+ind+'">'+respuesta.dimension+'</li>');
-                    $('#datosIndicadores').append('<li id="config_fil_'+ind+'">'+JSON.stringify(respuesta.filtro)+'</li>'); // $.param(jsonObj)
+                    $('#datosIndicadores').append('<li id="config_dim_'+parametros.id+'">'+respuesta.dimension+'</li>');
+                    $('#datosIndicadores').append('<li id="config_fil_'+parametros.id+'">'+JSON.stringify(respuesta.filtro)+'</li>'); // $.param(jsonObj)
                     
-                    $('#'+prefixTblIndicador+ind+' .verFichaTecnica').click(getFichaTecnica);
-                    $('#'+prefixTblIndicador+ind+' .verTablaDatos').click(getTablaDatos);
+                    $('#'+prefixTblIndicador+parametros.id+' .verFichaTecnica').click(getFichaTecnica);
+                    $('#'+prefixTblIndicador+parametros.id+' .verTablaDatos').click(getTablaDatos);
                     //construyeGrafia(ind, datos, etiquetas, tipo);
                 }
             },
@@ -64,7 +68,7 @@ function obtieneIndicador(ind) {
         }); 
     } else {
         // Si el indicador existe, dar el efecto de mover
-        $("li#"+prefixTblIndicador+ind).effect("shake", { times : 3 }, 800);
+        $("li#"+prefixTblIndicador+parametros.id).effect("shake", { times : 3 }, 800);
     }
 }
 
@@ -194,7 +198,7 @@ function obtieneTablero(event, idTab) {
                 showError('Error al obtener datos del tablero, revise el mensaje de error: '+respuesta.msjerror);
             } else {
                 $.each(respuesta.datos, function(posicion, indicador) {
-                    obtieneIndicador(indicador.id);
+                    obtieneIndicador(indicador);
                 });
             }
         },
@@ -230,7 +234,15 @@ $(document).ready(function() {
         event.preventDefault();
         event.stopPropagation();
         
-        obtieneIndicador($(this).attr('id'));
+        parametros = {
+                    id: $(this).attr('id'),
+                    dimension: $('#dimension').val(),
+                    filtro: JSON.parse($('#filtro').val()),
+                    tipo_grafico: '',
+                    configuracion: '' 
+                };
+        
+        obtieneIndicador(parametros);
     });
     
     $('#menuTableros > li').click(function(){

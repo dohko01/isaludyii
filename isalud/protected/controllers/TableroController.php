@@ -26,15 +26,19 @@ class TableroController extends Controller
         
         if(Yii::app()->request->isAjaxRequest && Yii::app()->request->getPost('id')) {
             try {
+                $dimension = Yii::app()->request->getPost('dimension');//'id_jurisdiccion';
+                $filtro = Yii::app()->request->getPost('filtro');//array('id_estado'=>7, 'anio'=>2013);
+                $orden = Yii::app()->request->getPost('orden');//'id_jurisdiccion';
+                
+                if(empty($dimension)) throw new Exception('Debe especificar una dimensión para el indicador');
+                
+                if(empty($filtro)) throw new Exception('Debe especificar los parametros de filtrado para el indicador');
+                
                 $modelFicha = FichaTecnica::model()->findByPk(Yii::app()->request->getPost('id'));
 
                 if($modelFicha) {
                     $respuesta = $modelFicha->crearIndicador();
                     if($respuesta['error']) throw new Exception($respuesta['msjerror']);
-
-                    $dimension = 'id_jurisdiccion';
-                    $filtro = array('id_estado'=>7, 'anio'=>2013);
-                    $orden = 'id_jurisdiccion';
 
                     $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
                     if(isset($respuesta['error'])) throw new Exception($respuesta['msjerror']);
