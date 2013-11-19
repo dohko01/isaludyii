@@ -7,7 +7,7 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-ht
 
 <script>
 	var myChart = {
-		type   : "radar",
+		type   : "line",
 		title  : {text: "Hello ZingChart World!"},
 		"scale-x":{
 			values	: ["Enero","Febrero","Marzo","Abril","Mayo","Junio"]
@@ -19,7 +19,6 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-ht
 				text:		"HOLA",
 				animate:	true,
 				effect:		2,
-				url:		""
 			},
 			{
 				values:		[2, 4, 6, 8, 10, 12],
@@ -29,12 +28,11 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-ht
 			}
 		]
 		};
-		window.onload=function(){
+		
 		zingchart.render({
 			id : "myChartDiv",
-			height : "100%",
-			width : "100%",
+			height : 400,
+			width : 600,
 			data : myChart
 		});	
-	};
 </script>

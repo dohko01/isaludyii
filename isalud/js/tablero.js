@@ -1,6 +1,36 @@
 // La variable prefixTblIndicador se establece en el controlador tablero 
 // a partir de la configuracion en params
 
+function generaGrafica(respuesta, indicadorId)
+{
+	var myChart = {
+		type   : "line",
+		title  : {text: respuesta.subtitulo},
+		"scale-x":{
+			values	: respuesta.etiquetas,
+			"item"  : {
+				"font-size":"9px"
+			}
+		},
+		legend : {},
+		series : [
+			{
+				values:		respuesta.valores,
+				text:		respuesta.titulo,
+				animate:	true,
+				effect:		2,
+			}
+		]
+		};
+		
+		zingchart.render({
+			id : "graficoIndicador_"+indicadorId,
+			height : 400,
+			width : 700,
+			data : myChart
+		});	
+}
+
 /**
  * Agrega el contenido del indicador al tablero
  * */
@@ -15,7 +45,7 @@ function agregarIndicador(indicador, contenido) {
                                 <button class="btn verTablaDatos"  data-id="'+indicador+'">Tabla de Datos</button>\n\
                             </div>\n\
                         </div>\n\
-        <div class="graficoIndicador"></div>\n\
+        <div id="graficoIndicador_'+indicador+'" class="graficoIndicador"></div>\n\
         <div class="pieIndicador">Fuente: '+contenido.fuentes+'<br />Última actualización: '+contenido.fecha+'</div>\n\
     </div>';
                     
@@ -60,6 +90,8 @@ function obtieneIndicador(parametros) {
                     $('#'+prefixTblIndicador+parametros.id+' .verFichaTecnica').click(getFichaTecnica);
                     $('#'+prefixTblIndicador+parametros.id+' .verTablaDatos').click(getTablaDatos);
                     //construyeGrafia(ind, datos, etiquetas, tipo);
+					generaGrafica(respuesta, parametros.id);
+					//alert(respuesta.subtitulo);
                 }
             },
             error: function( xhr, status ) {
@@ -230,7 +262,7 @@ $(document).ready(function() {
         dashboardData : widgetDefinitions
     });
 
-    $('#menuIndicadores > li').click(function(){
+    $('#menuIndicadores > li').click(function(event){
         event.preventDefault();
         event.stopPropagation();
         
@@ -245,7 +277,7 @@ $(document).ready(function() {
         obtieneIndicador(parametros);
     });
     
-    $('#menuTableros > li').click(function(){
+    $('#menuTableros > li').click(function(event){
         event.preventDefault();
         event.stopPropagation();
         

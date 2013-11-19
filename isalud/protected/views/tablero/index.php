@@ -19,6 +19,9 @@ Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'
 
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/tablero.js', CClientScript::POS_END);
 
+Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-html5-min.js');
+Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/license.js');
+
 $this->breadcrumbs=array(
 	'Tablero',
 );
