@@ -58,13 +58,13 @@ class TableroIndicador extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id_tablero' => 'Id Tablero',
-			'id_ficha_tecnica' => 'Id Ficha Tecnica',
-			'dimension' => 'Dimension',
+			'id_tablero' => 'Tablero',
+			'id_ficha_tecnica' => 'Ficha Tecnica',
+			'dimension' => 'Dimensión',
 			'filtro' => 'Filtro',
-			'posicion' => 'Posicion',
-			'tipo_grafico' => 'Tipo Grafico',
-			'configuracion' => 'Configuracion',
+			'posicion' => 'Posición',
+			'tipo_grafico' => 'Tipo de gráfico',
+			'configuracion' => 'Configuración',
 		);
 	}
 
@@ -109,4 +109,20 @@ class TableroIndicador extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+    
+    /**
+     * Devuelve una array con solo los mensajes de error
+     */
+    public function getMsgErrors() {
+        $errores = $this->getErrors();
+        $msgErrores = array();
+        
+        foreach($errores as $atributoError) {
+            foreach($atributoError as $error) {
+                array_push($msgErrores, $error);
+            }
+        }
+        
+        return $msgErrores;
+    }
 }

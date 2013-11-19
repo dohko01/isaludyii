@@ -36,7 +36,7 @@ $this->breadcrumbs=array(
             <ul class="dropdown-menu" id="menuIndicadores">
                 <?php 
                 foreach ($indicadores as $id => $nombre) {
-                    echo '<li id='.$id.'><a href="'.Yii::app()->createURL('tablero/getindicador').'">'.$nombre.'</a></li>';
+                    echo '<li id='.$id.'><a href="#">'.$nombre.'</a></li>';
                 }
                 ?>
             </ul>
@@ -49,9 +49,11 @@ $this->breadcrumbs=array(
             <ul class="dropdown-menu" id="menuTableros">
                 <li><a href="#" id="btnGuardarTablero">Guardar</a></li>
                 <li class="divider"></li>
-                <li><a href="#" class="listaTablero">Tablero 1</a></li>
-                <li><a href="#" class="listaTablero">Tablero 2</a></li>
-                <li><a href="#" class="listaTablero">Tablero 3</a></li>
+                <?php 
+                    foreach ($tableros as $id => $nombre) {
+                        echo '<li data-id='.$id.'><a href="#">'.$nombre.'</a></li>';
+                    }
+                ?>
             </ul>
         </div>
     </div>

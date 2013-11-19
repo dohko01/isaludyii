@@ -7,11 +7,11 @@
  * @property integer $id
  * @property string $nombre
  * @property boolean $es_publico
- * @property boolean $fecha_creacion
- * @property boolean $id_usuario
+ * @property date $fecha_creacion
+ * @property integer $id_usuario
  *
  * The followings are the available model relations:
- * @property TblFichaTecnica[] $tblFichaTecnicas
+ * @property FichaTecnica[] $FichasTecnicas
  */
 class Tablero extends CActiveRecord
 {
@@ -49,6 +49,7 @@ class Tablero extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'FichasTecnicas' => array(self::MANY_MANY, 'FichaTecnica', 'tbl_tablero_indicador(id_tablero, id_ficha_tecnica)'),
+            'indicadoresTablero' => array(self::HAS_MANY, 'TableroIndicador', 'id_tablero', 'order'=>'posicion ASC'),
 		);
 	}
 
@@ -105,4 +106,20 @@ class Tablero extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+    
+    /**
+     * Devuelve una array con solo los mensajes de error
+     */
+    public function getMsgErrors() {
+        $errores = $this->getErrors();
+        $msgErrores = array();
+        
+        foreach($errores as $atributoError) {
+            foreach($atributoError as $error) {
+                array_push($msgErrores, $error);
+            }
+        }
+        
+        return $msgErrores;
+    }
 }

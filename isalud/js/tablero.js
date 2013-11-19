@@ -5,23 +5,37 @@
  * Agrega el contenido del indicador al tablero
  * */
 function agregarIndicador(indicador, contenido) {
+    // Construir el widget del indicador
+    wgIndicador = '<div class="contenedorIndicador">\n\
+        <div class="tituloIndicador">'+contenido.titulo+'</div>\n\
+        <div class="subtituloIndicador">'+contenido.subtitulo+'</div>\n\
+        <div class="opcionesIndicador">\n\
+                            <div class="btn-group">\n\
+                                <button class="btn verFichaTecnica" data-id="'+indicador+'">Ficha Tecnica</button>\n\
+                                <button class="btn verTablaDatos"  data-id="'+indicador+'">Tabla de Datos</button>\n\
+                            </div>\n\
+                        </div>\n\
+        <div class="graficoIndicador"></div>\n\
+        <div class="pieIndicador">Fuente: '+contenido.fuentes+'<br />Última actualización: '+contenido.fecha+'</div>\n\
+    </div>';
+                    
     $("#tableroPrincipal").sDashboard("addWidget", {
                     widgetId : prefixTblIndicador+indicador,
-                    widgetContent : contenido
+                    widgetContent : wgIndicador
                 });
 }
 
 /**
  * Obtiene los datos del indicador desde el controlador
  * */
-function obtieneIndicador(url, ind) {
+function obtieneIndicador(ind) {
     // Validar que el indicador no este ya agregado al tablero
     existeIndicador = $('#tableroPrincipal').children('#'+prefixTblIndicador+ind);
     
     // Si no existe agregarlo al tablero
     if(existeIndicador.length == 0) {
         $.ajax({
-            url: url,
+            url: baseUrl+'/tablero/getindicador',
             data: 'id='+ind+'&YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val(),
             type: "POST",
             dataType : "json",
@@ -29,21 +43,7 @@ function obtieneIndicador(url, ind) {
                 if(respuesta.error) {
                     showError('Error al obtener datos del indicador, revise el mensaje de error: '+respuesta.msjerror);
                 } else {
-                    // Construir el widget del indicador
-                    wgIndicador = '<div class="contenedorIndicador">';
-                    wgIndicador += '<div class="tituloIndicador">'+respuesta.titulo+'</div>';
-                    wgIndicador += '<div class="subtituloIndicador">'+respuesta.subtitulo+'</div>';
-                    wgIndicador += '<div class="opcionesIndicador">\n\
-                                        <div class="btn-group">\n\
-                                            <button class="btn verFichaTecnica" data-id="'+ind+'">Ficha Tecnica</button>\n\
-                                            <button class="btn verTablaDatos"  data-id="'+ind+'">Tabla de Datos</button>\n\
-                                        </div>\n\
-                                    </div>';
-                    wgIndicador += '<div class="graficoIndicador"></div>';
-                    wgIndicador += '<div class="pieIndicador">Fuente: '+respuesta.fuentes+'<br />Última actualización: '+respuesta.fecha+'</div>';
-                    wgIndicador += '</div>';
-
-                    agregarIndicador(ind, wgIndicador);
+                    agregarIndicador(ind, respuesta);
                     
                     tblDatos = ConvertJsonToTable(respuesta.datos);
                     $('#datosIndicadores').append('<li id="datos_'+ind+'">'+tblDatos+'</li>');
@@ -116,6 +116,13 @@ function guardarTablero(event) {
     event.preventDefault();
     event.stopPropagation();
     
+    objTablero = $("#tableroPrincipal").sDashboard("option","dashboardData");
+    
+    if(objTablero.length == 0) {
+        showError('No hay indicadores cargados en el tablero.');
+        return false;
+    }
+    
     $.prompt('<i class="fa fa-pencil-square-o fa-lg"></i> Proporcione un nombre para guardar el grupo de indicadores del tablero', {
         icon:'',
         title:'Guardar grupo de indicadores',
@@ -123,13 +130,12 @@ function guardarTablero(event) {
             { title:'Guardar', callback:function() {
                     $(this).dialog("close"); 
                     nombreTablero = $(this).find('#result').val();
-                
-                    objTablero = $("#tableroPrincipal").sDashboard("option","dashboardData");
-                    // Define un array JSON vacio
+                    
+                    // Define un array JSON con los datos a enviar
                     datosTablero = {
-                            "nombre": 'nombre del tablero',
+                            "nombre": nombreTablero,
                             "YII_CSRF_TOKEN": $('[name=YII_CSRF_TOKEN]').val(),
-                            "datos": []
+                            "datos": [] // arreglo con los datos de los indicadores dentro del tablero
                         };
 
                     $.each(objTablero, function(posicion, indicador) {
@@ -138,7 +144,7 @@ function guardarTablero(event) {
                         jsonIndicador = {
                             id: idInd,
                             dimension: $('#config_dim_'+idInd).text(),
-                            filtro: JSON.parse($('#config_fil_'+idInd).text()),
+                            filtro: $('#config_fil_'+idInd).text(),//JSON.parse($('#config_fil_'+idInd).text()),
                             posicion: posicion+1,
                             tipo_grafico: '',
                             configuracion: '' 
@@ -171,6 +177,33 @@ function guardarTablero(event) {
     });
 }
 
+/**
+ * Obtiene la lista de indicadores guardados en un tablero
+ * */
+function obtieneTablero(event, idTab) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    $.ajax({
+        url: baseUrl+'/tablero/gettablero',
+        data: 'id='+idTab+'&YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val(),
+        type: "POST",
+        dataType : "json",
+        success: function( respuesta ) {
+            if(respuesta.error) {
+                showError('Error al obtener datos del tablero, revise el mensaje de error: '+respuesta.msjerror);
+            } else {
+                $.each(respuesta.datos, function(posicion, indicador) {
+                    obtieneIndicador(indicador.id);
+                });
+            }
+        },
+        error: function( xhr, status ) {
+            showError( "Error al obtener los datos. "+status+" "+xhr.status );
+        }
+    }); 
+}
+
 $(document).ready(function() {
     var widgetDefinitions = [];/*[
         {
@@ -187,10 +220,6 @@ $(document).ready(function() {
                                 <div class="graficoIndicador"></div>\n\
                                 <div class="pieIndicador">Fuentes<br>Fecha de última actualización</div></div>'
         },
-        {
-            widgetId: "Widget2", //unique id for the widget
-            widgetContent: $('.contenedorIndicador').html() //content for the widget
-        }
     ];*/
 
     $("#tableroPrincipal").sDashboard({
@@ -199,9 +228,16 @@ $(document).ready(function() {
 
     $('#menuIndicadores > li').click(function(){
         event.preventDefault();
+        event.stopPropagation();
         
-        url = $(this).find('a').attr('href');
-        obtieneIndicador(url, $(this).attr('id'));
+        obtieneIndicador($(this).attr('id'));
+    });
+    
+    $('#menuTableros > li').click(function(){
+        event.preventDefault();
+        event.stopPropagation();
+        
+        obtieneTablero(event, $(this).data('id'));
     });
     
     $('#tableroPrincipal .verFichaTecnica').click(getFichaTecnica);
