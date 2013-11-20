@@ -12,6 +12,7 @@ function generaGrafica(respuesta, indicadorId)
 				"font-size":"9px"
 			}
 		},
+        scaleY  : { label : { text : "Porcentaje" }, values: "0:100:10"},
 		legend : {},
 		series : [
 			{

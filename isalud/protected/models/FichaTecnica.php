@@ -765,7 +765,7 @@ class FichaTecnica extends CActiveRecord
             // es necesario para la construccion de la grafica
             foreach($resultado['datos'] as $fila) {
                 // La columna indicador es fila y contiene el valor del indicador
-                array_push($resultado['valores'], $fila['indicador']);
+                array_push($resultado['valores'], floatval($fila['indicador']));
                 // El campo etiqueta depende de la dimension a mostrar
                 array_push($resultado['etiquetas'], $fila[$campoEtiqueta]);
             }
