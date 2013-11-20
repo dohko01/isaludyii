@@ -102,7 +102,7 @@ class TableroController extends Controller
     }
     
     public function actionGetTablero() {
-        $respuesta = array('error'=>false, 'msjerror'=>'', $datos=>array());
+        $respuesta = array('error'=>false, 'msjerror'=>'', 'datos'=>array());
         
         if(Yii::app()->request->isAjaxRequest && Yii::app()->request->getPost('id')) {
             try {
