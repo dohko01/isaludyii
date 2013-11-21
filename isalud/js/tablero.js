@@ -57,11 +57,23 @@ function agregarIndicador(indicador, contenido) {
         <div class="tituloIndicador">'+contenido.titulo+'</div>\n\
         <div class="subtituloIndicador">'+contenido.subtitulo+'</div>\n\
         <div class="opcionesIndicador">\n\
-                            <div class="btn-group">\n\
-                                <button class="btn verFichaTecnica" data-id="'+indicador+'">Ficha Tecnica</button>\n\
-                                <button class="btn verTablaDatos"  data-id="'+indicador+'">Tabla de Datos</button>\n\
-                            </div>\n\
-                        </div>\n\
+            <div class="btn-toolbar">\n\
+                <button class="btn verFichaTecnica" data-id="'+indicador+'"> <i class="fa fa-list-alt fa-lg"></i> Ficha Tecnica</button>\n\
+                <button class="btn verTablaDatos" data-id="'+indicador+'"> <i class="fa fa-table fa-lg"></i> Tabla de Datos</button>\n\
+                <div class="btn-group">\n\
+                    <button class="btn dropdown-toggle" data-id="'+indicador+'" data-toggle="dropdown"> \n\
+                        <i class="fa fa-picture-o fa-lg"></i> Tipo de Grafico <span class="caret"></span></button>\n\
+                    <ul class="dropdown-menu">';
+    
+    $.each(graficos, function(codigo, grafico) {
+         wgIndicador += '<li style="float:none" data-id="'+indicador+'" data-tipo="'+codigo+'" class="verTipoGrafico"><a href="#">'+grafico+'</a></li>';
+    });
+    
+                        
+    wgIndicador += '</ul>\n\
+                </div>\n\
+            </div>\n\
+        </div>\n\
         <div id="graficoIndicador_'+indicador+'" class="graficoIndicador"></div>\n\
         <div class="pieIndicador">Fuente: '+contenido.fuentes+'<br />Última actualización: '+contenido.fecha+'</div>\n\
     </div>';
@@ -70,6 +82,8 @@ function agregarIndicador(indicador, contenido) {
                     widgetId : prefixTblIndicador+indicador,
                     widgetContent : wgIndicador
                 });
+    
+    $('#'+prefixTblIndicador+indicador+' .verTipoGrafico').click(cambiarTipoGrafico);
 }
 
 /**
@@ -257,6 +271,18 @@ function obtieneTablero(event, idTab) {
     }); 
 }
 
+function cambiarTipoGrafico(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    idGrafica = $(this).data('id');
+    tipoGrafica = $(this).data('tipo');
+    
+    console.log(idGrafica);
+    console.log(tipoGrafica);
+}
+
+
 $(document).ready(function() {
     var widgetDefinitions = [];/*[
         {
@@ -302,7 +328,7 @@ $(document).ready(function() {
     });
     
     $('#tableroPrincipal .verFichaTecnica').click(getFichaTecnica);
-    $('#tableroPrincipal .verTablaDatos').click(getTablaDatos);
+    $('#tableroPrincipal .verTablaDatos').click(getTablaDatos); 
     
     $('#btnGuardarTablero').click(guardarTablero);
 });
