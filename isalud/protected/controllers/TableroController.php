@@ -6,8 +6,11 @@ class TableroController extends Controller
 	{
         $config = CJavaScript::encode(Yii::app()->params['prefixTblIndicador']);
         $baseUrl = CJavaScript::encode(Yii::app()->baseUrl);
+        $graficos =  CJavaScript::encode(CHtml::listData(TipoGrafico::model()->findAll(), 'codigo', 'nombre'));
         
-        Yii::app()->clientScript->registerScript('appConfig', 'var prefixTblIndicador = '.$config.'; var baseUrl = '.$baseUrl.'; ', CClientScript::POS_HEAD);
+        Yii::app()->clientScript->registerScript('appConfig', 'var prefixTblIndicador = '.$config.
+                                                            '; var baseUrl = '.$baseUrl.
+                                                            '; var graficos = '.$graficos, CClientScript::POS_HEAD);
     
 		$this->render('index', array(
             'indicadores' => CHtml::listData(FichaTecnica::model()->findAll(), 'id', 'nombre'),
