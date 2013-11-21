@@ -32,6 +32,16 @@ $tableReglasEvaluacion = '<div class="datagrid">
         }
 $tableReglasEvaluacion .= '</tbody></table></div>';
 
+$variables = '';
+
+if($model->Variables) {
+    foreach ($model->Variables as $var) {
+        $variables .= $var->nombre.' ['.$var->ini_formula.'], ';
+    }
+    
+    $variables = trim($variables, ', ');
+}
+
 $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
@@ -79,6 +89,10 @@ $this->widget('zii.widgets.CDetailView', array(
             'value' => $model->Nivel->nombre,
         ),
 		'codigo',
+        array(
+            'label'=>'Variables',
+            'value' => $variables,
+        ),
         array(
             'name'=>'formula',
             'value' => $model->formula ? $model->formula : $model->creaFormulaIndicador(),
