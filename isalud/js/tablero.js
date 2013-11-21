@@ -3,6 +3,20 @@
 
 function generaGrafica(respuesta, indicadorId)
 {
+	var arr1 = [];
+	var rules = [];
+	
+	for(var ii=0; ii< respuesta.escalaEvaluacion.length; ii++)
+	{
+		arr1 = {
+			"rule":"%v > "+respuesta.escalaEvaluacion[ii].limite_inf+" && %v <= "+respuesta.escalaEvaluacion[ii].limite_sup+"",
+			"size":6,
+			"background-color":""+respuesta.escalaEvaluacion[ii].color+""
+		}
+		rules.push(arr1);
+	}
+	
+	console.log(rules);
 	var myChart = {
 		type   : "line",
 		title  : {text: respuesta.subtitulo},
@@ -20,6 +34,9 @@ function generaGrafica(respuesta, indicadorId)
 				text:		respuesta.titulo,
 				animate:	true,
 				effect:		2,
+				"marker":{
+					"rules":rules,
+				}
 			}
 		]
 		};
