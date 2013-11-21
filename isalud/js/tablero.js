@@ -16,7 +16,6 @@ function generaGrafica(respuesta, indicadorId)
 		rules.push(arr1);
 	}
 	
-	console.log(rules);
 	var myChart = {
 		type   : "line",
 		title  : {text: respuesta.subtitulo},

@@ -7,9 +7,9 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-ht
 
 <script>
 	var myChart = {
-		type   : "line",
+		type   : "radar",
 		title  : {text: "Hello ZingChart World!"},
-		"scale-x":{
+		"scale-k":{
 			values	: ["Enero","Febrero","Marzo","Abril","Mayo","Junio"]
 		},
 		legend : {},
@@ -19,12 +19,14 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-ht
 				text:		"HOLA",
 				animate:	true,
 				effect:		2,
+				"tooltip-text" : "%t\n%k:%v",
 			},
 			{
 				values:		[2, 4, 6, 8, 10, 12],
 				text:		"NO",
 				animate:	true,
-				effect:		2
+				effect:		2,
+				"tooltip-text" : "%t\n%k:%v",
 			}
 		]
 		};
@@ -34,5 +36,11 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-ht
 			height : 400,
 			width : 600,
 			data : myChart
-		});	
+		});
+
+		zingchart.node_click = function(node){
+				console.log(node);
+				alert("Node Clicked - Key: " + node["key"] + 
+			   " Value: " + node["scaletext"]);
+		}	
 </script>
