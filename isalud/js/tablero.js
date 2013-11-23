@@ -11,7 +11,6 @@ function getJSONGrafica(parametros) {
 	for(i=0; i<parametros.escalaEvaluacion.length; i++) {
 		rule = {
 			"rule": "%v >= "+parametros.escalaEvaluacion[i].limite_inf+" && %v <= "+parametros.escalaEvaluacion[i].limite_sup,
-			"size": 6,
 			"background-color": parametros.escalaEvaluacion[i].color,
             "line-color": parametros.escalaEvaluacion[i].color,
 		};
@@ -32,30 +31,77 @@ function getJSONGrafica(parametros) {
         markers.push(market);
 	}
     
+    // Parametros comunes para todos los tipos de graficas
+    jsonGrafica = {
+                "graphset": [ {
+                    "type": parametros.tipo_grafico,
+                    "title": { 
+                        "text": parametros.titulo,
+                        "background-color": "none",
+                        "font-color": "black",
+                        "border-width": 1,
+                        "border-color": "#CCCCCC",
+                        "bold": true,
+                        "border-bottom": "none"
+                    },
+                    "subtitle": { 
+                        "text": parametros.subtitulo,
+                        "background-color": "none",
+                        "font-color": "black",
+                        "border-width": 1,
+                        "border-color": "#CCCCCC",
+                        "bold": true,
+                        "border-top": "none",
+                    },
+                    "source": { "text": "Fuentes: "+parametros.fuentes+", Última actualización: "+parametros.fecha },
+                    "border-width": 1,
+                    "border-color": "#CCCCCC",
+                    "background-color": "#fff #eee",
+                    "plot": {
+                        "rules": rules,
+                        "valueBox": { 
+                            "type": "all", 
+                            "placement": "top", 
+                            "font-color": "#FFFFFF",
+                            "background-color": "#000000",
+                            "border-radius": 5,
+                            "bold": true,
+                        },
+                    },
+                    "tooltip":{
+                        "background-color": "#000000",
+                        "border-radius": 5,
+                        "font-color": "#FFFFFF",
+                        "bold": true,
+                        "padding": 5,
+                    },
+                } ]
+            };
+    
     switch(parametros.tipo_grafico) {
+        // se coloca primero las barras horizontales
+        // porque es necesario agregarle un margen izquierdo
+        case 'hbar':
+        case 'hbar3d':
+            configuraciones = {
+                "graphset": [ {
+                    "plotarea": {
+                        "margin-left": "80px",
+                    },
+                } ]
+            };
+            
+            // Agrega los nuevos parametros al objeto jsonGrafica
+            $.extend(jsonGrafica.graphset[0], configuraciones.graphset[0]);
         case 'area':
         case 'area3d':
         case 'bar':
         case 'bar3d':
         case 'bubble':
-        case 'hbar':
-        case 'hbar3d':
         case 'line':
         case 'line3d':
-            jsonGrafica = {
+            configuraciones = {
                 "graphset": [ {
-                    "type": parametros.tipo_grafico,
-                    "title": { 
-                        "text": parametros.titulo,
-                        "background-color":"none",
-                        "font-color":"black"
-                    },
-                    "subtitle": { 
-                        "text": parametros.subtitulo,
-                        "background-color":"none",
-                        "font-color":"black"
-                    },
-                    "source": { "text": "Fuentes: "+parametros.fuentes+", Última actualización: "+parametros.fecha },
                     "scaleX": {
                         "label": { "text": parametros.etiquetaX },
                         "values": parametros.etiquetas,
@@ -66,383 +112,175 @@ function getJSONGrafica(parametros) {
                         "values": "0:100:10", 
                         "markers": markers 
                     },
-                    "border-width": 1,
-                    "border-color": "black",
-                    "background-color": "white",
-                    "plot": {
-                        "rules": rules,
-                        "valueBox": { 
-                            "type": "all", 
-                            "placement": "top", 
-                            "color": "#1F307C" 
-                        }
-                    },
                     "series": [ {
                         "values": parametros.valores,
                         "text": parametros.titulo,
                         "animate": true,
                         "effect": 2,
-                        "marker": { "rules": rules }
-                    } ] 
+                        "marker": { 
+                            "rules": rules 
+                        },
+                    } ],
                 } ]
             };
+            
+            // Agrega los nuevos parametros al objeto jsonGrafica
+            $.extend(jsonGrafica.graphset[0], configuraciones.graphset[0]);
+        break;
+        
+        case 'radar':
+            configuraciones = {
+                "graphset": [ {
+                    "series": [ {
+                        "values": parametros.valores,
+                        "text": parametros.titulo,
+                        "animate": true,
+                        "effect": 2,
+                        "marker": { 
+                            "rules": rules 
+                        },
+                    } ],
+                    "scale-k":{
+                        "values": parametros.etiquetas
+                    },
+                    "plot": {
+                        "rules": rules,
+                        "valueBox": { 
+                            "type": "all", 
+                            "font-color": "#000",
+                        },
+                    },
+                } ]
+            };
+            
+            // Agrega los nuevos parametros al objeto jsonGrafica
+            $.extend(jsonGrafica.graphset[0], configuraciones.graphset[0]);
         break;
         
         case 'pie':
         case 'pie3d':
-            jsonGrafica = {
-                "graphset": [ {
-                    "source": { text : "Source: Farnsworth Delivery Tracking Gizmo"},
-                    "type": parametros.tipo_grafico,
-                    "background-color":"#eee",
-                    "title":{
-                        "text":"Top Used Mobile Apps",
-                        "background-color":"none",
-                        "font-color":"gray"
-                    },
-                    "subtitle":{
-                        "text":"Number of Users at Acme Company",
-                        "font-color":"gray"
-                    },
-                    "plotarea":{
-                        "margin-top":"10px",
-                        "margin-bottom":"30px",
-
-                    },
-                    "plot":{
-                        "value-box":{
-                            "color":"gray",
-                            "line-width":"10px",
-                            "bold":true
-                        }
-                    },
-                    "scale-r":{
-                        "ref-angle":130
-                    },
-                    "tooltip":{
-                        "text":"%t <br>Number of Users %v"
-                    },
-                    "series":[
-                        {
-                            "text":"Video App",
-                            "values":[15],
-                            "background-color":"#7dbdff",
-                        },
-                        {
-                            "text":"Note App",
-                            "values":[18],
-                            "background-color":"#88c79d"
-                        },
-                        {
-                            "text":"Social App",
-                            "values":[20],
-                            "background-color":"#fda9c7"
-                        },
-                        {
-                            "text":"Billing App",
-                            "values":[16],
-                            "background-color":"#fdd86f"
-                        },
-                        {
-                            "text":"Email App",
-                            "values":[21],
-                            "background-color":"#f76966",
-
-                        }
-                    ]
-                } ]
-            };
-        break;
-        
-        case 'radar':
-            jsonGrafica = {
-                "graphset": [{
-                    "source": { text : "Source: Farnsworth Delivery Tracking Gizmo" },
-                    "border-width":1,
-                    "border-color":"black",
-                    "legend":{
-                        "border-color":"#CCCCCC",
-                        "background-color":"#FFFFFF",
-                        "margin-top":40,
-                        "shadow":false,
-                        "alpha":1
-                    },
-                    "scale":{
-                        "size-factor":0.75
-                    },
-                    "tooltip":{
-                        "background-color":"#333333",
-                        "font-size":11,
-                        "font-color":"#FFFFFF",
-                        "bold":true,
-                        "font-family":"Helvetica",
-                        "padding":5
-                    },
-                    "series":[
-                        {
-                            "text":"Zeus Effort Estimate (in days)",
-                            "values":[11,39,25,12,17.5,25.5,25],
-                            "marker":{
-                                "background-color-2":"#699EBF",
-                                "background-color":"#F0F1F2"
-                            },
-                            "line-color":"#699EBF",
-                            "background-color-2":"#699EBF",
-                            "background-color":"#F0F1F2"
-                        }
-                    ],
-                    "scale-v":{
-                        "tick":{
-                            "line-gap-size":0,
-                            "line-color":"#cccccc",
-                            "line-width":1,
-                            "size":10
-                        },
-                        "font-size":16,
-                        "line-color":"#cccccc",
-                        "bold":true,
-                        "format":"%v",
-                        "item":{
-                            "font-size":11,
-                            "font-family":"Helvetica",
-                            "color":"#333333"
-                        },
-                        "label":{
-                            "color":"#333333"
-                        },
-                        "line-width":2,
-                        "font-family":"Helvetica",
-                        "color":"#333333"
-                    },
-                    "scale-y":{
-                        "label":{
-                            "text":"Effort ( in days )"
-                        }
-                    },
-                    "scale-x":{
-                        "label":{
-                            "text":"Feature"
-                        }
-                    },
-                    "background-color":"white",
-                    "scale-k":{
-                        "tick":{
-                            "line-gap-size":0,
-                            "line-color":"#cccccc",
-                            "line-width":1,
-                            "size":10
-                        },
-                        "font-size":16,
-                        "line-color":"#cccccc",
-                        "bold":true,
-                        "item":{
-                            "font-size":11,
-                            "font-family":"Helvetica",
-                            "color":"#333333"
-                        },
-                        "guide":{
-                            "line-width":0
-                        },
-                        "label":{
-                            "color":"#333333"
-                        },
-                        "line-width":2,
-                        "font-family":"Helvetica",
-                        "color":"#333333",
-                        "values":[ "Closure Test Plan",
-                                   "Language Enhancements",
-                                   "Scheduled Tasks",
-                                   "Security Enhancements 1 Test Plan",
-                                   "Security HotFix test plan","testplan schedule",
-                                   "Tomcat Integration - II"
-                               ]
-                    },
-                    "plot":{
-                        "fill-type":"radial",
-                        "hover-marker":{
-                            "background-color":"#888888",
-                            "size":3
-                        },
-                        "marker":{
-                            "background-color":"#cccccc",
-                            "size":3
-                        },
-                        "aspect":"line",
-                        "preview":true,
-                        "tooltip-text":"%v"
-                    },
-                    "type":"radar",
-                    "title":{
-                        "border-width":1,
-                        "border-color":"#cccccc",
-                        "background-color":"white",
-                        "font-size":18,
-                        "bold":true,
-                        "text":"ColdFusion Effort Estimates",
-                        "font-family":"Helvetica",
-                        "color":"#333333"
+            series = [];
+            
+            for(i=0; i<parametros.valores.length; i++) {
+                backgroundColor = '';
+                for(j=0; j<parametros.escalaEvaluacion.length; j++) {
+                    if(parametros.valores[i] >= parametros.escalaEvaluacion[j].limite_inf && parametros.valores[i] <= parametros.escalaEvaluacion[j].limite_sup) {
+                        backgroundColor = parametros.escalaEvaluacion[j].color;
+                        break;
                     }
-                } ]
+                }
+                
+                serie = {
+                        "text": parametros.etiquetas[i],
+                        "values": [ parametros.valores[i] ],
+                        "animate": true,
+                        "effect": 2,
+                        "background-color": backgroundColor
+                    };
+                
+                series.push(serie);
+            }
+            
+            configuraciones = {
+                "graphset": [ {
+                    "plot": {
+                        "rules": rules,
+                        "valueBox": { 
+                            "type": "all", 
+                            "text": "%t (%v)",
+                            "text-align": "center",
+                            "placement": "out", 
+                            "font-color": "#000000",
+                            "bold": true,
+                        },
+                        "tooltip-text":"%t (%v%)",
+                    },
+                    "plotarea": {
+                        "margin-top": "30px",
+                        "margin-bottom": "20px",
+                        "margin-right": "70px",
+                    },
+                    "series": series,
+                } ] 
             };
+            
+            // Agrega los nuevos parametros al objeto jsonGrafica
+            $.extend(jsonGrafica.graphset[0], configuraciones.graphset[0]);
         break;
         
         case 'gauge':
-            jsonGrafica = {
+            series = [];
+            labels = [];
+            
+            for(i=0; i<parametros.valores.length; i++) {
+                serie = {
+                        "text": parametros.etiquetas[i]+" ("+parametros.valores[i]+")",
+                        "values": [ parametros.valores[i] ],
+                        "animation": {
+                                "method": 5,
+                                "effect": 2,
+                                "speed": 2500
+                            }
+                    };
+                
+                series.push(serie);
+            }
+            
+            offsetX = -220;
+            width = 100;
+            
+            for(j=0; j<parametros.escalaEvaluacion.length; j++) {
+                label = {
+                        "x": "50%",
+                        "y": "90%",
+                        "width": width,
+                        "offsetX": offsetX,
+                        "textAlign": "center",
+                        "padding": 10,
+                        "anchor": "c",
+                        "text": parametros.escalaEvaluacion[j].nombre,
+                        "backgroundColor": parametros.escalaEvaluacion[j].color,
+                        "font-color": "#FFF",
+                        "bold": true,
+                    };
+                    
+                labels.push(label);
+                
+                offsetX = offsetX + width;
+            }
+            
+            configuraciones = {
                 "graphset": [ {
-                    "source": { text : "Source: Farnsworth Delivery Tracking Gizmo" },
-                    "type":"gauge",
-                    "background-color":"#fff #eee",
-                    "plot":{
-                        "background-color":"#666"
+                    "plotarea": {
+                        "margin": "0 0 0 0"
                     },
-                    "plotarea":{
-                        "margin":"0 0 0 0"
+                    "scale": {
+                        "size-factor": 1,
+                        "offset-y": 100,
+                        "offset-x": -80
                     },
-                    "scale":{
-                        "size-factor":0.8,
-                        "offset-y":100
+                    "plot": {
+                        "tooltip-text":"%t",
                     },
-                    "scale-r":{
-                        "values":"0:100:10",
-                        "border-color":"#b3b3b3",
-                        "border-width":"2",
-                        "background-color":"#eeeeee,#b3b3b3",
-                        "ring":{
-                            "size":10,
-                            "offset-r":"130px",
-                            "background-color":"#eeeeee,#bbbbbb",
-                            "rules":[
-                                {
-                                    "rule":"%v >=0 && %v < 20",
-                                    "background-color":"#348D00"
-                                },
-                                {
-                                    "rule":"%v >= 20 && %v < 40",
-                                    "background-color":"#B1AD00"
-                                },
-                                {
-                                    "rule":"%v >= 40 && %v < 60",
-                                    "background-color":"#FAC100"
-                                },
-                                {
-                                    "rule":"%v >= 60 && %v < 80",
-                                    "background-color":"#EC7928"
-                                },
-                                {
-                                    "rule":"%v >= 80",
-                                    "background-color":"#FB0A02"
-                                }
-                            ]
+                    "scale-r": {
+                        "values": "0:100:10",
+                        "background-color": "#eeeeee,#b3b3b3",
+                        "ring": {
+                            "size": 10,
+                            "background-color": "#eeeeee,#bbbbbb",
+                            "rules": rules
                         }
                     },
-                    "labels":[
-                        {
-                            "id":"lbl1",
-                            "x":"50%",
-                            "y":"90%",
-                            "width":80,
-                            "offsetX":160,
-                            "textAlign":"center",
-                            "padding":10,
-                            "anchor":"c",
-                            "text":"Very High",
-                            "backgroundColor":"#FB0A02",
-                            "tooltip":{
-                                "padding":10,
-                                "backgroundColor":"#ea0901",
-                                "text":"Some Text"
-                            }
-                        },
-                        {
-                            "id":"lbl2",
-                            "x":"50%",
-                            "y":"90%",
-                            "width":80,
-                            "offsetX":80,
-                            "textAlign":"center",
-                            "padding":10,
-                            "anchor":"c",
-                            "text":"High",
-                            "backgroundColor":"#EC7928",
-                            "tooltip":{
-                                "padding":10,
-                                "backgroundColor":"#da6817",
-                                "text":"Some Text"
-                            }
-                        },
-                        {
-                            "id":"lbl3",
-                            "x":"50%",
-                            "y":"90%",
-                            "width":80,
-                            "offsetX":0,
-                            "textAlign":"center",
-                            "padding":10,
-                            "anchor":"c",
-                            "text":"Medium",
-                            "backgroundColor":"#FAC100",
-                            "tooltip":{
-                                "padding":10,
-                                "backgroundColor":"#e9b000",
-                                "text":"Some Text"
-                            }
-                        },
-                        {
-                            "id":"lbl4",
-                            "x":"50%",
-                            "y":"90%",
-                            "width":80,
-                            "offsetX":-80,
-                            "textAlign":"center",
-                            "padding":10,
-                            "anchor":"c",
-                            "text":"Low",
-                            "backgroundColor":"#B1AD00",
-                            "tooltip":{
-                                "padding":10,
-                                "backgroundColor":"#a09c00",
-                                "text":"Some Text"
-                            }
-                        },
-                        {
-                            "id":"lbl5",
-                            "x":"50%",
-                            "y":"90%",
-                            "width":80,
-                            "offsetX":-160,
-                            "textAlign":"center",
-                            "padding":10,
-                            "anchor":"c",
-                            "text":"Very Low",
-                            "backgroundColor":"#348D00",
-                            "tooltip":{
-                                "padding":10,
-                                "backgroundColor":"#237b00",
-                                "text":"Some Text"
-                            }
-                        }
-                    ],
-                    "series":[
-                        {
-                            "values":[90],
-                            "animation":{
-                                "method":5,
-                                "effect":2,
-                                "speed":2500
-                            }
-                        },
-                         {
-                            "values":[50],
-                            "animation":{
-                                "method":5,
-                                "effect":2,
-                                "speed":2500
-                            }
-                        }
-                    ],
-                    "alpha":1
+                    "legend": {
+                        "margin-top": "70"
+                    },
+                    "labels": labels,
+                    "series": series,
                 } ]
             };
+            
+            // Agrega los nuevos parametros al objeto jsonGrafica
+            $.extend(jsonGrafica.graphset[0], configuraciones.graphset[0]);
         break;
         
         default:
@@ -484,6 +322,9 @@ function cambiarTipoGrafico(event) {
         width : 700,
         data : jsonGrafico
     });
+    
+    // Cierra el dropdown menu
+    $(this).parent().parent().removeClass('open');
 }
 
 /**
@@ -507,8 +348,6 @@ function generaGrafica(parametros, indicadorId)
 function agregarIndicador(indicador, contenido) {
     // Construir el widget del indicador
     wgIndicador = '<div class="contenedorIndicador">\n\
-        <div class="tituloIndicador">'+contenido.titulo+'</div>\n\
-        <div class="subtituloIndicador">'+contenido.subtitulo+'</div>\n\
         <div class="opcionesIndicador">\n\
             <div class="btn-toolbar">\n\
                 <button class="btn verFichaTecnica" data-id="'+indicador+'"> <i class="fa fa-list-alt fa-lg"></i> Ficha Tecnica</button>\n\
@@ -528,7 +367,6 @@ function agregarIndicador(indicador, contenido) {
             </div>\n\
         </div>\n\
         <div id="graficoIndicador_'+indicador+'" class="graficoIndicador"></div>\n\
-        <div class="pieIndicador">Fuente: '+contenido.fuentes+'<br />Última actualización: '+contenido.fecha+'</div>\n\
     </div>';
                     
     $("#tableroPrincipal").sDashboard("addWidget", {
@@ -768,6 +606,9 @@ $(document).ready(function() {
                 };
         
         obtieneIndicador(parametros);
+        
+        // Cierra el dropdown menu
+        $(this).parent().parent().removeClass('open');
     });
     
     $('#menuTableros > li').click(function(event){
@@ -775,6 +616,9 @@ $(document).ready(function() {
         event.stopPropagation();
         
         obtieneTablero(event, $(this).data('id'));
+        
+        // Cierra el dropdown menu
+        $(this).parent().parent().removeClass('open');
     });
     
     $('#tableroPrincipal .verFichaTecnica').click(getFichaTecnica);

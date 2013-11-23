@@ -54,7 +54,11 @@ class TableroController extends Controller
                 $respuesta['msjerror'] = $e->getMessage();
             }
             
-            $respuesta['tipo_grafico'] = 'line';
+            // Si no esta definido el tipo de grafio, se establecera como line
+            if( !Yii::app()->request->getPost('tipo_grafico') )
+                $respuesta['tipo_grafico'] = 'line';
+            else
+                $respuesta['tipo_grafico'] = Yii::app()->request->getPost('tipo_grafico');
 
             echo json_encode($respuesta);
         }
