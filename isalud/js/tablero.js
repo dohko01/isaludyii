@@ -8,6 +8,7 @@ function getJSONGrafica(parametros) {
     var markers = [];
     var jsonGrafica = null;
 	
+<<<<<<< HEAD
 	for(i=0; i<parametros.escalaEvaluacion.length; i++) {
 		rule = {
 			"rule": "%v >= "+parametros.escalaEvaluacion[i].limite_inf+" && %v <= "+parametros.escalaEvaluacion[i].limite_sup,
@@ -249,7 +250,13 @@ function getJSONGrafica(parametros) {
                         "line-width":2,
                         "font-family":"Helvetica",
                         "color":"#333333",
-                        "values":["Closure Test Plan","Language Enhancements","Scheduled Tasks","Security Enhancements 1 Test Plan","Security HotFix test plan","testplan schedule","Tomcat Integration - II"]
+                        "values":[ "Closure Test Plan",
+                                   "Language Enhancements",
+                                   "Scheduled Tasks",
+                                   "Security Enhancements 1 Test Plan",
+                                   "Security HotFix test plan","testplan schedule",
+                                   "Tomcat Integration - II"
+                               ]
                     },
                     "plot":{
                         "fill-type":"radial",
