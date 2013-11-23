@@ -8,7 +8,6 @@ function getJSONGrafica(parametros) {
     var markers = [];
     var jsonGrafica = null;
 	
-<<<<<<< HEAD
 	for(i=0; i<parametros.escalaEvaluacion.length; i++) {
 		rule = {
 			"rule": "%v >= "+parametros.escalaEvaluacion[i].limite_inf+" && %v <= "+parametros.escalaEvaluacion[i].limite_sup,
