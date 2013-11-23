@@ -53,6 +53,8 @@ class TableroController extends Controller
                 $respuesta['error'] = true;
                 $respuesta['msjerror'] = $e->getMessage();
             }
+            
+            $respuesta['tipo_grafico'] = 'line';
 
             echo json_encode($respuesta);
         }

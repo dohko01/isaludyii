@@ -400,6 +400,12 @@
 					this._removeWidgetFromWidgetDefinitions(widgetId);
 				}
 			},
+            
+            //Clean the dashboard, by p4scu41
+			clean : function() {
+                this.element.find('li').remove(); 
+                this.options.dashboardData = [];
+			},
 
 			//get the wigetDefinitions
 			getDashboardData : function() {

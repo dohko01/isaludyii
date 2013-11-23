@@ -65,7 +65,7 @@ $this->breadcrumbs=array(
 
 <input type="hidden" name="YII_CSRF_TOKEN" id="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
 <input type="hidden" name="dimension" id="dimension" value="id_jurisdiccion" />
-<input type="hidden" name="filtro" id="filtro" value='{"id_estado":7,"anio":2013}' />
+<input type="hidden" name="filtro" id="filtro" value='{"id_estado":7, "anio":2013}' />
 
 <ul id="tableroPrincipal"> </ul>
 <ul id="datosIndicadores" style="display: none;"> </ul>

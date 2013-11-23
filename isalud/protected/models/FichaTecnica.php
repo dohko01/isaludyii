@@ -760,6 +760,8 @@ class FichaTecnica extends CActiveRecord
             $resultado['valores'] = array();
             $resultado['etiquetas'] = array();
             $resultado['escalaEvaluacion'] = array();
+            $resultado['etiquetaY'] = $this->unidad_medida;
+            $resultado['etiquetaX'] = $campoSubtitulo;
             
             // Enviar los valores y las etiquetas en un arreglo separado,
             // es necesario para la construccion de la grafica
