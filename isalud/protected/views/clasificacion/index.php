@@ -3,16 +3,16 @@
 /* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(
-	'Clasificacions',
+	'Clasificaciones',
 );
 
 $this->menu=array(
-	array('label'=>'Crear Clasificacion', 'url'=>array('create')),
-	array('label'=>'Administrar Clasificacion', 'url'=>array('admin')),
+	array('label'=>'Crear Clasificación', 'url'=>array('create')),
+	array('label'=>'Administrar Clasificación', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Clasificacions</h1>
+<h1>Clasificaciones</h1>
 
 <?php $this->widget('zii.widgets.CListView', array(
 	'dataProvider'=>$dataProvider,

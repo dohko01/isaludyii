@@ -3,19 +3,19 @@
 /* @var $model Clasificacion */
 
 $this->breadcrumbs=array(
-	'Clasificacions'=>array('index'),
-	$model->id=>array('view','id'=>$model->id),
-	'Update',
+	'Clasificaciones'=>array('index'),
+	$model->nombre=>array('view','id'=>$model->id),
+	'Actualizar',
 );
 
 $this->menu=array(
-	array('label'=>'Listar Clasificacion', 'url'=>array('index')),
-	array('label'=>'Crear Clasificacion', 'url'=>array('create')),
-	array('label'=>'Ver Clasificacion', 'url'=>array('view', 'id'=>$model->id)),
-	array('label'=>'Administrar Clasificacion', 'url'=>array('admin')),
+	array('label'=>'Listar Clasificación', 'url'=>array('index')),
+	array('label'=>'Crear Clasificación', 'url'=>array('create')),
+	array('label'=>'Ver Clasificación', 'url'=>array('view', 'id'=>$model->id)),
+	array('label'=>'Administrar Clasificación', 'url'=>array('admin')),
 );
 ?>
 
-<h1>Update Clasificacion <?php echo $model->id; ?></h1>
+<h1>Actualizar la Clasificacion <?php echo $model->nombre; ?></h1>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

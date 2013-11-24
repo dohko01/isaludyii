@@ -7,6 +7,20 @@ class ClasificacionController extends Controller
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
 	public $layout='//layouts/column2';
+    
+    /**
+	 * Titulo singular para breadcrumb y encabezado
+	 *
+	 * @var string
+	 */
+	public $title_sin = 'Clasificación';
+
+	/**
+	 * Titulo plural para breadcrumb y encabezado
+	 *     
+	 * @var string 
+	 */
+	public $title_plu = 'Clasificaciones';
 
 	/**
 	 * @return array action filters
@@ -54,6 +68,8 @@ class ClasificacionController extends Controller
 	 */
 	public function actionView($id)
 	{
+        $this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Ver';
+        
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 		));
@@ -65,6 +81,8 @@ class ClasificacionController extends Controller
 	 */
 	public function actionCreate()
 	{
+        $this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Crear';
+        
 		$model=new Clasificacion;
 
 		// Uncomment the following line if AJAX validation is needed
@@ -89,6 +107,8 @@ class ClasificacionController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+        $this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Actualizar';
+        
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -113,6 +133,8 @@ class ClasificacionController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+        $this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Eliminar';
+        
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -136,6 +158,8 @@ class ClasificacionController extends Controller
 	 */
 	public function actionAdmin()
 	{
+        $this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Administración';
+        
 		$model=new Clasificacion('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Clasificacion']))

@@ -15,7 +15,7 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
+	<p class="note">Campos con <span class="required">*</span> son obligatorios.</p>
 
 	<?php echo $form->errorSummary($model); ?>
 
@@ -26,7 +26,15 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+		<?php
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnEnviarForm',
+            'value'=>'1',
+            'caption'=>$model->isNewRecord ? 'Guardar' : 'Actualizar',
+            )
+        );
+        ?>
 	</div>
 
 <?php $this->endWidget(); ?>
