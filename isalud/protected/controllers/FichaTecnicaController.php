@@ -106,17 +106,18 @@ class FichaTecnicaController extends Controller
                 $this->validateVariables($model);
 
                 if($model->save()) {
-                    
-                    $variables = $_POST['FichaTecnica']['Variables'];
+                    if(isset($_POST['FichaTecnica']['Variables'])) {
+                        $variables = $_POST['FichaTecnica']['Variables'];
 
-                    if(!empty($variables)) {
-                        foreach($variables as $var) {
-                            $objVar = new FichaTecnicaVariable;
+                        if(!empty($variables)) {
+                            foreach($variables as $var) {
+                                $objVar = new FichaTecnicaVariable;
 
-                            $objVar->id_ficha_tecnica = $model->id;
-                            $objVar->id_variable = $var;
+                                $objVar->id_ficha_tecnica = $model->id;
+                                $objVar->id_variable = $var;
 
-                            $objVar->save();
+                                $objVar->save();
+                            }
                         }
                     }
                     $transaction->commit();
@@ -162,16 +163,18 @@ class FichaTecnicaController extends Controller
                 if($model->save()) {
                     FichaTecnicaVariable::model()->deleteAllByAttributes(array('id_ficha_tecnica'=>$model->id));
 
-                    $variables = $_POST['FichaTecnica']['Variables'];
+                    if(isset($_POST['FichaTecnica']['Variables'])) {
+                        $variables = $_POST['FichaTecnica']['Variables'];
 
-                    if(!empty($variables)) {
-                        foreach($variables as $var) {
-                            $objVar = new FichaTecnicaVariable;
+                        if(!empty($variables)) {
+                            foreach($variables as $var) {
+                                $objVar = new FichaTecnicaVariable;
 
-                            $objVar->id_ficha_tecnica = $model->id;
-                            $objVar->id_variable = $var;
+                                $objVar->id_ficha_tecnica = $model->id;
+                                $objVar->id_variable = $var;
 
-                            $objVar->save();
+                                $objVar->save();
+                            }
                         }
                     }
 
@@ -269,44 +272,47 @@ class FichaTecnicaController extends Controller
      */
     private function validateVariables($model)
     {
-        // Variables contenidas en la formula
-        $vars_formula = array();
-        // Variables seleccionadas en la lista
-        $vars_select = explode(',',$_POST['variablesSeleccionadas']);
+        if(isset($_POST['variablesSeleccionadas'])) {
+            // Variables contenidas en la formula
+            $vars_formula = array();
+        
+            // Variables seleccionadas en la lista
+            $vars_select = explode(',',$_POST['variablesSeleccionadas']);
 
-        // Elimina dobles espacios
-        $model->formula = preg_replace('/\s+/', ' ', $model->formula);
+            // Elimina dobles espacios
+            $model->formula = preg_replace('/\s+/', ' ', $model->formula);
 
-        //preg_match_all('/(\[[a-z0-9\_\-]+\])/', $model->formula, $vars_formula);
-        preg_match_all('/\[[a-z0-9\_\-]{1,}\]/', $model->formula, $vars_formula);
+            //preg_match_all('/(\[[a-z0-9\_\-]+\])/', $model->formula, $vars_formula);
+            preg_match_all('/\[[a-z0-9\_\-]{1,}\]/', $model->formula, $vars_formula);
 
-        $trimVars = function(&$elemento, &$clave) {
-            $elemento = trim($elemento);
-        };
-        // Eliminar espacios en blanco de las variables
-        array_walk_recursive($vars_formula, $trimVars);
-        array_walk_recursive($vars_select, $trimVars);
+            $trimVars = function(&$elemento, &$clave) {
+                $elemento = trim($elemento);
+            };
+            // Eliminar espacios en blanco de las variables
+            array_walk_recursive($vars_formula, $trimVars);
+            array_walk_recursive($vars_select, $trimVars);
 
-        print_r($vars_formula[0]);
-        print_r($vars_select);
+            print_r($vars_formula[0]);
+            print_r($vars_select);
 
-        // Revisar si existe alguna variable que esta en la formula y que no este seleccionada
-        $difVars = array_diff($vars_formula[0], $vars_select);
-        $difVars = array_filter($difVars);
+            // Revisar si existe alguna variable que esta en la formula y que no este seleccionada
+            $difVars = array_diff($vars_formula[0], $vars_select);
+            $difVars = array_filter($difVars);
 
-        if(count($difVars)) {
-            $model->addError('Variables', 'Debe seleccionar todas las variables a utilizar en la formula');
-            $model->addError('formula', 'La formula contiene variables que no estan seleccionadas');
-            throw new Exception();
-        }
+            if(count($difVars)) {
+                $model->addError('Variables', 'Debe seleccionar todas las variables a utilizar en la formula');
+                $model->addError('formula', 'La formula contiene variables que no estan seleccionadas');
+                throw new Exception();
+            }
 
-        // Revisar si existe alguna variable que esta seleccionada pero que no aparece en la formula
-        $difVars = array_diff($vars_select, $vars_formula[0]);
-        $difVars = array_filter($difVars);
+            // Revisar si existe alguna variable que esta seleccionada pero que no aparece en la formula
+            $difVars = array_diff($vars_select, $vars_formula[0]);
+            $difVars = array_filter($difVars);
 
-        if(count($difVars)) {
-            $model->addError('Variables', 'Existen variables seleccionadas que no se utilizan en la formula');
-            throw new Exception();
+            if(count($difVars)) {
+                $model->addError('Variables', 'Existen variables seleccionadas que no se utilizan en la formula');
+                throw new Exception();
+            }
         }
     }
 

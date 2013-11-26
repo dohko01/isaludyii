@@ -28,17 +28,17 @@
  * @property string $utilidad
  *
  * The followings are the available model relations:
- * @property TblcTipoIndicador $idCatTipoIndicador
- * @property TblcClasificacion $idCatClasificacion
- * @property TblEscalaEvaluacion $idEscalaEvaluacion
- * @property TblcPeriodicidad $idCatPeriodicidad
- * @property FichaTecnica $idFichaTecnicaPadre
- * @property FichaTecnica[] $tblFichaTecnicas
- * @property TblcDireccion $idCatDireccion
- * @property TblcSubdireccion $idCatSubdireccion
- * @property TblcCoordinacion $idCatCoordinacion
- * @property TblcProgramaAccion $idCatProgramaAccion
- * @property TblcNivel $idCatNivel
+ * @property TipoIndicador $TipoIndicador
+ * @property Clasificacion $Clasificacion
+ * @property EscalaEvaluacion $EscalaEvaluacion
+ * @property Periodicidad Periodicidad
+ * @property FichaTecnica $FichaTecnicaPadre
+ * @property FichaTecnica[] $FichaTecnicasHijas
+ * @property Direccion $Direccion
+ * @property Subdireccion $Subdireccion
+ * @property Coordinacion $Coordinacion
+ * @property ProgramaAccion $ProgramaAccion
+ * @property Nivel $Nivel
  */
 class FichaTecnica extends CActiveRecord
 {
@@ -762,6 +762,7 @@ class FichaTecnica extends CActiveRecord
             $resultado['escalaEvaluacion'] = array();
             $resultado['etiquetaY'] = $this->unidad_medida;
             $resultado['etiquetaX'] = $campoSubtitulo;
+            $resultado['nivel'] = array("id" => $this->Nivel->id, "nombre" => $this->Nivel->nombre);
             
             // Enviar los valores y las etiquetas en un arreglo separado,
             // es necesario para la construccion de la grafica
