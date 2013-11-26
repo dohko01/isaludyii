@@ -137,7 +137,7 @@ function getJSONGrafica(parametros) {
                         "animate": true,
                         "effect": 2,
                         "marker": { 
-                            "rules": rules 
+                            "rules": markers, 
                         },
                     } ],
                     "scale-k":{
