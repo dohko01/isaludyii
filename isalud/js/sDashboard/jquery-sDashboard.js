@@ -109,6 +109,13 @@
 
 					var widgetDefinition = self._getWidgetContentForId(widgetListItem.attr("id"), self);
 
+                    /**** p4scu41 ****/
+                    $('#winMaximizarGrafica').data("idGrafica", widgetDefinition.widgetId.replace('ind_','')); // elimina la parte 'ind_'
+                    $('#winMaximizarGrafica').dialog("open");
+                    $('#'+widgetDefinition.widgetId+' .contenedorIndicador').fadeOut("slow");
+                    /**** p4scu41 ****/
+                    
+                    /*
 					//toggle the maximize icon into minimize icon
 					$(e.currentTarget).toggleClass("sDashboard-circle-minus-icon");
 					//change the tooltip on the maximize/minimize icon buttons
@@ -138,7 +145,7 @@
 							//need to find out if its a bug on flotr2 library.
 							self._bindChartEvents(chartArea[0], widgetListItem.attr("id"), widgetDefinition, self);
 						}
-					}
+					}*/
 				});
 
 				//refresh widget click event handler
@@ -238,9 +245,6 @@
 				widgetContainer.append(widgetHeader);
 				//add widgetContent to widgetContainer
 				widgetContainer.append(widgetContent);
-                
-                // p4scu41
-                //widgetContainer.resizable();
 
 				//append the widgetContainer to the widget
 				widget.append(widgetContainer);
@@ -378,8 +382,10 @@
 				} else {
 					this.options.dashboardData.push(widgetDefinition);
 					var widget = this._constructWidget(widgetDefinition);
+                    //p4scu41
                     widget.css('display','none');
 					this.element.prepend(widget);
+                    //p4scu41
                     this.element.find("li#" + widgetDefinition.widgetId).toggle("slide");
 					this._renderChart(widgetDefinition);
 					this._renderTable(widgetDefinition);
@@ -394,8 +400,10 @@
 				//get the dom element
 				var widget = this.element.find("li" + idSelector);
 				if (widget.length > 0) {
+                    // p4scu41
+                    this.element.find("li" + idSelector).toggle("slow", function() { $(this).remove(); });
 					//delete the dom element
-					this.element.find("li" + idSelector).remove();
+					//this.element.find("li" + idSelector).remove();
 					//remove the dom element from the widgetDefinition
 					this._removeWidgetFromWidgetDefinitions(widgetId);
 				}

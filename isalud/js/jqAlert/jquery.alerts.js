@@ -71,7 +71,7 @@
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
-                modal: true,
+                modal: typeof defaultOptions.modal === 'undefined' ? false : defaultOptions.modal,
                 close: function(event, ui) {
                 	if(typeof timer !== 'undefined'){
 	                	timer.pause();
@@ -157,7 +157,7 @@
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
-                modal: true,
+                modal: typeof defaultOptions.modal === 'undefined' ? false : defaultOptions.modal,
                 buttons: btns,
                 close: function(event, ui) {
                 	if(typeof timer !== 'undefined'){
@@ -251,7 +251,7 @@
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
-                modal: true,
+                modal: typeof defaultOptions.modal === 'undefined' ? false : defaultOptions.modal,
                 buttons: btns,
                 close: function(event, ui) {
                 	if(typeof timer !== 'undefined'){
@@ -354,7 +354,7 @@
                 title: defaultOptions.title,
 				show: defaultOptions.show,
                 hide: defaultOptions.hide,                
-                modal: true,
+                modal: typeof defaultOptions.modal === 'undefined' ? false : defaultOptions.modal,
                 buttons: btns,
                 close: function(event, ui) {
                 	if(typeof timer !== 'undefined'){

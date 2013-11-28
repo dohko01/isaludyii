@@ -69,3 +69,31 @@ $this->breadcrumbs=array(
 
 <ul id="tableroPrincipal"> </ul>
 <ul id="datosIndicadores" style="display: none;"> </ul>
+
+<?php
+$this->beginWidget('zii.widgets.jui.CJuiDialog',array(
+    'id'=>'winMaximizarGrafica',
+    'options'=>array(
+        'autoOpen'=>false,
+        'modal'=>false,
+        'height'=>'js:$(window).height()-200',
+        'width'=>'js:$(window).width()-300',
+        //'open'=>'js:addGraficaMaximizar',
+        'close'=>'js:destroyGraficaMaximizar',
+        'resizeStop'=>'js:redimensionaGraficaMaximizar',
+        'show'=>'js:{
+            effect: "blind",
+            duration: 1000,
+            complete: addGraficaMaximizar
+        }',
+        'hide'=>'js:{
+            effect: "blind",
+            duration: 1000, 
+        }'
+    ),
+));
+
+    echo '<div class="contenedorIndicador"></div>';
+        
+$this->endWidget('zii.widgets.jui.CJuiDialog');
+?>

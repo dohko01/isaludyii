@@ -1,5 +1,86 @@
 // Las variables prefixTblIndicador, baseUrl y graficos se establecen en la accion index el controlador tablero 
 
+heightToolbar = 65;
+heidhtZingChart = 400;
+widthZingChart = 700;
+
+function redimensionaGraficaMaximizar(event, object) {
+    idGrafica = $('#winMaximizarGrafica').data("idGrafica");
+    
+    /* Otras alternativas para obtener altura y anchura del dialog
+    console.log("Width: " + $('#winMaximizarGrafica').closest('.ui-dialog').width() + ", height: " + $('#winMaximizarGrafica').closest('.ui-dialog').height());
+    console.log("Width: " + Math.round(object.size.width) + ", height: " + Math.round(object.size.height));*/
+    
+    newWidth = Math.round($(this).outerWidth());
+    newHeight = Math.round($(this).outerHeight())-heightToolbar; // Le restamos la altura del toolbar
+    
+    zingchart.exec("maxGraficoIndicador_"+idGrafica, 'resize', {
+        width : newWidth,
+        height : newHeight
+    });
+}
+
+function destroyGraficaMaximizar(event, object) {
+    idGrafica = $('#winMaximizarGrafica').data("idGrafica");
+    $('#ind_'+idGrafica+' .contenedorIndicador').fadeIn("slow");
+    
+    // Elimina el grafico maximizado del indicador
+    zingchart.exec("maxGraficoIndicador_"+idGrafica, 'destroy');
+    
+    // Elimina el contenido dentro del dialog
+    $('#winMaximizarGrafica .contenedorIndicador').html('');
+}
+
+function addGraficaMaximizar(event, object) {
+    idGrafica = $('#winMaximizarGrafica').data("idGrafica");
+    
+    wgIndicador = '<div class="opcionesIndicador">\n\
+            <div class="btn-toolbar">\n\\n\
+                <div class="btn-group">\n\
+                    <button class="btn verFichaTecnica" data-id="'+idGrafica+'"> <i class="fa fa-list-alt fa-lg"></i> Ficha Tecnica</button>\n\
+                </div>\n\
+                <div class="btn-group">\n\
+                    <button class="btn verTablaDatos" data-id="'+idGrafica+'"> <i class="fa fa-table fa-lg"></i> Tabla de Datos</button>\n\
+                </div>\n\
+                <div class="btn-group">\n\
+                    <button class="btn dropdown-toggle" data-id="'+idGrafica+'" data-toggle="dropdown"> \n\
+                        <i class="fa fa-picture-o fa-lg"></i> Tipo de Grafico <span class="caret"></span></button>\n\
+                    <ul class="dropdown-menu">';
+    
+    // Agrega la lista de tipos de graficos al menu del indicador
+    $.each(graficos, function(codigo, grafico) {
+         wgIndicador += '<li style="float:none" data-id="'+idGrafica+'" data-tipo="'+codigo+'" class="verTipoGrafico maximizado"><a href="#">'+grafico+'</a></li>';
+    });
+    
+    wgIndicador += '</ul>\n\
+                </div>\n\
+            </div>\n\
+        </div>\n\
+        <div id="maxGraficoIndicador_'+idGrafica+'" class="graficoIndicador"></div>\n\
+     ';
+    
+    $('#winMaximizarGrafica .contenedorIndicador').html(wgIndicador);
+    
+    $('#winMaximizarGrafica .verTipoGrafico').click(cambiarTipoGrafico);
+    $('#winMaximizarGrafica .verFichaTecnica').click(getFichaTecnica);
+    $('#winMaximizarGrafica .verTablaDatos').click(getTablaDatos); 
+    
+    // Obtiene el objeto JSON que contiene los datos devueltos al obtener el indicador
+    parametros = JSON.parse($('#json_'+idGrafica).text());;
+    
+    // Obtiene el objeto JSON para el zingchart
+    jsonGrafico = getJSONGrafica(parametros);
+    
+    // Vuelve a renderizar el grafico
+    // la altura y anchula la toma del dialog
+    zingchart.render({
+        id : "maxGraficoIndicador_"+idGrafica,
+        height : Math.round($('#winMaximizarGrafica').outerHeight()-heightToolbar),  // Le restamos la altura del toolbar
+        width :  Math.round($('#winMaximizarGrafica').outerWidth()),
+        data : jsonGrafico
+    });
+}
+
 /**
  * Obtiene el JSON de configuracion para el objeto ZingChart
  */
@@ -299,6 +380,17 @@ function cambiarTipoGrafico(event) {
     event.stopPropagation();
     
     idGrafica = $(this).data('id');
+    idZingChart = 'graficoIndicador_';
+    height = heidhtZingChart;
+    width = widthZingChart;
+    
+    
+    // Si la grafia a cambiar esta maximizada
+    if($(this).hasClass('maximizado')) {
+        idZingChart = 'maxGraficoIndicador_';
+        height = Math.round($('#winMaximizarGrafica').outerHeight()-heightToolbar);
+        width = Math.round($('#winMaximizarGrafica').outerWidth());
+    }
     
     // Obtiene el objeto JSON que contiene los datos devueltos al obtener el indicador
     parametros = JSON.parse($('#json_'+idGrafica).text());
@@ -313,13 +405,13 @@ function cambiarTipoGrafico(event) {
     jsonGrafico = getJSONGrafica(parametros);
     
     // Elimina el grafico
-    zingchart.exec("graficoIndicador_"+idGrafica, 'destroy');
+    zingchart.exec(idZingChart+idGrafica, 'destroy');
     
     // Vuelve a renderizar el grafico
     zingchart.render({
-        id : "graficoIndicador_"+idGrafica,
-        height : 400,
-        width : 700,
+        id : idZingChart+idGrafica,
+        height : height,
+        width : width,
         data : jsonGrafico
     });
     
@@ -336,8 +428,8 @@ function generaGrafica(parametros, indicadorId)
 
     zingchart.render({
         id : "graficoIndicador_"+indicadorId,
-        height : 400,
-        width : 700,
+        height : heidhtZingChart,
+        width : widthZingChart,
         data : objGrafica
     });	
 }
@@ -359,7 +451,7 @@ function agregarIndicador(indicador, contenido) {
     
     // Agrega la lista de tipos de graficos al menu del indicador
     $.each(graficos, function(codigo, grafico) {
-         wgIndicador += '<li style="float:none" data-id="'+indicador+'" data-tipo="'+codigo+'" class="verTipoGrafico"><a href="#">'+grafico+'</a></li>';
+         wgIndicador += '<li style="float:none" data-id="'+indicador+'" data-tipo="'+codigo+'" class="verTipoGrafico tablero"><a href="#">'+grafico+'</a></li>';
     });
     
     wgIndicador += '</ul>\n\
