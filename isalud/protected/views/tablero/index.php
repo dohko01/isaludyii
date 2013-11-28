@@ -97,3 +97,11 @@ $this->beginWidget('zii.widgets.jui.CJuiDialog',array(
         
 $this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
+<script language="javascript" type="text/javascript">
+zingchart.node_click = function(node){
+		console.log(node);
+		var id_indicador = node.id.split("_");
+		var jDatos = $.parseJSON($("#json_"+id_indicador[1]).html());
+		console.log(jDatos);
+}
+</script>
