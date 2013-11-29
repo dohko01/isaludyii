@@ -93,6 +93,10 @@ $this->widget('zii.widgets.CDetailView', array(
             'name'=>'es_publico',
             'value' => $model->es_publico ? 'Si' : 'No',
         ),
+        array(
+            'name'=>'id_cat_tipo_grafico',
+            'value' => $model->TipoGrafico ? $model->TipoGrafico->nombre : '',
+        ),
 		'ponderacion',
 		'unidad_medida',
 		'meta',

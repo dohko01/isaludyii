@@ -132,6 +132,14 @@
 		<?php echo $form->error($model,'es_publico'); ?>
 	</div>
 
+    <div class="row">
+		<?php echo $form->labelEx($model,'id_cat_tipo_grafico'); ?>
+        <?php echo $form->dropDownList($model, 'id_cat_tipo_grafico',
+                                    CHtml::listData(TipoGrafico::model()->findAll(), 'id', 'nombre'),
+                                    array('empty'=>'Seleccionar..', 'class'=>'span7') ); ?>
+		<?php echo $form->error($model,'id_cat_tipo_grafico'); ?>
+	</div>
+
 	<div class="row">
 		<?php echo $form->labelEx($model,'ponderacion'); ?>
 		<?php echo $form->numberField($model,'ponderacion', array('class'=>'span7', 'min'=>'0', 'max'=>'100')); ?>

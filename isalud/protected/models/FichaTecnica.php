@@ -39,6 +39,7 @@
  * @property Coordinacion $Coordinacion
  * @property ProgramaAccion $ProgramaAccion
  * @property Nivel $Nivel
+ * @property TipoGrafico $TipoGrafico
  */
 class FichaTecnica extends CActiveRecord
 {
@@ -59,7 +60,7 @@ class FichaTecnica extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('id_cat_tipo_indicador, id_cat_clasificacion, id_escala_evaluacion, id_cat_periodicidad, id_cat_direccion, id_cat_nivel, nombre, unidad_medida', 'required'),
-			array('id_cat_tipo_indicador, id_cat_clasificacion, id_escala_evaluacion, id_cat_periodicidad, id_ficha_tecnica_padre, id_cat_direccion, id_cat_subdireccion, id_cat_coordinacion, id_cat_programa_accion, id_cat_nivel, es_acumulable, es_publico', 'numerical', 'integerOnly'=>true),
+			array('id_cat_tipo_indicador, id_cat_clasificacion, id_escala_evaluacion, id_cat_periodicidad, id_ficha_tecnica_padre, id_cat_direccion, id_cat_subdireccion, id_cat_coordinacion, id_cat_programa_accion, id_cat_nivel, es_acumulable, es_publico, id_cat_tipo_grafico', 'numerical', 'integerOnly'=>true),
 			array('ponderacion', 'numerical'),
 			array('nombre, formula', 'length', 'max'=>200),
 			array('codigo', 'length', 'max'=>40),
@@ -92,6 +93,7 @@ class FichaTecnica extends CActiveRecord
 			'Nivel' => array(self::BELONGS_TO, 'Nivel', 'id_cat_nivel'),
             'Variables' => array(self::MANY_MANY, 'Variable', 'tbl_ficha_tecnica_variable(id_ficha_tecnica, id_variable)'),
             'FichaTecnicaVariables' => array(self::HAS_MANY, 'FichaTecnicaVariable', 'id_ficha_tecnica'),
+            'TipoGrafico' => array(self::BELONGS_TO, 'TipoGrafico', 'id_cat_tipo_grafico'),
 		);
 	}
 
@@ -112,6 +114,7 @@ class FichaTecnica extends CActiveRecord
 			'id_cat_coordinacion' => 'Coordinación',
 			'id_cat_programa_accion' => 'Programa de acción',
 			'id_cat_nivel' => 'Nivel del indicador',
+            'id_cat_tipo_grafico' => 'Tipo de grafico',
 			'nombre' => 'Nombre',
 			'codigo' => 'Código',
 			'formula' => 'Formula',
@@ -155,6 +158,7 @@ class FichaTecnica extends CActiveRecord
 		$criteria->compare('id_cat_coordinacion',$this->id_cat_coordinacion);
 		$criteria->compare('id_cat_programa_accion',$this->id_cat_programa_accion);
 		$criteria->compare('id_cat_nivel',$this->id_cat_nivel);
+        $criteria->compare('id_cat_tipo_grafico',$this->id_cat_tipo_grafico);
 		$criteria->compare('LOWER(nombre)',strtolower($this->nombre),true);
 		$criteria->compare('LOWER(codigo)',strtolower($this->codigo),true);
 		$criteria->compare('LOWER(formula)',strtolower($this->formula),true);
