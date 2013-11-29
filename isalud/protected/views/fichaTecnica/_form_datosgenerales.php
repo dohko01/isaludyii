@@ -103,7 +103,7 @@
             ),
         );
 
-        if(!empty($_POST['FichaTecnica'])) {
+        if(!empty($_POST['FichaTecnica']) && isset($_POST['FichaTecnica']['Variables'])) {
             $options['value'] = $_POST['FichaTecnica']['Variables'];
         }
 

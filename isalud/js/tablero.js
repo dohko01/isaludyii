@@ -426,7 +426,7 @@ function generaGrafica(parametros, indicadorId)
 {
 	var objGrafica = getJSONGrafica(parametros);
 
-    zingchart.render({
+	zingchart.render({
         id : "graficoIndicador_"+indicadorId,
         height : heidhtZingChart,
         width : widthZingChart,

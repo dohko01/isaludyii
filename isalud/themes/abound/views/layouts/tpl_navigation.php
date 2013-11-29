@@ -18,7 +18,7 @@
 		if(Yii::app()->user->id != 0)
 		{
 			$orderBy = new CDbCriteria(array('order'=>'nombre'));
-			$menuUsuario = Modulo::model()->findAllByAttributes(array('id_cat_tipo_usuario'=>Yii::app()->user->tipoUsuario, 'parent_id'=>NULL));
+			$menuUsuario = Modulo::model()->findAllByAttributes(array('id_cat_tipo_usuario'=>Yii::app()->user->tipoUsuario, 'parent_id'=>NULL),$orderBy);
 			
 			foreach($menuUsuario as $kk => $itemMenu)
 			{

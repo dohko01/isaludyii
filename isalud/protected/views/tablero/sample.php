@@ -7,7 +7,7 @@ $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-ht
 
 <script>
 	var myChart = {
-		type   : "radar",
+		type   : "bar",
 		title  : {text: "Hello ZingChart World!"},
 		"scale-k":{
 			values	: ["Enero","Febrero","Marzo","Abril","Mayo","Junio"]
