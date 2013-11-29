@@ -45,6 +45,12 @@ class TableroController extends Controller
 
                     $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
                     if(isset($respuesta['error'])) throw new Exception($respuesta['msjerror']);
+                    
+                    // Si no esta definido el tipo de grafio, se establecera como line
+                    if( empty($respuesta['tipo_grafico']) && Yii::app()->request->getPost('tipo_grafico')==null )
+                        $respuesta['tipo_grafico'] = 'line';
+                    else if (Yii::app()->request->getPost('tipo_grafico')!=null)
+                        $respuesta['tipo_grafico'] = Yii::app()->request->getPost('tipo_grafico');
                 } else {
                     $respuesta['error'] = true;
                     $respuesta['msjerror'] = 'No se encuentra el indicador especificado';
@@ -54,12 +60,6 @@ class TableroController extends Controller
                 $respuesta['msjerror'] = $e->getMessage();
             }
             
-            // Si no esta definido el tipo de grafio, se establecera como line
-            if( !Yii::app()->request->getPost('tipo_grafico') )
-                $respuesta['tipo_grafico'] = 'line';
-            else
-                $respuesta['tipo_grafico'] = Yii::app()->request->getPost('tipo_grafico');
-
             echo json_encode($respuesta);
         }
     }

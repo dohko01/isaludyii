@@ -767,6 +767,7 @@ class FichaTecnica extends CActiveRecord
             $resultado['etiquetaY'] = $this->unidad_medida;
             $resultado['etiquetaX'] = $campoSubtitulo;
             $resultado['nivel'] = array("id" => $this->Nivel->id, "nombre" => $this->Nivel->nombre);
+            $resultado['tipo_grafico'] = $this->TipoGrafico ? $this->TipoGrafico->codigo : '';
             
             // Enviar los valores y las etiquetas en un arreglo separado,
             // es necesario para la construccion de la grafica
