@@ -66,6 +66,7 @@ $this->breadcrumbs=array(
 <input type="hidden" name="YII_CSRF_TOKEN" id="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
 <input type="hidden" name="dimension" id="dimension" value="id_jurisdiccion" />
 <input type="hidden" name="filtro" id="filtro" value='{"id_estado":7, "anio":2013}' />
+<input type="hidden" name="actualizarGrafica" id="actualizarGrafica" />
 
 <ul id="tableroPrincipal"> </ul>
 <ul id="datosIndicadores" style="display: none;"> </ul>
@@ -99,9 +100,12 @@ $this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
 <script language="javascript" type="text/javascript">
 zingchart.node_click = function(node){
-		console.log(node);
-		var id_indicador = node.id.split("_");
-		var jDatos = $.parseJSON($("#json_"+id_indicador[1]).html());
-		console.log(jDatos);
+        console.log(node);
+        var id_indicador = node.id.split("_");
+        var jDatos = $.parseJSON($("#json_"+id_indicador[1]).html());
+        $('#actualizarGrafica').val(node.id);
+        cambiaNivel(jDatos.idIndicadores[node.nodeindex]);
+        //alert(jDatos.idIndicadores[node.nodeindex]);
+        //console.log(jDatos);
 }
 </script>

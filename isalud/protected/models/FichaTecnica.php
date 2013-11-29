@@ -616,6 +616,7 @@ class FichaTecnica extends CActiveRecord
         $columnasIndicadores = array(); // En el caso de ser un indicador compuesto, respaldar el nombre de las columnas que guardan el resultado de los indicadores hijos
         $subtitulo = '';
         $significados = CHtml::listData(SignificadoCampo::model()->findAll(), 'codigo', 'descripcion');
+        $idIndicadores = array(); //En el caso de ser un indicador compuesto, almacena todos los ids de los indicadores hijos
 
         $columnas = $this->getColumsIndicador();
 
@@ -663,6 +664,8 @@ class FichaTecnica extends CActiveRecord
                 $etiquetasIndicadores[] = $varInd->nombre;
                 // Guardar el nombre de la columna que contiene el valor del indicador
                 $columnasIndicadores[] = $varInd->codigo;
+                //Guarda el id de los indicadores que lo componen
+                $idIndicadores[] = $varInd->id;
             }
             
             //REVISAR. Eliminar la primera coma
@@ -674,20 +677,20 @@ class FichaTecnica extends CActiveRecord
             // La columna indicador contiene el valor a mostrar en la grafica
             $operacionIndicador = 'ROUND(('.$this->formula.'), 1) AS indicador';
         }
-        
+        $campoSubtitulo = '';
         // El orden por default sera el resultado del indicador
         if($orden == null) {
             $orden = 'indicador';
         }
         
         // Solo se considera la dimensión para aquellos indicadores que no son compuestos
+        $innerJoin = '';
         if(!empty($this->formula)) {
             // Respalda la dimension antes de ser modificada
             $resultado['dimension'] = $dimension;
 
             // Revisar si la dimensión hace referencia a un catalogo
             $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$dimension));
-            $innerJoin = '';
 
             // Si la dimension es un catalogo
             if($objDimension->catalogo) {
@@ -806,6 +809,7 @@ class FichaTecnica extends CActiveRecord
             // Para los indicadores compuestos, las etiquetas son los nombres de los indicadores hijos
             if(empty($this->formula)) {
                 $resultado['etiquetas'] = $etiquetasIndicadores;
+                $resultado['idIndicadores'] = $idIndicadores;
                 
                 foreach($columnasIndicadores as $columna) {
                     array_push($resultado['valores'], floatval($resultado['datos'][0][$columna]));

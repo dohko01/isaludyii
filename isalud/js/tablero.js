@@ -4,6 +4,18 @@ heightToolbar = 65;
 heidhtZingChart = 400;
 widthZingChart = 700;
 
+function cambiaNivel(id)
+{
+    parametros = {
+                id: id,
+                dimension: $('#dimension').val(),
+                filtro: JSON.parse($('#filtro').val()),
+                tipo_grafico: '',
+                configuracion: ''
+            };
+    obtieneIndicador(parametros);
+}
+
 function redimensionaGraficaMaximizar(event, object) {
     idGrafica = $('#winMaximizarGrafica').data("idGrafica");
     
@@ -434,9 +446,17 @@ function cambiarTipoGrafico(event) {
 function generaGrafica(parametros, indicadorId)
 {
 	var objGrafica = getJSONGrafica(parametros);
-
+        var actualizarGrafica = $('#actualizarGrafica').val();
+        var idGrafica = "graficoIndicador_"+indicadorId;
+        
+        if(actualizarGrafica != '')
+        {
+            idGrafica = actualizarGrafica;
+            $('#actualizarGrafica').val('');
+        }
+        
 	zingchart.render({
-        id : "graficoIndicador_"+indicadorId,
+        id : idGrafica,
         height : heidhtZingChart,
         width : widthZingChart,
         data : objGrafica
@@ -509,7 +529,9 @@ function obtieneIndicador(parametros) {
                     if(parametros.filtro)       respuesta.filtro       = parametros.filtro;
                     if(parametros.tipo_grafico) respuesta.tipo_grafico = parametros.tipo_grafico;
                     
-                    agregarIndicador(parametros.id, respuesta);
+                    var actualizarGrafica = $('#actualizarGrafica').val();
+                    if(actualizarGrafica == '')
+                        agregarIndicador(parametros.id, respuesta);
                     
                     // Convierte el json donde estan los datos en una tabla html
                     tblDatos = ConvertJsonToTable(respuesta.datos);
