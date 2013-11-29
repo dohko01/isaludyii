@@ -103,9 +103,11 @@ zingchart.node_click = function(node){
         console.log(node);
         var id_indicador = node.id.split("_");
         var jDatos = $.parseJSON($("#json_"+id_indicador[1]).html());
-        $('#actualizarGrafica').val(node.id);
-        cambiaNivel(jDatos.idIndicadores[node.nodeindex]);
-        //alert(jDatos.idIndicadores[node.nodeindex]);
-        //console.log(jDatos);
+        console.log(jDatos);
+        if(jDatos.nivel.id == 4)
+        {
+            $('#actualizarGrafica').val(node.id);
+            cambiaNivel(jDatos.idIndicadores[node.nodeindex]);
+        }
 }
 </script>

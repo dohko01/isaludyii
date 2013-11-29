@@ -506,7 +506,12 @@ function agregarIndicador(indicador, contenido) {
 function obtieneIndicador(parametros) {
     // Validar que el indicador no este ya agregado al tablero
     existeIndicador = $('#tableroPrincipal').children('#'+prefixTblIndicador+parametros.id);
+    var actualizarGrafica = $('#actualizarGrafica').val();
     
+    if(actualizarGrafica != '')
+    {
+        existeIndicador.length = 0;
+    }
     // Si no existe agregarlo al tablero
     if(existeIndicador.length == 0) {
         $.extend( parametros, {"YII_CSRF_TOKEN": $('[name=YII_CSRF_TOKEN]').val()} );
