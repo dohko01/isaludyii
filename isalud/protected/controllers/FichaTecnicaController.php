@@ -282,8 +282,8 @@ class FichaTecnicaController extends Controller
             // Elimina dobles espacios
             $model->formula = preg_replace('/\s+/', ' ', $model->formula);
 
-            //preg_match_all('/(\[[a-z0-9\_\-]+\])/', $model->formula, $vars_formula);
-            preg_match_all('/\[[a-z0-9\_\-]{1,}\]/', $model->formula, $vars_formula);
+            preg_match_all('/(\[[A-Za-z0-9\_\-]+\])/', $model->formula, $vars_formula);
+            //preg_match_all('/\[[a-z0-9\_\-]{1,}\]/', $model->formula, $vars_formula);
 
             $trimVars = function(&$elemento, &$clave) {
                 $elemento = trim($elemento);
@@ -291,9 +291,6 @@ class FichaTecnicaController extends Controller
             // Eliminar espacios en blanco de las variables
             array_walk_recursive($vars_formula, $trimVars);
             array_walk_recursive($vars_select, $trimVars);
-
-            print_r($vars_formula[0]);
-            print_r($vars_select);
 
             // Revisar si existe alguna variable que esta en la formula y que no este seleccionada
             $difVars = array_diff($vars_formula[0], $vars_select);

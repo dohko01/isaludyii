@@ -253,6 +253,13 @@ class FichaTecnica extends CActiveRecord
 
         $strVariables = '';
         $strCamposComunes = '';
+        
+        if(empty($this->formula) && empty($this->FichasTecnicasHijas)) {
+            $respuesta['error']=true;
+            $respuesta['msjerror']='Verifique la formula del indicador.';
+            
+            return $respuesta;
+        }
 
         // Validar si las fuentes de datos estan mas actualizadas
         // que la informacion de la tabla del indicador
@@ -605,6 +612,8 @@ class FichaTecnica extends CActiveRecord
         $resultado = null;
         $fuentes = array(); // Guarda la lista de todas las fuentes de datos
         $campoEtiqueta = ''; // Guarda la la etiqueta del campo dimension que se esta mostrando
+        $etiquetasIndicadores = array(); // En el caso de ser un indicador compuesto, las etiquetas son los nombres de los indicadores hijos
+        $columnasIndicadores = array(); // En el caso de ser un indicador compuesto, respaldar el nombre de las columnas que guardan el resultado de los indicadores hijos
         $subtitulo = '';
         $significados = CHtml::listData(SignificadoCampo::model()->findAll(), 'codigo', 'descripcion');
 
@@ -649,8 +658,15 @@ class FichaTecnica extends CActiveRecord
                 $strColumnas .= ', SUM('.$varInd->codigo.') AS '.$varInd->codigo;
                 
                 // Agregar el indicador como fuente de datos
-                $fuentes[$varInd->id]= $varInd->nombre;
+                $fuentes[$varInd->id] = $varInd->nombre;
+                // Agregar el nombre del indicador a la etiqueta
+                $etiquetasIndicadores[] = $varInd->nombre;
+                // Guardar el nombre de la columna que contiene el valor del indicador
+                $columnasIndicadores[] = $varInd->codigo;
             }
+            
+            //REVISAR. Eliminar la primera coma
+            $strColumnas = ltrim($strColumnas, ', ');
 
             // La columna indicador es fija y contiene el resultado de la formula
             $operacionIndicador = 'ROUND(('.implode(' + ', $formula).'), 1) AS indicador';
@@ -664,34 +680,41 @@ class FichaTecnica extends CActiveRecord
             $orden = 'indicador';
         }
         
-        // Respalda la dimension antes de ser modificada
-        $resultado['dimension'] = $dimension;
+        // Solo se considera la dimensión para aquellos indicadores que no son compuestos
+        if(!empty($this->formula)) {
+            // Respalda la dimension antes de ser modificada
+            $resultado['dimension'] = $dimension;
 
-        // Revisar si la dimensión hace referencia a un catalogo
-        $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$dimension));
-        $innerJoin = '';
+            // Revisar si la dimensión hace referencia a un catalogo
+            $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$dimension));
+            $innerJoin = '';
 
-        // Si la dimension es un catalogo
-        if($objDimension->catalogo) {
-            // La columna nombre es fija en todos los catalogos y contiene la descripcion del id al que hace referencia
-            $strColumnas = 'nombre AS '.$objDimension->catalogo;
-            // Todos los catalogos tienen como prefijo tblc_
-            $innerJoin = ' INNER JOIN tblc_'.$objDimension->catalogo.' USING('.$objDimension->llave_primaria.') ';
+            // Si la dimension es un catalogo
+            if($objDimension->catalogo) {
+                // La columna nombre es fija en todos los catalogos y contiene la descripcion del id al que hace referencia
+                $strColumnas = 'nombre AS '.$objDimension->catalogo;
+                // Todos los catalogos tienen como prefijo tblc_
+                $innerJoin = ' INNER JOIN tblc_'.$objDimension->catalogo.' USING('.$objDimension->llave_primaria.') ';
 
-            // Si la forma de ordenar es la misma que la dimension,
-            // entonces ordenamos por la descripcion del catalogo
-            // en este caso siempre sera la columna nombre
-            if($orden == $dimension)
-                $orden = 'nombre';
+                // Si la forma de ordenar es la misma que la dimension,
+                // entonces ordenamos por la descripcion del catalogo
+                // en este caso siempre sera la columna nombre
+                if($orden == $dimension)
+                    $orden = 'nombre';
 
-            // Agregamos a la dimension el campo nombre, ya que es requerido en el group by
-            $dimension .= ', nombre';
-            $campoEtiqueta = $objDimension->catalogo;
-            $campoSubtitulo = $objDimension->descripcion;
+                // Agregamos a la dimension el campo nombre, ya que es requerido en el group by
+                $dimension .= ', nombre';
+                $campoEtiqueta = $objDimension->catalogo;
+                $campoSubtitulo = $objDimension->descripcion;
+            } else {
+                $strColumnas = $dimension;
+                $campoEtiqueta = $dimension;
+                $campoSubtitulo = ucfirst($dimension);
+            }
         } else {
-            $strColumnas = $dimension;
-            $campoEtiqueta = $dimension;
-            $campoSubtitulo = ucfirst($dimension);
+            //$strColumnas = $dimension;
+            //$campoEtiqueta = $dimension;
+            //$campoSubtitulo = ucfirst($dimension);
         }
         
         // Agregar los filtros al subtitulo
@@ -723,7 +746,13 @@ class FichaTecnica extends CActiveRecord
         // Agregamos la descripcion de la dimension que se esta mostrando al subtitulo
         $subtitulo = 'Por '.$campoSubtitulo.', para '.trim($subtitulo,', ');
         
-        $groupBy = ' GROUP BY '.implode(', ', $camposFiltro).', '.$dimension;
+        $groupBy = ' GROUP BY '.implode(', ', $camposFiltro);
+        
+        // Solo se considera la dimensión para aquellos indicadores que no son compuestos
+        if(!empty($this->formula)) {
+            $groupBy .= ', '.$dimension;
+        }
+        
         $where = ' WHERE 1=1 ';
         $orderBy = ' ORDER BY '.$orden;
 
@@ -735,6 +764,7 @@ class FichaTecnica extends CActiveRecord
         $variables = $this->Variables;
         
         // Reemplazamos las variables por su respectiva operacion en formato SQL
+        // Solo aplica para indicadores que tenga una formula
         foreach ($variables as $variable) {
             // Operacion para el calculo de la columna
             $strColumnas .= ', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula;
@@ -768,14 +798,26 @@ class FichaTecnica extends CActiveRecord
             $resultado['etiquetaX'] = $campoSubtitulo;
             $resultado['nivel'] = array("id" => $this->Nivel->id, "nombre" => $this->Nivel->nombre);
             $resultado['tipo_grafico'] = $this->TipoGrafico ? $this->TipoGrafico->codigo : '';
+            $resultado['sql'] = $sql;
             
             // Enviar los valores y las etiquetas en un arreglo separado,
             // es necesario para la construccion de la grafica
-            foreach($resultado['datos'] as $fila) {
-                // La columna indicador es fila y contiene el valor del indicador
-                array_push($resultado['valores'], floatval($fila['indicador']));
-                // El campo etiqueta depende de la dimension a mostrar
-                array_push($resultado['etiquetas'], $fila[$campoEtiqueta]);
+            
+            // Para los indicadores compuestos, las etiquetas son los nombres de los indicadores hijos
+            if(empty($this->formula)) {
+                $resultado['etiquetas'] = $etiquetasIndicadores;
+                
+                foreach($columnasIndicadores as $columna) {
+                    array_push($resultado['valores'], floatval($resultado['datos'][0][$columna]));
+                }
+            } else {
+                foreach($resultado['datos'] as $fila) {
+                    // La columna indicador es fija y contiene el valor del indicador
+                    array_push($resultado['valores'], floatval($fila['indicador']));
+                    // El campo etiqueta depende de la dimension a mostrar
+                    array_push($resultado['etiquetas'], $fila[$campoEtiqueta]);
+                    
+                }
             }
             
             $escalaEvaluacion = $this->EscalaEvaluacion;

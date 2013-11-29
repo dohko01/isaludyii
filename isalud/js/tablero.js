@@ -88,6 +88,15 @@ function getJSONGrafica(parametros) {
     var rules = [];
     var markers = [];
     var jsonGrafica = null;
+    var max = 100;
+    
+    // Obtiene el valor mayor del conjunto de valores del grafico
+    maxValor = Math.max.apply(null, parametros.valores.map(function(node) {
+            return node;
+        }));
+        
+    if(max<maxValor)
+        max = maxValor;
 	
 	for(i=0; i<parametros.escalaEvaluacion.length; i++) {
 		rule = {
@@ -190,7 +199,7 @@ function getJSONGrafica(parametros) {
                     },
                     "scaleY": { 
                         "label": { "text": parametros.etiquetaY },
-                        "values": "0:100:10", 
+                        "values": "0:"+max+":10", 
                         "markers": markers 
                     },
                     "series": [ {
@@ -344,7 +353,7 @@ function getJSONGrafica(parametros) {
                         "tooltip-text":"%t",
                     },
                     "scale-r": {
-                        "values": "0:100:10",
+                        "values": "0:"+max+":10",
                         "background-color": "#eeeeee,#b3b3b3",
                         "ring": {
                             "size": 10,
@@ -505,6 +514,8 @@ function obtieneIndicador(parametros) {
                     // Convierte el json donde estan los datos en una tabla html
                     tblDatos = ConvertJsonToTable(respuesta.datos);
                     $('#datosIndicadores').append('<li id="datos_'+parametros.id+'">'+tblDatos+'</li>');
+                    
+                    console.log(respuesta.sql);
                     
                     // Guarda todo el objeto JSON para posteriormente utilizarlo al cambiar el tipo de grafico
                     $('#datosIndicadores').append('<li id="json_'+parametros.id+'">'+JSON.stringify(respuesta)+'</li>'); // $.param(jsonObj)
