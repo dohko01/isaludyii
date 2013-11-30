@@ -525,7 +525,7 @@ function obtieneIndicador(parametros) {
                 if(respuesta.error) {
                     showError('Error al obtener datos del indicador, revise el mensaje de error: '+respuesta.msjerror);
                 } else {
-                    // si el indicadore se esta obteniendo desde un tablero guardado
+                    // si el indicador se esta obteniendo desde un tablero guardado
                     // parametros contendra las siguientes variables
                     // dimension, filtro y tipo_grafico
                     // estos deben ser asignados a los datos obtenidos del indicador
@@ -541,8 +541,6 @@ function obtieneIndicador(parametros) {
                     // Convierte el json donde estan los datos en una tabla html
                     tblDatos = ConvertJsonToTable(respuesta.datos);
                     $('#datosIndicadores').append('<li id="datos_'+parametros.id+'">'+tblDatos+'</li>');
-                    
-                    console.log(respuesta.sql);
                     
                     // Guarda todo el objeto JSON para posteriormente utilizarlo al cambiar el tipo de grafico
                     $('#datosIndicadores').append('<li id="json_'+parametros.id+'">'+JSON.stringify(respuesta)+'</li>'); // $.param(jsonObj)
