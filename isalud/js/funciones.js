@@ -1,3 +1,6 @@
+// Determina si se van a mostrar los errores JavaScript en el navegador
+var debug = true;
+
 /* Fuente
 http://jsfiddle.net/justincook/x4C2t/
 http://jsfiddle.net/x4C2t/7/
@@ -19,6 +22,15 @@ $(document).ready(function(){
     $('body').ajaxStop(function() {
         $(this).loading(false);
     });
+    
+    // Muestra errores de JavaScript en el navegador
+    if(debug) {
+        window.onerror = function(msg, url, line){
+            mensaje = 'Error JavaScript: '+msg+', Archivo: '+url+', Linea: '+line;
+            showError(mensaje);
+            return true;
+        }
+    }
 });
 
 function showError(mensaje) {
