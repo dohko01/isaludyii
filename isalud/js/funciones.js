@@ -28,8 +28,8 @@ $(document).ready(function(){
         window.onerror = function(msg, url, line){
             mensaje = 'Error JavaScript: '+msg+', Archivo: '+url+', Linea: '+line;
             showError(mensaje);
-            return true;
-        }
+            return false;
+        };
     }
 });
 
