@@ -84,10 +84,10 @@ class EscalaEvaluacionController extends Controller
 		$this->pageTitle = Yii::app()->name.' - '.$this->title_sin.' - Crear';
         
 		$model=new EscalaEvaluacion;
-        $criteriosEvaluacion = CHtml::listData(CriterioEvaluacion::model()->findAll(), 'id', 'nombre');
-        $msjError = '';
-        $transaction = null;
-        $reglasEvaluacion = null;
+                $criteriosEvaluacion = CHtml::listData(CriterioEvaluacion::model()->findAll(), 'id', 'nombre');
+                $msjError = '';
+                $transaction = null;
+                $reglasEvaluacion = null;
 
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
