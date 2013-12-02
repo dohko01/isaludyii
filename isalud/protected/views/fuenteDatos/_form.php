@@ -23,6 +23,8 @@
         });
 
         $('#FuenteDatos_archivo').change(function(){
+            extension = ($(this).val().substring($(this).val().lastIndexOf("."))).toLowerCase();
+                
             $.ajax({
                 url: '<?php echo Yii::app()->createURL('fuentedatos/validararchivo'); ?>',
                 type: 'POST',
@@ -35,6 +37,10 @@
                 $('#archivoActual').val('');
             }).fail(function() {
                 showError('ERROR: No se pudo realizar la verificación del archivo, intentelo cargar nuevamente o notifiquelo con el administrador del sistema.')
+            }).always(function() {
+                if(extension == '.csv' || extension == '.txt') {
+                    $('#advertencia_csv').fadeIn();
+                }
             });
         });
     });
@@ -99,7 +105,18 @@
         ?>
 	</div>
 <?php $this->endWidget(); ?>
-
+    
+    <div id="advertencia_csv" style="display: none">
+        <div class="alert">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong>
+                Un archivo en formato CSV (Comma Separated Values) o en texto plano debe tener el siguiente formato: 
+                Las columnas deben estar separada por una coma (,) y las filas se delimitan con una nueva linea de lo contrario 
+                el sistema no podrá leer los datos de manera correcta
+            </strong>
+        </div>
+    </div>
+    
 </div><!-- form -->
 
 <div id="result_probar_sentencia_sql" style="margin: auto;">

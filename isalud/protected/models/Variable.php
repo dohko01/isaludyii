@@ -38,11 +38,29 @@ class Variable extends CActiveRecord
 			array('nombre, ini_formula', 'length', 'max'=>45),
             array('ini_formula', 'match', 'pattern'=>'/^([a-zA-Z0-9_-])+$/', 'message'=>'Sólo puede escribir caracteres alfanuméricos, guión bajo(_) y guión medio (-)'),
 			array('comentario', 'safe'),
+            array('nombre', 'ValidateNombre'),
+            array('ini_formula', 'ValidateIniFormula'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, id_fuente_datos, id_campo, nombre, ini_formula, comentario', 'safe', 'on'=>'search'),
 		);
 	}
+    
+    public function ValidateNombre($attribute,$params)
+    {
+        $objVariable = $this->findByAttributes(array('nombre'=>$this->nombre));
+        
+        if(!empty($objVariable))
+            $this->addError('nombre','Ya existe una variable con el mismo nombre, elija otro nombre para la nueva variable.');
+    }
+    
+    public function ValidateIniFormula($attribute,$params)
+    {
+        $objVariable = $this->findByAttributes(array('ini_formula'=>$this->ini_formula));
+        
+        if(!empty($objVariable))
+            $this->addError('ini_formula','Ya existe una variable con el mismo nombre para formula, elija otro nombre para formula para la nueva variable.');
+    }
 
 	/**
 	 * @return array relational rules.
