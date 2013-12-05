@@ -242,7 +242,7 @@ function getJSONGrafica(parametros) {
                         "animate": true,
                         "effect": 2,
                         "marker": { 
-                            "rules": markers, 
+                            "rules": rules, 
                         },
                     } ],
                     "scale-k":{
@@ -525,7 +525,7 @@ function obtieneIndicador(parametros) {
             type: "POST",
             dataType : "json",
             success: function( respuesta ) {
-                if(respuesta.error) {
+                if(respuesta.error == true) {
                     showError('Error al obtener datos del indicador, revise el mensaje de error: '+respuesta.msjerror);
                 } else {
                     // si el indicador se esta obteniendo desde un tablero guardado
@@ -544,8 +544,6 @@ function obtieneIndicador(parametros) {
                     // Convierte el json donde estan los datos en una tabla html
                     tblDatos = ConvertJsonToTable(respuesta.datos);
                     $('#datosIndicadores').append('<li id="datos_'+parametros.id+'">'+tblDatos+'</li>');
-                    
-                    console.log(respuesta.sql);
                     
                     // Guarda todo el objeto JSON para posteriormente utilizarlo al cambiar el tipo de grafico
                     $('#datosIndicadores').append('<li id="json_'+parametros.id+'">'+JSON.stringify(respuesta)+'</li>'); // $.param(jsonObj)

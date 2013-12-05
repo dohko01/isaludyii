@@ -267,6 +267,10 @@ class FichaTecnica extends CActiveRecord
         if(!$reconstruirTabla) {
             // Si no tiene formula, es un indicador compuesto
             if(empty($this->formula)) {
+                // Si es un indicador compuesto no se contruira tabla
+                // se calcula a partir de los indicadores hijos
+                return $respuesta;
+                /*
                 // Si la tabla padre no tiene fecha de creacion
                 // no es necesario hacer el drop
                 if($this->fecha_tbl_indicador != '') {
@@ -309,7 +313,7 @@ class FichaTecnica extends CActiveRecord
                                 break;
                         }
                     }
-                }
+                }*/
             } else {
                 $tmpVariables = $this->Variables;
                 // Se obtienen todas las variable que forman el indicador
@@ -369,6 +373,10 @@ class FichaTecnica extends CActiveRecord
         // la formula se formara por la suma del producto de cada indicador
         // por su ponderacion
         if(empty($this->formula)) {
+            // no se construira ninguna tabla si el indicador es compuesto
+            // se calcula a partir de los indicadores hijos
+            return $respuesta;
+            /*
             $indicadoresHijos = $this->FichasTecnicasHijas;
             $arregloCamposIndicadores = array(); // Guarda un arreglo bidimensional de los campos de cada indicador con el id de la ficha tecnica como indice
             $arregloTblVarsIndicadores = array(); // Guarda un arreglo con los nombres de las tablas temporales de cada indicador hijo
@@ -483,7 +491,7 @@ class FichaTecnica extends CActiveRecord
                 $transaction->rollback();
                 $respuesta['error']=true;
                 $respuesta['msjerror']='Error la tabla del indicador. '.$e->getMessage();
-            }
+            }*/
         } else {
             $transaction = Yii::app()->db->beginTransaction();
 
@@ -618,26 +626,30 @@ class FichaTecnica extends CActiveRecord
         $significados = CHtml::listData(SignificadoCampo::model()->findAll(), 'codigo', 'descripcion');
         $idIndicadores = array(); //En el caso de ser un indicador compuesto, almacena todos los ids de los indicadores hijos
 
-        $columnas = $this->getColumsIndicador();
+        // Validar las columnas del indicador, solo en caso de que el indicador tenga variables asociadas
+        // ya que un indicador compuesto no tendra tabla asociada
+        if(!empty($this->formula)) {
+            $columnas = $this->getColumsIndicador();
 
-        // Validar que la dimension sea una columna del indicador
-        // Una dimensión es un campo/columna de la tabla indicador
-        if(!in_array($dimension, $columnas)) {
-            $respuesta['error']=true;
-            $respuesta['msjerror']='La dimensión '.$dimension.' no es válida';
-
-            return $respuesta;
-        }
-
-        $camposFiltro = array_keys($filtros);
-
-        // Validar que todos los filtros sean un campo del indicador
-        foreach ($camposFiltro as $keyFil => $campFil) {
-            if(!in_array($campFil, $columnas)) {
+            // Validar que la dimension sea una columna del indicador
+            // Una dimensión es un campo/columna de la tabla indicador
+            if(!in_array($dimension, $columnas)) {
                 $respuesta['error']=true;
-                $respuesta['msjerror']='El filtro '.$campFil.' no es válido';
+                $respuesta['msjerror']='La dimensión '.$dimension.' no es válida';
 
                 return $respuesta;
+            }
+
+            $camposFiltro = array_keys($filtros);
+
+            // Validar que todos los filtros sean un campo del indicador
+            foreach ($camposFiltro as $keyFil => $campFil) {
+                if(!in_array($campFil, $columnas)) {
+                    $respuesta['error']=true;
+                    $respuesta['msjerror']='El filtro '.$campFil.' no es válido';
+
+                    return $respuesta;
+                }
             }
         }
         
@@ -646,17 +658,33 @@ class FichaTecnica extends CActiveRecord
             // Es un indicador compuesto, su formula se forma a partir de 
             // la suma del producto de cada indicador por su % ponderacion
             $varIndicadores = $this->FichasTecnicasHijas;
-            $formula = array();
+            $datosIndicadorPadre = array();
+            $ponderaciones = array();
             
             // Recorrer todos los indicadores hijos
             foreach ($varIndicadores as $varInd) {
                 if(empty($varInd->codigo))
                     $varInd->crearCodigo();
-
-                // Multiplicar cada indicador por su ponderacion
-                $formula[] = ' (SUM('.$varInd->codigo.') * '.$varInd->ponderacion.' / 100) ';
-                // El codigo del indicador es el nombre de la columna en la tabla indicador padre
-                $strColumnas .= ', SUM('.$varInd->codigo.') AS '.$varInd->codigo;
+                
+                // Calcular cada indicador hijo
+                // Se ordena por la dimension para obtener los datos de forma adecuada y formar la tabla del indicador padre
+                $datosIndicadorHijo = $varInd->calcularIndicador($dimension, $filtros, $dimension, FALSE);
+                
+                // Obtiene la lista de llaves o columnas de los datos calculados
+                $dim = array_keys($datosIndicadorHijo[0]);
+                $i = 0;
+                
+                // Obtiene todos los datos calculados del indicador hijo
+                foreach ($datosIndicadorHijo as $registro) {
+                    // El primer valor es la dimension
+                    $datosIndicadorPadre[$i][$dim[0]] = $registro[$dim[0]];
+                    // La columna indicador contiene el resultado del indicador
+                    $datosIndicadorPadre[$i][$varInd->codigo] = $registro['indicador'];
+                    $i++;
+                }
+                
+                // Guardamos las ponderaciones de cada indicador para posteriormente aplicarlo en la formula
+                $ponderaciones[$varInd->codigo] = $varInd->ponderacion;
                 
                 // Agregar el indicador como fuente de datos
                 $fuentes[$varInd->id] = $varInd->nombre;
@@ -668,11 +696,16 @@ class FichaTecnica extends CActiveRecord
                 $idIndicadores[] = $varInd->id;
             }
             
-            //REVISAR. Eliminar la primera coma
-            $strColumnas = ltrim($strColumnas, ', ');
-
-            // La columna indicador es fija y contiene el resultado de la formula
-            $operacionIndicador = 'ROUND(('.implode(' + ', $formula).'), 1) AS indicador';
+            // Recorrer el indicador padre para hacer el calculo
+            foreach ($datosIndicadorPadre as $fila => $valores) {
+                $resultadoIndPadre = 0;
+                
+                foreach ($ponderaciones as $indHijo => $ponderacionHijo) {
+                    $resultadoIndPadre += floatval($valores[$indHijo]) * floatval($ponderacionHijo) / 100;
+                }
+                
+                $datosIndicadorPadre[$fila]['indicador'] = $resultadoIndPadre;
+            }
         } else {
             // La columna indicador contiene el valor a mostrar en la grafica
             $operacionIndicador = 'ROUND(('.$this->formula.'), 1) AS indicador';
@@ -685,39 +718,33 @@ class FichaTecnica extends CActiveRecord
         
         // Solo se considera la dimensión para aquellos indicadores que no son compuestos
         $innerJoin = '';
-        if(!empty($this->formula)) {
-            // Respalda la dimension antes de ser modificada
-            $resultado['dimension'] = $dimension;
+        // Respalda la dimension antes de ser modificada
+        $resultado['dimension'] = $dimension;
 
-            // Revisar si la dimensión hace referencia a un catalogo
-            $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$dimension));
+        // Revisar si la dimensión hace referencia a un catalogo
+        $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$dimension));
 
-            // Si la dimension es un catalogo
-            if($objDimension->catalogo) {
-                // La columna nombre es fija en todos los catalogos y contiene la descripcion del id al que hace referencia
-                $strColumnas = 'nombre AS '.$objDimension->catalogo;
-                // Todos los catalogos tienen como prefijo tblc_
-                $innerJoin = ' INNER JOIN tblc_'.$objDimension->catalogo.' USING('.$objDimension->llave_primaria.') ';
+        // Si la dimension es un catalogo
+        if($objDimension->catalogo) {
+            // La columna nombre es fija en todos los catalogos y contiene la descripcion del id al que hace referencia
+            $strColumnas = 'nombre AS '.$objDimension->catalogo;
+            // Todos los catalogos tienen como prefijo tblc_
+            $innerJoin = ' INNER JOIN tblc_'.$objDimension->catalogo.' USING('.$objDimension->llave_primaria.') ';
 
-                // Si la forma de ordenar es la misma que la dimension,
-                // entonces ordenamos por la descripcion del catalogo
-                // en este caso siempre sera la columna nombre
-                if($orden == $dimension)
-                    $orden = 'nombre';
+            // Si la forma de ordenar es la misma que la dimension,
+            // entonces ordenamos por la descripcion del catalogo
+            // en este caso siempre sera la columna nombre
+            if($orden == $dimension)
+                $orden = 'nombre';
 
-                // Agregamos a la dimension el campo nombre, ya que es requerido en el group by
-                $dimension .= ', nombre';
-                $campoEtiqueta = $objDimension->catalogo;
-                $campoSubtitulo = $objDimension->descripcion;
-            } else {
-                $strColumnas = $dimension;
-                $campoEtiqueta = $dimension;
-                $campoSubtitulo = ucfirst($dimension);
-            }
+            // Agregamos a la dimension el campo nombre, ya que es requerido en el group by
+            $dimension .= ', nombre';
+            $campoEtiqueta = $objDimension->catalogo;
+            $campoSubtitulo = $objDimension->descripcion;
         } else {
-            //$strColumnas = $dimension;
-            //$campoEtiqueta = $dimension;
-            //$campoSubtitulo = ucfirst($dimension);
+            $strColumnas = $dimension;
+            $campoEtiqueta = $dimension;
+            $campoSubtitulo = ucfirst($dimension);
         }
         
         // Agregar los filtros al subtitulo
@@ -749,44 +776,40 @@ class FichaTecnica extends CActiveRecord
         // Agregamos la descripcion de la dimension que se esta mostrando al subtitulo
         $subtitulo = 'Por '.$campoSubtitulo.', para '.trim($subtitulo,', ');
         
-        $groupBy = ' GROUP BY '.implode(', ', $camposFiltro);
-        
         // Solo se considera la dimensión para aquellos indicadores que no son compuestos
         if(!empty($this->formula)) {
-            $groupBy .= ', '.$dimension;
+            $groupBy = ' GROUP BY '.implode(', ', $camposFiltro).', '.$dimension;
+            $where = ' WHERE 1=1 ';
+            $orderBy = ' ORDER BY '.$orden;
+
+            // Agregar todos los filtros la consulta
+            foreach ($camposFiltro as $campFil) {
+                $where .= ' AND '.$campFil.' = \''.$filtros[$campFil].'\'';
+            }
+
+            $variables = $this->Variables;
+
+            // Reemplazamos las variables por su respectiva operacion en formato SQL
+            // Solo aplica para indicadores que tenga una formula
+            foreach ($variables as $variable) {
+                // Operacion para el calculo de la columna
+                $strColumnas .= ', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula;
+                // Operacion para el calculo del indicador
+                $operacionIndicador = str_replace('['.$variable->ini_formula.']',
+                                           'SUM('.$variable->ini_formula.')',
+                                            $operacionIndicador
+                                        );
+
+                // Guardar la fuente de datos de cada variable
+                $fuente = $variable->FuenteDatos;
+                $fuentes[$fuente->id]= $fuente->nombre;
+            }
+
+            $sql = 'SELECT '.$strColumnas.', '.$operacionIndicador.' FROM '.$nombreTablaIndicador.
+                    $innerJoin.$where.$groupBy.$orderBy;
         }
         
-        $where = ' WHERE 1=1 ';
-        $orderBy = ' ORDER BY '.$orden;
-
-        // Agregar todos los filtros la consulta
-        foreach ($camposFiltro as $campFil) {
-            $where .= ' AND '.$campFil.' = \''.$filtros[$campFil].'\'';
-        }
-
-        $variables = $this->Variables;
-        
-        // Reemplazamos las variables por su respectiva operacion en formato SQL
-        // Solo aplica para indicadores que tenga una formula
-        foreach ($variables as $variable) {
-            // Operacion para el calculo de la columna
-            $strColumnas .= ', SUM('.$variable->ini_formula.') AS '.$variable->ini_formula;
-            // Operacion para el calculo del indicador
-            $operacionIndicador = str_replace('['.$variable->ini_formula.']',
-                                       'SUM('.$variable->ini_formula.')',
-                                        $operacionIndicador
-                                    );
-            
-            // Guardar la fuente de datos de cada variable
-            $fuente = $variable->FuenteDatos;
-            $fuentes[$fuente->id]= $fuente->nombre;
-        }
-
-        $sql = 'SELECT '.$strColumnas.', '.$operacionIndicador.' FROM '.$nombreTablaIndicador.
-                $innerJoin.$where.$groupBy.$orderBy;
-
         if($metadatos) {
-            $resultado['datos'] = Yii::app()->db->createCommand($sql)->query()->readAll();
             $resultado['titulo'] = $this->nombre;
             $resultado['subtitulo'] = $subtitulo;
             $resultado['fuentes'] = implode(', ', $fuentes);
@@ -800,8 +823,8 @@ class FichaTecnica extends CActiveRecord
             $resultado['etiquetaY'] = $this->unidad_medida;
             $resultado['etiquetaX'] = $campoSubtitulo;
             $resultado['nivel'] = array("id" => $this->Nivel->id, "nombre" => $this->Nivel->nombre);
-            $resultado['tipo_grafico'] = $this->TipoGrafico ? $this->TipoGrafico->codigo : '';
-            $resultado['sql'] = $sql;
+            // Se establece el tipo de grafico barras por defecto, en caso de que no este definido
+            $resultado['tipo_grafico'] = $this->TipoGrafico ? $this->TipoGrafico->codigo : 'bar';
             
             // Enviar los valores y las etiquetas en un arreglo separado,
             // es necesario para la construccion de la grafica
@@ -810,11 +833,14 @@ class FichaTecnica extends CActiveRecord
             if(empty($this->formula)) {
                 $resultado['etiquetas'] = $etiquetasIndicadores;
                 $resultado['idIndicadores'] = $idIndicadores;
+                $resultado['datos'] = $datosIndicadorPadre;
                 
                 foreach($columnasIndicadores as $columna) {
                     array_push($resultado['valores'], floatval($resultado['datos'][0][$columna]));
                 }
             } else {
+                $resultado['datos'] = Yii::app()->db->createCommand($sql)->query()->readAll();
+                
                 foreach($resultado['datos'] as $fila) {
                     // La columna indicador es fija y contiene el valor del indicador
                     array_push($resultado['valores'], floatval($fila['indicador']));
@@ -835,8 +861,15 @@ class FichaTecnica extends CActiveRecord
                 array_push($resultado['escalaEvaluacion'], $reglaEvaluacion);
             }
         } else {
-            $resultado = Yii::app()->db->createCommand($sql)->query()->readAll();
+            if(empty($this->formula)) {
+                $resultado = $datosIndicadorPadre;
+            } else {
+                $resultado = Yii::app()->db->createCommand($sql)->query()->readAll();
+            }
         }
+        
+        // Siempre debemos devolver la variable error, de lo contrario marca error en el js de la vista
+        $resultado['error'] = false;
          
         return $resultado;
     }

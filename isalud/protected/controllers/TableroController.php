@@ -44,7 +44,7 @@ class TableroController extends Controller
                     if($respuesta['error']) throw new Exception($respuesta['msjerror']);
 
                     $respuesta = $modelFicha->calcularIndicador($dimension, $filtro, $orden);
-                    if(isset($respuesta['error'])) throw new Exception($respuesta['msjerror']);
+                    if($respuesta['error']) throw new Exception($respuesta['msjerror']);
                     
                     // Si no esta definido el tipo de grafio, se establecera como line
                     if( empty($respuesta['tipo_grafico']) && Yii::app()->request->getPost('tipo_grafico')==null )
