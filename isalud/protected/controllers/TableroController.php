@@ -13,8 +13,8 @@ class TableroController extends Controller
                                                             '; var graficos = '.$graficos, CClientScript::POS_HEAD);
     
 		$this->render('index', array(
-            'indicadores' => CHtml::listData(FichaTecnica::model()->findAll(), 'id', 'nombre'),
-            'tableros' => CHtml::listData(Tablero::model()->findAll(), 'id', 'nombre'),
+            'indicadores' => CHtml::listData(FichaTecnica::model()->findAll(array('order'=>'nombre ASC')), 'id', 'nombre'),
+            'tableros' => CHtml::listData(Tablero::model()->findAll(array('order'=>'nombre ASC')), 'id', 'nombre'),
         ));
 	}
 	
