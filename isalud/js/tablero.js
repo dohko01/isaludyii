@@ -91,6 +91,9 @@ function addGraficaMaximizar(event, object) {
         width :  Math.round($('#winMaximizarGrafica').outerWidth()),
         data : jsonGrafico
     });
+    
+    // Elimina el mensaje de powered by ZingChart
+    $("#graficoIndicador_"+idGrafica+"-license").remove();
 }
 
 /**
@@ -108,7 +111,7 @@ function getJSONGrafica(parametros) {
         }));
         
     if(max<maxValor)
-        max = maxValor;
+        max = maxValor + (maxValor*0.05); // Se le suma el 10% para que la grafica no quede a tope en el eje de las y
 	
 	for(i=0; i<parametros.escalaEvaluacion.length; i++) {
 		rule = {
@@ -541,6 +544,8 @@ function obtieneIndicador(parametros) {
                     // Convierte el json donde estan los datos en una tabla html
                     tblDatos = ConvertJsonToTable(respuesta.datos);
                     $('#datosIndicadores').append('<li id="datos_'+parametros.id+'">'+tblDatos+'</li>');
+                    
+                    console.log(respuesta.sql);
                     
                     // Guarda todo el objeto JSON para posteriormente utilizarlo al cambiar el tipo de grafico
                     $('#datosIndicadores').append('<li id="json_'+parametros.id+'">'+JSON.stringify(respuesta)+'</li>'); // $.param(jsonObj)
