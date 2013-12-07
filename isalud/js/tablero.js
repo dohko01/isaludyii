@@ -332,13 +332,13 @@ function getJSONGrafica(parametros) {
             }
             
             offsetX = -220;
-            width = 100;
+            widthGauge = 100;
             
             for(j=0; j<parametros.escalaEvaluacion.length; j++) {
                 label = {
                         "x": "50%",
                         "y": "90%",
-                        "width": width,
+                        "width": widthGauge,
                         "offsetX": offsetX,
                         "textAlign": "center",
                         "padding": 10,
@@ -351,7 +351,7 @@ function getJSONGrafica(parametros) {
                     
                 labels.push(label);
                 
-                offsetX = offsetX + width;
+                offsetX = offsetX + widthGauge;
             }
             
             configuraciones = {
