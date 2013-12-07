@@ -3,6 +3,8 @@
 heightToolbar = 65;
 heidhtZingChart = 400;
 widthZingChart = 700;
+zingchart.ASYNC = true;
+outputZingChart = "svg";
 
 function cambiaNivel(id)
 {
@@ -88,7 +90,10 @@ function addGraficaMaximizar(event, object) {
     zingchart.render({
         id : "maxGraficoIndicador_"+idGrafica,
         height : Math.round($('#winMaximizarGrafica').outerHeight()-heightToolbar),  // Le restamos la altura del toolbar
-        width :  Math.round($('#winMaximizarGrafica').outerWidth()),
+        width : Math.round($('#winMaximizarGrafica').outerWidth()),
+        hideprogresslogo : true,
+        locale : "es",
+        output : outputZingChart,
         data : jsonGrafico
     });
     
@@ -436,6 +441,9 @@ function cambiarTipoGrafico(event) {
         id : idZingChart+idGrafica,
         height : height,
         width : width,
+        hideprogresslogo : true,
+        locale : "es",
+        output : outputZingChart,
         data : jsonGrafico
     });
     
@@ -462,6 +470,9 @@ function generaGrafica(parametros, indicadorId)
         id : idGrafica,
         height : heidhtZingChart,
         width : widthZingChart,
+        hideprogresslogo : true,
+        locale : "es",
+        output : outputZingChart,
         data : objGrafica
     });	
 }
