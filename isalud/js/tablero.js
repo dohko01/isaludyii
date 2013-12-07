@@ -5,6 +5,7 @@ heidhtZingChart = 400;
 widthZingChart = 700;
 zingchart.ASYNC = true;
 outputZingChart = "svg";
+urlLogo = baseUrl+'/images/logo.png';
 
 function cambiaNivel(id)
 {
@@ -25,7 +26,7 @@ function redimensionaGraficaMaximizar(event, object) {
     console.log("Width: " + $('#winMaximizarGrafica').closest('.ui-dialog').width() + ", height: " + $('#winMaximizarGrafica').closest('.ui-dialog').height());
     console.log("Width: " + Math.round(object.size.width) + ", height: " + Math.round(object.size.height));*/
     
-    newWidth = Math.round($(this).outerWidth());
+    newWidth = Math.round($(this).outerWidth())-30;
     newHeight = Math.round($(this).outerHeight())-heightToolbar; // Le restamos la altura del toolbar
     
     zingchart.exec("maxGraficoIndicador_"+idGrafica, 'resize', {
@@ -90,9 +91,10 @@ function addGraficaMaximizar(event, object) {
     zingchart.render({
         id : "maxGraficoIndicador_"+idGrafica,
         height : Math.round($('#winMaximizarGrafica').outerHeight()-heightToolbar),  // Le restamos la altura del toolbar
-        width : Math.round($('#winMaximizarGrafica').outerWidth()),
+        width : Math.round($('#winMaximizarGrafica').outerWidth())-30,
         hideprogresslogo : true,
         locale : "es",
+        customprogresslogo : urlLogo,
         output : outputZingChart,
         data : jsonGrafico
     });
@@ -418,7 +420,7 @@ function cambiarTipoGrafico(event) {
     if($(this).hasClass('maximizado')) {
         idZingChart = 'maxGraficoIndicador_';
         height = Math.round($('#winMaximizarGrafica').outerHeight()-heightToolbar);
-        width = Math.round($('#winMaximizarGrafica').outerWidth());
+        width = Math.round($('#winMaximizarGrafica').outerWidth())-30;
     }
     
     // Obtiene el objeto JSON que contiene los datos devueltos al obtener el indicador
@@ -443,6 +445,7 @@ function cambiarTipoGrafico(event) {
         width : width,
         hideprogresslogo : true,
         locale : "es",
+        customprogresslogo : urlLogo,
         output : outputZingChart,
         data : jsonGrafico
     });
@@ -472,6 +475,7 @@ function generaGrafica(parametros, indicadorId)
         width : widthZingChart,
         hideprogresslogo : true,
         locale : "es",
+        customprogresslogo : urlLogo,
         output : outputZingChart,
         data : objGrafica
     });	
