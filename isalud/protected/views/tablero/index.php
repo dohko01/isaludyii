@@ -10,7 +10,6 @@ Yii::app()->getClientScript()->registerCssFile(
       '/jui/css/base/jquery-ui.css');
 
 Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/sDashboard/sDashboard.css');
-Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/css/tablero.css');
 
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/libs/flotr2/flotr2.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/sDashboard/files/libs/touchpunch/jquery.ui.touch-punch.js');
@@ -79,7 +78,6 @@ $this->beginWidget('zii.widgets.jui.CJuiDialog',array(
         'modal'=>false,
         'height'=>'js:$(window).height()-200',
         'width'=>'js:$(window).width()-300',
-        //'open'=>'js:addGraficaMaximizar',
         'close'=>'js:destroyGraficaMaximizar',
         'resizeStop'=>'js:redimensionaGraficaMaximizar',
         'show'=>'js:{
