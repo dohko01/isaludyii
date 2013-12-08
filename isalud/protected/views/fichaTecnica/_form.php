@@ -25,13 +25,16 @@
         $this->widget('zii.widgets.jui.CJuiTabs', array(
             'tabs'=>array(
                 'Datos Generales'=>array(
-                    'content'=>$this->renderPartial('_form_datosgenerales', array('form'=>$form,'model'=>$model), true)
+                    'content'=>$this->renderPartial('_form_datosgenerales', array('form'=>$form,'model'=>$model), true),
+                    'id'=>'DatosGenerales'
                 ),
                 'Asignaciones'=>array(
-                    'content'=>$this->renderPartial('_form_asignaciones', array('form'=>$form,'model'=>$model), true)
+                    'content'=>$this->renderPartial('_form_asignaciones', array('form'=>$form,'model'=>$model), true),
+                    'id'=>'Asignaciones'
                 ),
                 'Descripciones'=>array(
-                    'content'=>$this->renderPartial('_form_descripciones', array('form'=>$form,'model'=>$model), true)
+                    'content'=>$this->renderPartial('_form_descripciones', array('form'=>$form,'model'=>$model), true),
+                    'id'=>'Descripciones'
                 ),
             ),
         ));

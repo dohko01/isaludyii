@@ -7,7 +7,8 @@ Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),
-	$model->nombre,
+	$model->nombre=>array('view','id'=>$model->id),
+	'Datos Cargados',
 );
 
 $this->menu=array(

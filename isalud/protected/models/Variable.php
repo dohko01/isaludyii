@@ -38,8 +38,8 @@ class Variable extends CActiveRecord
 			array('nombre, ini_formula', 'length', 'max'=>45),
             array('ini_formula', 'match', 'pattern'=>'/^([a-zA-Z0-9_-])+$/', 'message'=>'Sólo puede escribir caracteres alfanuméricos, guión bajo(_) y guión medio (-)'),
 			array('comentario', 'safe'),
-            array('nombre', 'ValidateNombre'),
-            array('ini_formula', 'ValidateIniFormula'),
+            array('nombre', 'ValidateNombre', 'on' => 'create, insert'),
+            array('ini_formula', 'ValidateIniFormula', 'on' => 'create, insert'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, id_fuente_datos, id_campo, nombre, ini_formula, comentario', 'safe', 'on'=>'search'),
@@ -120,6 +120,7 @@ class Variable extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+            'pagination'=>array('pageSize'=>20)
 		));
 	}
 
