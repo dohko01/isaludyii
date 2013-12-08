@@ -92,8 +92,8 @@ function addGraficaMaximizar(event, object) {
         id : "maxGraficoIndicador_"+idGrafica,
         height : Math.round($('#winMaximizarGrafica').outerHeight()-heightToolbar),  // Le restamos la altura del toolbar
         width : Math.round($('#winMaximizarGrafica').outerWidth())-30,
-        hideprogresslogo : true,
         locale : "es",
+        setLocale : "es",
         customprogresslogo : urlLogo,
         output : outputZingChart,
         data : jsonGrafico
@@ -443,8 +443,8 @@ function cambiarTipoGrafico(event) {
         id : idZingChart+idGrafica,
         height : height,
         width : width,
-        hideprogresslogo : true,
         locale : "es",
+        setLocale : "es",
         customprogresslogo : urlLogo,
         output : outputZingChart,
         data : jsonGrafico
@@ -473,8 +473,8 @@ function generaGrafica(parametros, indicadorId)
         id : idGrafica,
         height : heidhtZingChart,
         width : widthZingChart,
-        hideprogresslogo : true,
         locale : "es",
+        setLocale : "es",
         customprogresslogo : urlLogo,
         output : outputZingChart,
         data : objGrafica
