@@ -107,7 +107,7 @@
             $options['value'] = $_POST['FichaTecnica']['Variables'];
         }
 
-        $this->widget('ext.EchMultiselect.EchMultiselect', $options);
+        $this->widget('ext.EchMultiSelect.EchMultiSelect', $options);
         echo $form->error($model,'Variables');
         echo CHtml::hiddenField('variablesSeleccionadas');
         ?>
