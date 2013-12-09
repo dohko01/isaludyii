@@ -111,6 +111,7 @@
             <button type="button" class="close" data-dismiss="alert">×</button>
             <strong>
                 Un archivo en formato CSV (Comma Separated Values) o en texto plano debe tener el siguiente formato: 
+                La primera Fila debe contener el nombre de las columnas. 
                 Las columnas deben estar separada por una coma (,) y las filas se delimitan con una nueva linea de lo contrario 
                 el sistema no podrá leer los datos de manera correcta
             </strong>
