@@ -410,10 +410,10 @@ function cambiarTipoGrafico(event) {
     event.preventDefault();
     event.stopPropagation();
     
-    idGrafica = $(this).data('id');
-    idZingChart = 'graficoIndicador_';
-    height = heidhtZingChart;
-    width = widthZingChart;
+    var idGrafica = $(this).data('id');
+    var idZingChart = 'graficoIndicador_';
+    var height = heidhtZingChart;
+    var width = widthZingChart;
     
     
     // Si la grafia a cambiar esta maximizada
@@ -424,7 +424,7 @@ function cambiarTipoGrafico(event) {
     }
     
     // Obtiene el objeto JSON que contiene los datos devueltos al obtener el indicador
-    parametros = JSON.parse($('#json_'+idGrafica).text());
+    parametros = JSON.parse($('#json_'+$("#indicadorActual_"+idGrafica).html()).text());
     
     // Modifica el tipo de grafica a mostrar
     parametros.tipo_grafico = $(this).data('tipo');
