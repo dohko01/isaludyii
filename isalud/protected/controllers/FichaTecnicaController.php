@@ -338,7 +338,12 @@ class FichaTecnicaController extends Controller
 	{
         if(Yii::app()->request->isAjaxRequest && isset($_POST['id'])) {
             $fichaTecnica = $this->loadModel($_POST['id']);
-
+            
+            if(isset($_POST['cambiaNivel']))
+            {
+                echo '{"id":'.$fichaTecnica->id.',"formula":'.(($fichaTecnica->formula) ? '"'.$fichaTecnica->formula.'"':"null").'}';
+                return;
+            }
             $this->renderPartial('viewFicha',array(
                 'model'=>$fichaTecnica,
             ));

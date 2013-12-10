@@ -556,6 +556,12 @@ function obtieneIndicador(parametros) {
                     if(actualizarGrafica == '')
                         agregarIndicador(parametros.id, respuesta);
                     
+                    //Almacena el indicador actual para la profundidad de las graficas
+                    if($("#indicadorActual_"+parametros.id).length == 0)
+                        $('#indicadoresActuales').append('<li id="indicadorActual_'+parametros.id+'">'+parametros.id+'</li>');
+                    else
+                        $("#indicadorActual_"+parametros.id).html(parametros.id);
+                    
                     // Convierte el json donde estan los datos en una tabla html
                     tblDatos = ConvertJsonToTable(respuesta.datos);
                     $('#datosIndicadores').append('<li id="datos_'+parametros.id+'">'+tblDatos+'</li>');
