@@ -1,5 +1,6 @@
 <?php
 Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/styles/jqx.base.css');
+Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/styles/jqx.ui-redmond.css');
 
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/jqxcore.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/jqxdocking.js');
@@ -26,14 +27,15 @@ $this->breadcrumbs=array(
     <div id="docking">
         <div style="width: 39%">
             <div id="window1" class="grupoIndicador">
-                <div><strong>Titulo 1</strong></div>
-                <div style="overflow: auto;" class="graficoIndicador" id="indicador_1"></div>
+                <div><strong>Indicadores de Salud</strong></div>
+                <div style="overflow: auto;" class="graficoIndicador" id="morbilidad_mortalidad"></div>
+                
             </div>
         </div>
         <div style="width: 59%">
             <div id="window2" class="grupoIndicador">
-                <div><strong>Titulo 2</strong></div>
-                <div style="overflow: auto;" class="graficoIndicador" id="indicador_2"></div>
+                <div><strong>Indicadores de Programas Especiales</strong></div>
+                <div style="overflow: auto;" class="graficoIndicador" id="programas_especiales"></div>
             </div>
         </div>
     </div>
@@ -41,14 +43,14 @@ $this->breadcrumbs=array(
     <div id="docking2">
         <div style="width: 39%">
             <div id="window3" class="grupoIndicador">
-                <div><strong>Titulo 3</strong></div>
-                <div style="overflow: auto;" class="graficoIndicador" id="indicador_3"></div>
+                <div><strong>Indicadores de Recursos</strong></div>
+                <div style="overflow: auto;" class="graficoIndicador" id="recursos"></div>
             </div>
         </div>
         <div style="width: 59%">
             <div id="window4" class="grupoIndicador">
-                <div><strong>Titulo 4</strong></div>
-                <div style="overflow: auto;" class="graficoIndicador" id="indicador_4"></div>
+                <div><strong>Indicadores de Servicios</strong></div>
+                <div style="overflow: auto;" class="graficoIndicador" id="servicios"></div>
             </div>
         </div>
     </div>
