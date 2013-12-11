@@ -69,6 +69,7 @@ $this->breadcrumbs=array(
 
 <ul id="tableroPrincipal"> </ul>
 <ul id="datosIndicadores" style="display: none;"> </ul>
+<ul id="indicadoresActuales" style="display: none"></ul>
 
 <?php
 $this->beginWidget('zii.widgets.jui.CJuiDialog',array(
@@ -98,14 +99,38 @@ $this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
 <script language="javascript" type="text/javascript">
 zingchart.node_click = function(node){
-        console.log(node);
+        //console.log(node);
         var id_indicador = node.id.split("_");
-        var jDatos = $.parseJSON($("#json_"+id_indicador[1]).html());
+        var indicadorActual = $('#indicadorActual_'+id_indicador[1]).html();
+        var jDatos = $.parseJSON($("#json_"+indicadorActual).html());
+        var id = id_indicador[1];
         console.log(jDatos);
-        if(jDatos.nivel.id == 4)
-        {
-            $('#actualizarGrafica').val(node.id);
-            cambiaNivel(jDatos.idIndicadores[node.nodeindex]);
-        }
+        $.ajax({
+            url: baseUrl+'/fichaTecnica/GetFichaTecnica/'+indicadorActual,
+            data: 'id='+indicadorActual+'&YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val()+'&cambiaNivel=1',
+            type: "POST",
+            dataType : "json",
+            success: function( respuesta ) {
+                if(respuesta.error) {
+                    showError('Error al obtener datos del indicador, revise el mensaje de error: '+respuesta.msjerror);
+                } else {
+                    //alert(respuesta.formula)
+                    if(respuesta.formula == null)
+                    {
+                        $('#actualizarGrafica').val(node.id);
+                        $('#indicadorActual_'+id_indicador[1]).html(jDatos.idIndicadores[node.nodeindex]);
+                        cambiaNivel(jDatos.idIndicadores[node.nodeindex]);
+                    }
+                }
+            },
+            error: function( xhr, status ) {
+                showError( "Error al obtener los datos. "+status+" "+xhr.status );
+            }
+        });
+//        if(jDatos.nivel.id == 4)
+//        {
+//            $('#actualizarGrafica').val(node.id);
+//            cambiaNivel(id);
+//        }
 }
 </script>

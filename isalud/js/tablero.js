@@ -410,10 +410,10 @@ function cambiarTipoGrafico(event) {
     event.preventDefault();
     event.stopPropagation();
     
-    idGrafica = $(this).data('id');
-    idZingChart = 'graficoIndicador_';
-    height = heidhtZingChart;
-    width = widthZingChart;
+    var idGrafica = $(this).data('id');
+    var idZingChart = 'graficoIndicador_';
+    var height = heidhtZingChart;
+    var width = widthZingChart;
     
     
     // Si la grafia a cambiar esta maximizada
@@ -424,7 +424,7 @@ function cambiarTipoGrafico(event) {
     }
     
     // Obtiene el objeto JSON que contiene los datos devueltos al obtener el indicador
-    parametros = JSON.parse($('#json_'+idGrafica).text());
+    parametros = JSON.parse($('#json_'+$("#indicadorActual_"+idGrafica).html()).text());
     
     // Modifica el tipo de grafica a mostrar
     parametros.tipo_grafico = $(this).data('tipo');
@@ -555,6 +555,12 @@ function obtieneIndicador(parametros) {
                     var actualizarGrafica = $('#actualizarGrafica').val();
                     if(actualizarGrafica == '')
                         agregarIndicador(parametros.id, respuesta);
+                    
+                    //Almacena el indicador actual para la profundidad de las graficas
+                    if($("#indicadorActual_"+parametros.id).length == 0)
+                        $('#indicadoresActuales').append('<li id="indicadorActual_'+parametros.id+'">'+parametros.id+'</li>');
+                    else
+                        $("#indicadorActual_"+parametros.id).html(parametros.id);
                     
                     // Convierte el json donde estan los datos en una tabla html
                     tblDatos = ConvertJsonToTable(respuesta.datos);
