@@ -6,10 +6,15 @@ Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/jqxdocking.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/jqxwindow.js');
 
+Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/FusionWidgetsXT/FusionCharts.js');
+
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/tableroGerencial.js', CClientScript::POS_END);
 
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-html5-min.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/license.js');
+
+//Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/jquery.svg/jquery.svg.min.js', CClientScript::POS_LOAD);
+//Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/jquery.svg/jquery.svgdom.min.js', CClientScript::POS_END);
 
 $this->breadcrumbs=array(
 	'Tablero','Gerencial'
@@ -21,21 +26,55 @@ $this->breadcrumbs=array(
         min-height: 600px;
         min-width: 800px;
     }
+    svg { cursor: pointer; }
 </style>
 
 <div id="tableroPrincipal">
     <div id="docking">
         <div style="width: 39%">
             <div id="window1" class="grupoIndicador">
-                <div><strong>Indicadores de Salud</strong></div>
-                <div style="overflow: auto;" class="graficoIndicador" id="morbilidad_mortalidad"></div>
-                
+                <div><strong>Indicadores de Eficiencia</strong></div>
+                <div style="overflow: auto;" class="graficoIndicador" id="eficiencia">
+                    <h4>Cobertura de vacunación de niños</h4>
+                    <table align="center">
+                        <tr align="center">
+                            <td>
+                                <div id="graficaCobMenorUno" style="cursor: pointer"></div>
+                                <h4>menores de un año</h4>
+                            </td>
+                            <td>
+                                <div id="graficaCobUno" style="cursor: pointer"></div>
+                                <h4>de un año</h4>
+                            </td>
+                            <td>
+                                <div id="graficaCobUnoCuatro" style="cursor: pointer"></div>
+                                <h4>de uno a cuatro años</h4>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
         <div style="width: 59%">
             <div id="window2" class="grupoIndicador">
-                <div><strong>Indicadores de Programas Especiales</strong></div>
-                <div style="overflow: auto;" class="graficoIndicador" id="programas_especiales"></div>
+                <div><strong>Indicadores de Eficacia</strong></div>
+                <div style="overflow: hidden;" class="graficoIndicador" id="eficacia">
+                    <h4>Logros de vacunación durante las Semanas Nacionales de Salud</h4>
+                    <table align="center">
+                        <tr><td align="center">
+                            <strong>Antipoliomielitica tipo Sabin en población de 6 a 59 meses de edad</strong>
+                            <div id="graficoSNSSabin"></div>
+                        </td></tr>
+                        <tr><td align="center"><br>
+                            <strong>SR en población de 12 años de edad</strong>
+                            <div id="graficoSNSSR"></div>
+                        </td></tr>
+                        <tr><td align="center"><br>
+                            <strong>TD en población de 12 años de edad</strong>
+                            <div id="graficoSNSTD"></div>
+                        </td></tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -43,19 +82,43 @@ $this->breadcrumbs=array(
     <div id="docking2">
         <div style="width: 39%">
             <div id="window3" class="grupoIndicador">
-                <div><strong>Indicadores de Recursos</strong></div>
+                <div><strong>An&aacute;lisis de la informaci&oacute;n</strong></div>
                 <div style="overflow: auto;" class="graficoIndicador" id="recursos"></div>
             </div>
         </div>
         <div style="width: 59%">
             <div id="window4" class="grupoIndicador">
-                <div><strong>Indicadores de Servicios</strong></div>
-                <div style="overflow: auto;" class="graficoIndicador" id="servicios"></div>
+                <div><strong>Indicadores de Econom&iacute;a</strong></div>
+                <div style="overflow: auto;" class="graficoIndicador" id="economia">
+                    <table align="center" width="90%">
+                        <tr align="center" valign="top">
+                            <td>
+                                <h5>Presupuesto</h5>
+                                <div id="presupuesto"></div>
+                            </td>
+                            <td>
+                                <div id="biologico">
+                                    <h5>Existencia de biológicos de <br>acuerdo a lo planeado</h5>
+                                    <img src="../images/semaforo-amarillo.png">
+                                </div>
+                            </td>
+                            <td>
+                                <div id="red_frio">
+                                    <h5>Situación actual de <br>la red de fríos</h5>
+                                    <img src="../images/semaforo-rojo.png">
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<input type="hidden" name="YII_CSRF_TOKEN" id="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
-<input type="hidden" name="dimension" id="dimension" value="id_estado" />
-<input type="hidden" name="filtro" id="filtro" value='{"id_estado":7, "anio":2013}' />
+<form name="datosIndicador" id="datosIndicador" method="POST" action="<?php echo Yii::app()->createURL('tablero'); ?>" target="_blank">
+    <input type="hidden" name="YII_CSRF_TOKEN" id="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
+    <input type="hidden" name="dimension" id="dimension" value="id_estado" />
+    <input type="hidden" name="filtro" id="filtro" value='{"id_estado":7, "anio":2013}' />
+    <input type="hidden" name="indicador" id="indicador" value='' />
+</form>
