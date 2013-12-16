@@ -12,14 +12,19 @@ urlLogo = baseUrl+'/images/logo.png';
  * Regresa niveles de las graficas
  */
 
-function regresaNivel(id)
+function regresaNivel(id, id_actualizar)
 {
+    var id_nuevo = id_actualizar.split("_");
     var indicadorActual = $('#indicadorActual_'+id).html();
     var jDatos = $.parseJSON($("#json_"+id).html());
     var id = id;
-    $('#actualizarGrafica').val(id);
-    $('#indicadorActual_'+id).html(id);
+    $('#actualizarGrafica').val(id_actualizar);
+    $('#indicadorActual_'+id_nuevo[1]).html(id);
+    //alert(id_actualizar);
     cambiaNivel(id);
+    //$('#q li:last').remove();
+    $('#listadoGrafica_'+id_nuevo[1]+' a.grafico_'+id).nextAll().remove();
+    //$( "li.third-item" ).nextAll().css( "background-color", "red" )
 }
 
 function cambiaNivel(id)
@@ -520,7 +525,7 @@ function agregarIndicador(indicador, contenido) {
                 </div>\n\
             </div>\n\
         </div>\n\
-        <div id="listadoGrafica_'+indicador+'"><a href="#" onclick="regresaNivel('+indicador+','+indicador+');">'+contenido.titulo+'</a></div>\n\
+        <div id="listadoGrafica_'+indicador+'"><a href="#" class="grafico_'+indicador+'" onclick="regresaNivel('+indicador+',\'graficoIndicador_'+indicador+'\');">'+contenido.titulo+'</a></div>\n\
         <div id="graficoIndicador_'+indicador+'" class="graficoIndicador"></div>\n\
     </div>';
                     
@@ -542,9 +547,8 @@ function obtieneIndicador(parametros) {
     existeIndicador = $('#tableroPrincipal').children('#'+prefixTblIndicador+parametros.id);
     var actualizarGrafica = $('#actualizarGrafica').val();
     
-    
     // Si no existe agregarlo al tablero
-    if(existeIndicador.length == 0) {
+    if(existeIndicador.length == 0 || actualizarGrafica != '') {
         $.extend( parametros, {"YII_CSRF_TOKEN": $('[name=YII_CSRF_TOKEN]').val()} );
          
         $.ajax({
@@ -565,7 +569,7 @@ function obtieneIndicador(parametros) {
                     if(parametros.filtro)       respuesta.filtro       = parametros.filtro;
                     if(parametros.tipo_grafico) respuesta.tipo_grafico = parametros.tipo_grafico;
                     
-                    var actualizarGrafica = $('#actualizarGrafica').val();
+                    //var actualizarGrafica = $('#actualizarGrafica').val();
                     if(actualizarGrafica == '')
                         agregarIndicador(parametros.id, respuesta);
                     
