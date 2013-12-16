@@ -7,6 +7,21 @@ zingchart.ASYNC = true;
 outputZingChart = "svg";
 urlLogo = baseUrl+'/images/logo.png';
 
+/**
+ * 
+ * Regresa niveles de las graficas
+ */
+
+function regresaNivel(id)
+{
+    var indicadorActual = $('#indicadorActual_'+id).html();
+    var jDatos = $.parseJSON($("#json_"+id).html());
+    var id = id;
+    $('#actualizarGrafica').val(id);
+    $('#indicadorActual_'+id).html(id);
+    cambiaNivel(id);
+}
+
 function cambiaNivel(id)
 {
     parametros = {
@@ -505,6 +520,7 @@ function agregarIndicador(indicador, contenido) {
                 </div>\n\
             </div>\n\
         </div>\n\
+        <div id="listadoGrafica_'+indicador+'"><a href="#" onclick="regresaNivel('+indicador+','+indicador+');">'+contenido.titulo+'</a></div>\n\
         <div id="graficoIndicador_'+indicador+'" class="graficoIndicador"></div>\n\
     </div>';
                     
@@ -526,10 +542,7 @@ function obtieneIndicador(parametros) {
     existeIndicador = $('#tableroPrincipal').children('#'+prefixTblIndicador+parametros.id);
     var actualizarGrafica = $('#actualizarGrafica').val();
     
-    if(actualizarGrafica != '')
-    {
-        existeIndicador.length = 0;
-    }
+    
     // Si no existe agregarlo al tablero
     if(existeIndicador.length == 0) {
         $.extend( parametros, {"YII_CSRF_TOKEN": $('[name=YII_CSRF_TOKEN]').val()} );

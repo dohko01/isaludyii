@@ -120,6 +120,7 @@ zingchart.node_click = function(node){
                         $('#actualizarGrafica').val(node.id);
                         $('#indicadorActual_'+id_indicador[1]).html(jDatos.idIndicadores[node.nodeindex]);
                         cambiaNivel(jDatos.idIndicadores[node.nodeindex]);
+                        $('#listadoGrafica_'+id_indicador[1]).append('&nbsp;-><a href="#" onclick="cambiaNivel('+jDatos.idIndicadores[node.nodeindex]+','+id+');">'+jDatos.etiquetas[node.nodeindex]+'</a>');
                     }
                 }
             },
