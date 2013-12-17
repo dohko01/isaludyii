@@ -27,16 +27,29 @@ function generaGrafica(parametros) {
     $('#'+parametros.id+"-license").remove();
 }
 
+function enviarIndicador(parametros) {
+    $('#indicador').val(parametros.indicador);
+    
+    if(parametros.dimension)
+        $('#dimension').val(parametros.dimension);
+    
+    if(parametros.filtro) 
+        $('#filtro').val(parametros.filtro);
+    
+    $('#datosIndicador').submit();
+}
+
 $(document).ready(function () {
     heightWin = 400;//($(document).height() - $('.navbar-fixed-top').height() - $('.breadcrumb').height() - $('.navbar-fixed-bottom').height() - 80) / 2;
     $('.grupoIndicador').css('height', heightWin+'px');
     $('#docking, #docking2').jqxDocking({ theme: 'ui-redmond', orientation: 'horizontal', width: '100%', mode: 'docked' });
     $('#docking, #docking2').jqxDocking('hideAllCloseButtons');
-    $('#window1, #window2, #window3, #window4').jqxWindow({ draggable: false }); 
+    // Se establece keyboardCloseKey a 1000, para evitar cerrar en el esc
+    $('#window1, #window2, #window3, #window4').jqxWindow({ draggable: false, keyboardCloseKey: 1000 }); 
     
     
     /******************** INICIO eficiencia *******************************/
-    var wTermometro=150, hTermometro=270;
+    /*var wTermometro=100, hTermometro=270;
     
     var graficaCobMenorUno = new FusionCharts("Thermometer", "CobMenorUno", wTermometro, hTermometro);
     
@@ -55,6 +68,12 @@ $(document).ready(function () {
     
     $("#graficaCobMenorUno").click(function(){
         console.log($(this).attr("id"));
+        
+        enviarIndicador({
+            dimension: '',
+            filtro: '',
+            indicador: ''
+        });
     });
     
     
@@ -74,6 +93,12 @@ $(document).ready(function () {
     
     $("#graficaCobUno").click(function(){
         console.log($(this).attr("id"));
+        
+        enviarIndicador({
+            dimension: '',
+            filtro: '',
+            indicador: ''
+        });
     });
     
     var graficaCobUnoCuatro = new FusionCharts("Thermometer", "CobUnoCuatro", wTermometro, hTermometro);
@@ -92,12 +117,57 @@ $(document).ready(function () {
     
     $("#graficaCobUnoCuatro").click(function(){
         console.log($(this).attr("id"));
-    });
+        
+        enviarIndicador({
+            dimension: '',
+            filtro: '',
+            indicador: ''
+        });
+    });*/
+    
+    indicador = { 
+        id: 'vacunacion',
+        alto: 300,
+        ancho: 650,
+        grafica: {
+            "graphset": [{
+                "type": "area",
+                "title": { 
+                    "text": 'Vacunación',
+                    "background-color": "none",
+                    "font-color": "black",
+                    "border-width": 1,
+                    "border-color": "#CCCCCC",
+                    "bold": true,
+                    "border-bottom": "none"
+                },
+                "legend": {},
+                "border-width": 1,
+                "border-color": "#CCCCCC",
+                "background-color": "#fff #eee",
+                "tooltip": { text : "%v% de %t en %k" },
+                "scaleX": { values: ["Dic 12","Ene 13","Feb 13","Mar 13","Abr 13","May 13","Jun 13","Jul 13","Ago 13","Sep 13","Oct 13","Nov 13"] },
+                "scaleY": { "values": "0:100:10" },
+                "source": { text: "Fuente de datos" },
+                "series": [
+                    {
+                        text: "Cobertura", "values": [26,13,32,12,33,26,23,20,40,90,60,70], "animate": true, "effect": 1, "highlight": true
+                    },{
+                        text: "Concordancia", "values": [33,26,23,20,12,33,26,23,20,60,40,70], "animate": true, "effect": 1, "highlight": true
+                    }
+                ]
+            }
+        ]
+        }
+    };
+    
+    generaGrafica(indicador);
+    
     /*********************** FIN eficiencia ****************************/
     
     
     /******************** INICIO eficacia *******************************/
-    var wiLinearGauge = 600, heLinearGauge = 80;
+    var wiLinearGauge = 400, heLinearGauge = 73, metaSNS = 95;
     
     var graficoSNSSabin = new FusionCharts("HLInearGauge", "SNSSabin", wiLinearGauge, heLinearGauge);
     
@@ -113,12 +183,12 @@ $(document).ready(function () {
             },
             "pointers": {
                 "pointer": [ {
-                        "value": "27.5"
+                        "value": sabin_sns
                     } ]
             },
             "trendpoints": {
                 "point": [ {
-                    "startvalue": "79",
+                    "startvalue": metaSNS,
                     "displayvalue": "Meta",
                     "color": "FFF",
                     "thickness": "2",
@@ -151,7 +221,7 @@ $(document).ready(function () {
     graficoSNSSabin.render("graficoSNSSabin");
     
     $("#graficoSNSSabin").click(function(){
-        console.log($(this).attr("id"));
+        enviarIndicador({ indicador: 18 });
     });
     
     var graficoSNSSR = new FusionCharts("HLInearGauge", "SNSSR", wiLinearGauge, heLinearGauge);
@@ -169,12 +239,12 @@ $(document).ready(function () {
             
             "pointers": {
                 "pointer": [ {
-                        "value": "62"
+                        "value": sr_sns
                     } ]
             },
             "trendpoints": {
                 "point": [ {
-                    "startvalue": "79",
+                    "startvalue": metaSNS,
                     "displayvalue": "Meta",
                     "color": "FFF",
                     "thickness": "2",
@@ -207,7 +277,7 @@ $(document).ready(function () {
     graficoSNSSR.render("graficoSNSSR");
     
     $("#graficoSNSSR").click(function(){
-        console.log($(this).attr("id"));
+        enviarIndicador({ indicador: 19 });
     });
     
     var graficoSNSTD = new FusionCharts("HLInearGauge", "SNSTD", wiLinearGauge, heLinearGauge);
@@ -224,12 +294,12 @@ $(document).ready(function () {
             },
             "pointers": {
                 "pointer": [ {
-                        "value": "92"
+                        "value": td_sns
                     } ]
             },
             "trendpoints": {
                 "point": [ {
-                    "startvalue": "79",
+                    "startvalue": metaSNS,
                     "displayvalue": "Meta",
                     "color": "FFF",
                     "thickness": "2",
@@ -262,7 +332,7 @@ $(document).ready(function () {
     graficoSNSTD.render("graficoSNSTD");
     
     $("#graficoSNSTD").click(function(){
-        console.log($(this).attr("id"));
+        enviarIndicador({ indicador: 20 });
     });
     
     /*********************** FIN eficacia ****************************/
@@ -321,6 +391,17 @@ $(document).ready(function () {
     };
     
     generaGrafica(indicador);
+    
+    zingchart.node_click = function(node){
+        console.log(node.id);
+        
+        enviarIndicador({
+            dimension: '',
+            filtro: '',
+            indicador: ''
+        });
+    };
+
     /*********************** FIN economia ****************************/
     
 });

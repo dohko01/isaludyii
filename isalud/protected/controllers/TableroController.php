@@ -141,8 +141,38 @@ class TableroController extends Controller
     public function actionGerencial()
 	{
         $baseUrl = CJavaScript::encode(Yii::app()->baseUrl);
+        $sabin_sns['indicador'] = 0;
+        $sr_sns['indicador'] = 0;
+        $td_sns['indicador'] = 0;
         
-        Yii::app()->clientScript->registerScript('appConfig', 'var baseUrl = '.$baseUrl, CClientScript::POS_HEAD);
+        $indicador = FichaTecnica::model()->findByPk(18);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) 
+                $sabin_sns = $indicador->calcularIndicador('id_estado', array('id_estado'=>7, 'anio'=>2013), null, false);
+        }
+        
+        $indicador = FichaTecnica::model()->findByPk(19);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) 
+                $sr_sns = $indicador->calcularIndicador('id_estado', array('id_estado'=>7, 'anio'=>2013), null, false);
+        }
+        
+        $indicador = FichaTecnica::model()->findByPk(20);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) 
+                $td_sns = $indicador->calcularIndicador('id_estado', array('id_estado'=>7, 'anio'=>2013), null, false);
+        }
+        
+        Yii::app()->clientScript->registerScript('appConfig', 'var baseUrl = '.$baseUrl.';'.
+                                                              'var sabin_sns = '.CJavaScript::encode($sabin_sns[0]['indicador']).';'.
+                                                              'var sr_sns = '.CJavaScript::encode($sr_sns[0]['indicador']).';'.
+                                                              'var td_sns  = '.CJavaScript::encode($td_sns[0]['indicador']).';', CClientScript::POS_HEAD);
         
 		$this->render('gerencial', array());
 	}
