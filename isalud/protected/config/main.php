@@ -54,7 +54,7 @@ return array(
 		'db'=>array(
 			//'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
 			'tablePrefix'=>'',
-			'connectionString' => 'pgsql:host=localhost;port=5432;dbname=pgadmin',
+			'connectionString' => 'pgsql:host=localhost;port=5432;dbname=isalud',
 			'username'=>'usrisalud',
 			'password'=>'passisalud',
 			'charset'=>'UTF8',

@@ -26,9 +26,7 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<h2> Tablero de control gerencial </h2>
-
-<?PHP var_dump($_POST); ?>
+<h2> Pantalla de inicio principal </h2>
 
 <div id="opcionesTablero">
 
@@ -65,7 +63,7 @@ $this->breadcrumbs=array(
 </div>
 
 <input type="hidden" name="YII_CSRF_TOKEN" id="YII_CSRF_TOKEN" value="<?php echo Yii::app()->request->csrfToken; ?>" />
-<input type="hidden" name="dimension" id="dimension" value="id_estado" />
+<input type="hidden" name="dimension" id="dimension" value="id_jurisdiccion" />
 <input type="hidden" name="filtro" id="filtro" value='{"id_estado":7, "anio":2013}' />
 <input type="hidden" name="actualizarGrafica" id="actualizarGrafica" />
 
