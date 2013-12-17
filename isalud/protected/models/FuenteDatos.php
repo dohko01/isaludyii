@@ -316,9 +316,11 @@ class FuenteDatos extends CActiveRecord
 
                 if(empty($datos))
                     throw new Exception('No se pudieron obtener los datos desde el archivo.');
-
+                
                 $nombreCampo = array_shift($datos);
-
+                $nombreCampo = array_filter($nombreCampo);
+                //$noColumnas = count($nombreCampo);
+                
                 // no se aceptaran espacios ni caracteres especiales en el nombre de los campos
                 foreach($nombreCampo as $key => $value) {
                     $nombreCampo[$key] = $this->limpiarCadena($value);
@@ -327,9 +329,11 @@ class FuenteDatos extends CActiveRecord
                 foreach ($datos as $fila) {
                     $cadenaInsert .= '('.$this->id.',\'';
                     foreach ($fila as $campo => $valor) {
-                        // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
-                        $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
-                        $cadenaInsert .= $nombreCampo[$campo].'=>"'.$valor.'",';
+                        if(!empty($campo) && !empty($valor)) {
+                            // Revisar si la codificación del caracter es utf-8, si no los es hay que convertirlo
+                            $valor = mb_check_encoding($valor, 'UTF-8') ? $valor : utf8_encode(trim($valor));
+                            $cadenaInsert .= $nombreCampo[$campo].'=>"'.$valor.'",';
+                        }
                     }
                     // Eliminar la ultima coma (,)
                     $cadenaInsert = substr($cadenaInsert, 0, -1);

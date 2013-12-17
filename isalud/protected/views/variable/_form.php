@@ -56,7 +56,7 @@
 		<?php echo $form->labelEx($model,'id_fuente_datos'); ?>
         <?php echo $form->dropDownList($model, 'id_fuente_datos',
                                     CHtml::listData(FuenteDatos::model()->findAll(), 'id', 'nombre'),
-                                    array('empty'=>'Seleccionar..') ); ?>
+                                    array('empty'=>'Seleccionar..', 'class'=>'span7') ); ?>
 		<?php echo $form->error($model,'id_fuente_datos'); ?>
 	</div>
 
@@ -69,25 +69,25 @@
 
         echo $form->dropDownList($model, 'id_campo',
                                     $campos,
-                                    array('empty'=>'Seleccionar..') ); ?>
+                                    array('empty'=>'Seleccionar..', 'class'=>'span7') ); ?>
 		<?php echo $form->error($model,'id_campo'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'nombre'); ?>
-		<?php echo $form->textField($model,'nombre',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'nombre',array('maxlength'=>100, 'class'=>'span7')); ?>
 		<?php echo $form->error($model,'nombre'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'ini_formula'); ?>
-		<?php echo $form->textField($model,'ini_formula',array('size'=>45,'maxlength'=>45)); ?>
+		<?php echo $form->textField($model,'ini_formula',array('maxlength'=>45, 'class'=>'span7')); ?>
 		<?php echo $form->error($model,'ini_formula'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'comentario'); ?>
-		<?php echo $form->textArea($model,'comentario',array('rows'=>6, 'cols'=>50)); ?>
+		<?php echo $form->textArea($model,'comentario',array('rows'=>6, 'cols'=>50, 'class'=>'span7')); ?>
 		<?php echo $form->error($model,'comentario'); ?>
 	</div>
 

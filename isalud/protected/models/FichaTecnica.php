@@ -186,6 +186,18 @@ class FichaTecnica extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+    
+    /**
+     * Elimina la tabla del indicador
+     */
+    protected function beforeDelete()
+    {
+        parent::beforeDelete();
+        
+        try {
+            Yii::app()->db->createCommand('DROP TABLE '.Yii::app()->params['prefixTblIndicador'].$this->id)->execute();
+        } catch (Exception $e) { }
+    }
 
     /**
 	 * Crear el codigo para el indicador

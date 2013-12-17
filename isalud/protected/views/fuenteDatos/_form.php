@@ -80,12 +80,15 @@
         $this->widget('zii.widgets.jui.CJuiTabs', array(
             'tabs'=>array(
                 'Datos Generales'=>array(
+                    'id'=>'DatosGenerales',
                     'content'=>$this->renderPartial('_form_datosgenerales', array('form'=>$form,'model'=>$model), true)
                 ),
                 'Base de Datos'=>array(
+                    'id'=>'BaseDatos',
                     'content'=>$this->renderPartial('_form_bdatos', array('form'=>$form,'model'=>$model), true)
                 ),
                 'Archivo'=>array(
+                    'id'=>'Archivo',
                     'content'=>$this->renderPartial('_form_archivo', array('form'=>$form,'model'=>$model), true)
                 ),
             ),

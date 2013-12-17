@@ -35,7 +35,8 @@ class Variable extends CActiveRecord
 		return array(
 			array('id_fuente_datos, id_campo, nombre, ini_formula', 'required'),
 			array('id_fuente_datos, id_campo', 'numerical', 'integerOnly'=>true),
-			array('nombre, ini_formula', 'length', 'max'=>45),
+			array('nombre', 'length', 'max'=>100),
+            array('ini_formula', 'length', 'max'=>45),
             array('ini_formula', 'match', 'pattern'=>'/^([a-zA-Z0-9_-])+$/', 'message'=>'Sólo puede escribir caracteres alfanuméricos, guión bajo(_) y guión medio (-)'),
 			array('comentario', 'safe'),
             array('nombre', 'ValidateNombre', 'on' => 'create, insert'),
