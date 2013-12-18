@@ -58,16 +58,22 @@ function redimensionaGraficaMaximizar(event, object) {
 function destroyGraficaMaximizar(event, object) {
     idGrafica = $('#winMaximizarGrafica').data("idGrafica");
     $('#ind_'+idGrafica+' .contenedorIndicador').fadeIn("slow");
+    $('#indicadorActual_'+idGrafica).html(idGrafica);
     
     // Elimina el grafico maximizado del indicador
     zingchart.exec("maxGraficoIndicador_"+idGrafica, 'destroy');
     
     // Elimina el contenido dentro del dialog
     $('#winMaximizarGrafica .contenedorIndicador').html('');
+    
+    $('#isMaximized').val('');
 }
 
 function addGraficaMaximizar(event, object) {
     idGrafica = $('#winMaximizarGrafica').data("idGrafica");
+    var idGraficaActual = $('#indicadorActual_'+idGrafica).html();
+    
+    $('#isMaximized').val('1');
     
     wgIndicador = '<div class="opcionesIndicador">\n\
             <div class="btn-toolbar">\n\\n\
@@ -101,7 +107,7 @@ function addGraficaMaximizar(event, object) {
     $('#winMaximizarGrafica .verTablaDatos').click(getTablaDatos); 
     
     // Obtiene el objeto JSON que contiene los datos devueltos al obtener el indicador
-    parametros = JSON.parse($('#json_'+idGrafica).text());;
+    parametros = JSON.parse($('#json_'+idGraficaActual).text());;
     
     // Obtiene el objeto JSON para el zingchart
     jsonGrafico = getJSONGrafica(parametros);
@@ -481,7 +487,11 @@ function generaGrafica(parametros, indicadorId)
 {
 	var objGrafica = getJSONGrafica(parametros);
         var actualizarGrafica = $('#actualizarGrafica').val();
-        var idGrafica = "graficoIndicador_"+indicadorId;
+        
+        if($('#isMaximized').val() != '1')
+            var idGrafica = "graficoIndicador_"+indicadorId;
+        else
+            var idGrafica = "maxGraficoIndicador_"+indicadorId;
         
         if(actualizarGrafica != '')
         {
