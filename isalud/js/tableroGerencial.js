@@ -4,6 +4,13 @@ outputZingChart = "svg";
 urlLogo = baseUrl+'/images/logo.png';
 FusionCharts.setCurrentRenderer('javascript');
 
+ar_vac_cob_m1 = null;
+ar_vac_cen_m1 = null;
+ar_vac_cob_1 = null;
+ar_vac_cen_1 = null;
+ar_vac_cob_1_4 = null;
+ar_vac_cen_1_4 = null;
+
 /**
  * Crea la grafica dentro del contenedor con el ID especificado
  * 
@@ -37,6 +44,109 @@ function enviarIndicador(parametros) {
         $('#filtro').val(parametros.filtro);
     
     $('#datosIndicador').submit();
+}
+
+function getMayor(arreglo) {
+    var mayor = 0;
+    
+    for(var i=0; i<=arreglo.length; i++) {
+        if(arreglo[i]>mayor){
+            mayor=arreglo[i];
+        }
+    }
+    
+    if(mayor<100)
+        return 100;
+    
+    return mayor+15;
+}
+
+function cambiaGraficaVacunacion() {
+    eje_cobertura = null;
+    eje_concordancia = null;
+    titulo = "";
+    tipo = $(this).data('id');
+    
+    switch (tipo) {
+        case 'menor_1':
+            titulo = "Vacunación en población menor de un año";
+            eje_cobertura = ar_vac_cob_m1;
+            eje_concordancia = ar_vac_cen_m1;
+            break;
+        case '_1':
+            titulo = "Vacunación en población de un año";
+            eje_cobertura = ar_vac_cob_1;
+            eje_concordancia = ar_vac_cen_1;
+            break;
+        case '1_4':
+            titulo = "Vacunación en población menor de 1 a 4 años";
+            eje_cobertura = ar_vac_cob_1_4;
+            eje_concordancia = ar_vac_cen_1_4;
+            break;
+    }
+    
+    max = getMayor(eje_concordancia);
+    
+    indicador = { 
+        id: 'vacunacion',
+        alto: 300,
+        ancho: 650,
+        grafica: {
+            "graphset": [{
+                "type": "mixed",
+                "title": { 
+                    "text": titulo,
+                    "background-color": "none",
+                    "font-color": "black",
+                    "border-width": 1,
+                    "border-color": "#CCCCCC",
+                    "bold": true,
+                    "border-bottom": "none"
+                },
+                "plot": {
+                    "valueBox": { 
+                        "type": "all", 
+                        "placement": "top",
+                    },
+                },
+                "legend": {},
+                "border-width": 1,
+                "border-color": "#CCCCCC",
+                "background-color": "#fff #eee",
+                "tooltip": { text : "%v% de %t en %k" },
+                "scaleX": { "label": { "text": "Meses" }, "values": ["Ene 13","Feb 13","Mar 13","Abr 13","May 13","Jun 13","Jul 13","Ago 13","Sep 13","Oct 13","Nov 13"] },
+                "scaleY": { "label": { "text": "Porcentajes" }, "values": "0:"+max+":10",
+                        "markers" : [
+                            {
+                                "type" : "line",
+                                "range" : [95],
+                                "line-color" : "#E00000",
+                                "line-width" : 3,
+                                "text" : "Meta (95%)"
+                            }]
+                    },
+                "source": { text: "PROVAC, Proyección de población CONAPO" },
+                "series": [
+                    {
+                        "type": "line", text: "Cobertura", "values": eje_cobertura, "animate": true, "effect": 1, 
+                        "highlight": true, "line-color": "#ff4e00", 
+                        "marker":{
+                            "background-color":"#ff4e00",
+                            "border-color":"#ff4e00"
+                        }
+                    },{
+                        "type": "area", text: "Concordancia", "values": eje_concordancia, "animate": true, "effect": 1, 
+                        "highlight": true
+                    }
+                ]
+            }
+        ]
+        }
+    };
+    
+    zingchart.exec("vacunacion", 'destroy');
+    
+    generaGrafica(indicador);
 }
 
 $(document).ready(function () {
@@ -124,6 +234,29 @@ $(document).ready(function () {
             indicador: ''
         });
     });*/
+    /****************************************/
+    ar_vac_cob_m1 = $.map(vac_cob_m1, function(value, index) {
+        return parseFloat(value);
+    });
+    ar_vac_cen_m1 = $.map(vac_cen_m1, function(value, index) {
+        return parseFloat(value);
+    });
+    /****************************************/
+    ar_vac_cob_1 = $.map(vac_cob_1, function(value, index) {
+        return parseFloat(value);
+    });
+    ar_vac_cen_1 = $.map(vac_cen_1, function(value, index) {
+        return parseFloat(value);
+    });
+    /****************************************/
+    ar_vac_cob_1_4 = $.map(vac_cob_1_4, function(value, index) {
+        return parseFloat(value);
+    });
+    ar_vac_cen_1_4 = $.map(vac_cen_1_4, function(value, index) {
+        return parseFloat(value);
+    });
+    
+    max = getMayor(ar_vac_cen_m1);
     
     indicador = { 
         id: 'vacunacion',
@@ -131,9 +264,9 @@ $(document).ready(function () {
         ancho: 650,
         grafica: {
             "graphset": [{
-                "type": "area",
+                "type": "mixed",
                 "title": { 
-                    "text": 'Vacunación',
+                    "text": 'Vacunación en población menor de un año',
                     "background-color": "none",
                     "font-color": "black",
                     "border-width": 1,
@@ -141,19 +274,40 @@ $(document).ready(function () {
                     "bold": true,
                     "border-bottom": "none"
                 },
+                "plot": {
+                    "valueBox": { 
+                        "type": "all", 
+                        "placement": "top",
+                    },
+                },
                 "legend": {},
                 "border-width": 1,
                 "border-color": "#CCCCCC",
                 "background-color": "#fff #eee",
                 "tooltip": { text : "%v% de %t en %k" },
-                "scaleX": { values: ["Dic 12","Ene 13","Feb 13","Mar 13","Abr 13","May 13","Jun 13","Jul 13","Ago 13","Sep 13","Oct 13","Nov 13"] },
-                "scaleY": { "values": "0:100:10" },
-                "source": { text: "Fuente de datos" },
+                "scaleX": { "label": { "text": "Meses" }, "values": ["Ene 13","Feb 13","Mar 13","Abr 13","May 13","Jun 13","Jul 13","Ago 13","Sep 13","Oct 13","Nov 13"] },
+                "scaleY": { "label": { "text": "Porcentajes" }, "values": "0:"+max+":10",
+                        "markers" : [
+                            {
+                                "type" : "line",
+                                "range" : [95],
+                                "line-color" : "#E00000",
+                                "line-width" : 3,
+                                "text" : "Meta (95%)"
+                            }]
+                    },
+                "source": { text: "PROVAC, Proyección de población CONAPO" },
                 "series": [
                     {
-                        text: "Cobertura", "values": [26,13,32,12,33,26,23,20,40,90,60,70], "animate": true, "effect": 1, "highlight": true
+                        "type": "line", text: "Cobertura", "values": ar_vac_cob_m1, "animate": true, "effect": 2, 
+                        "highlight": true, "line-color": "#ff4e00", 
+                        "marker":{
+                            "background-color":"#ff4e00",
+                            "border-color":"#ff4e00"
+                        }
                     },{
-                        text: "Concordancia", "values": [33,26,23,20,12,33,26,23,20,60,40,70], "animate": true, "effect": 1, "highlight": true
+                        "type": "area", text: "Concordancia", "values": ar_vac_cen_m1, "animate": true, "effect": 2, 
+                        "highlight": true
                     }
                 ]
             }
@@ -162,6 +316,8 @@ $(document).ready(function () {
     };
     
     generaGrafica(indicador);
+    
+    $(".btnVacunacion").click(cambiaGraficaVacunacion);
     
     /*********************** FIN eficiencia ****************************/
     
@@ -358,6 +514,9 @@ $(document).ready(function () {
                 "bold" : true,
                 "padding" : 5
             },
+            "plot":{
+                "background-color":"#000"
+            },
             "plotarea" : {
                 "position": "0% 0%",
                 "margin-top": 0,
@@ -370,13 +529,81 @@ $(document).ready(function () {
                 "offset-y" : 50,
             },
             "scale-r" : {
-                "values" : "0:105.94500000000001:10",
+                "values" : "0:100:10",
                 "background-color" : "#eeeeee,#b3b3b3",
                 "ring" : {
                     "size" : 10,
                     "background-color" : "#eeeeee,#bbbbbb",
+                    "rules" : [{
+                            "rule" : "%v >= 81 && %v <= 100",
+                            "background-color" : "green",
+                            "line-color" : "green"
+                        }, {
+                            "rule" : "%v >= 61 && %v <= 80",
+                            "background-color" : "yellow",
+                            "line-color" : "yellow"
+                        }, {
+                            "rule" : "%v >= 41 && %v <= 60",
+                            "background-color" : "red",
+                            "line-color" : "red"
+                        }, {
+                            "rule" : "%v >= 0 && %v <= 40",
+                            "background-color" : "black",
+                            "line-color" : "black"
+                        }
+                    ]
                 }
             },
+            "labels" : [{
+                    "x" : "50%",
+                    "y" : "90%",
+                    "width" : 100,
+                    "offsetX" : -150,
+                    "textAlign" : "center",
+                    "padding" : 10,
+                    "anchor" : "c",
+                    "text" : "Sobresaliente",
+                    "backgroundColor" : "green",
+                    "font-color" : "#FFF",
+                    "bold" : true
+                }, {
+                    "x" : "50%",
+                    "y" : "90%",
+                    "width" : 100,
+                    "offsetX" : -50,
+                    "textAlign" : "center",
+                    "padding" : 10,
+                    "anchor" : "c",
+                    "text" : "Satisfactorio",
+                    "backgroundColor" : "yellow",
+                    "font-color" : "#FFF",
+                    "bold" : true
+                }, {
+                    "x" : "50%",
+                    "y" : "90%",
+                    "width" : 100,
+                    "offsetX" : 50,
+                    "textAlign" : "center",
+                    "padding" : 10,
+                    "anchor" : "c",
+                    "text" : "Mínimo",
+                    "backgroundColor" : "red",
+                    "font-color" : "#FFF",
+                    "bold" : true
+                }, {
+                    "x" : "50%",
+                    "y" : "90%",
+                    "width" : 100,
+                    "offsetX" : 150,
+                    "textAlign" : "center",
+                    "padding" : 10,
+                    "anchor" : "c",
+                    "text" : "Precario",
+                    "backgroundColor" : "black",
+                    "font-color" : "#FFF",
+                    "bold" : true
+                }
+            ],
             "series" : [{
                     "text" : "Presupuesto Asignado",
                     "values" : [60.5],
@@ -393,13 +620,11 @@ $(document).ready(function () {
     generaGrafica(indicador);
     
     zingchart.node_click = function(node){
-        console.log(node.id);
-        
-        enviarIndicador({
-            dimension: '',
-            filtro: '',
-            indicador: ''
-        });
+        if(node.id == 'vacunacion') {
+            enviarIndicador({ indicador: '1,21,2,22,17,23' });
+        } else if (node.id == 'presupuesto'){
+            //enviarIndicador({ indicador:  });
+        }
     };
 
     /*********************** FIN economia ****************************/

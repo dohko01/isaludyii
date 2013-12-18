@@ -141,10 +141,23 @@ class TableroController extends Controller
     public function actionGerencial()
 	{
         $baseUrl = CJavaScript::encode(Yii::app()->baseUrl);
+        
         $sabin_sns['indicador'] = 0;
         $sr_sns['indicador'] = 0;
         $td_sns['indicador'] = 0;
         
+        $vac_cob_m1 = 0; // 1
+        $vac_cen_m1 = 0; // 21
+        
+        $vac_cob_1 = 0; // 2
+        $vac_cen_1 = 0; // 22
+        
+        $vac_cob_1_4 = 0; // 17
+        $vac_cen_1_4 = 0; // 23
+        
+        $meses = array("Enero"=>1,"Febrero"=>2,"Marzo"=>3,"Abril"=>4,"Mayo"=>5,"Junio"=>6,"Julio"=>7,"Agosto"=>8,"Septiembre"=>9,"Octubre"=>10,"Noviembre"=>11,"Diciembre"=>12);
+        
+        /*****************************************************************************/
         $indicador = FichaTecnica::model()->findByPk(18);
         if($indicador) {
             $respuesta = $indicador->crearIndicador();
@@ -152,7 +165,7 @@ class TableroController extends Controller
             if(!$respuesta['error']) 
                 $sabin_sns = $indicador->calcularIndicador('id_estado', array('id_estado'=>7, 'anio'=>2013), null, false);
         }
-        
+        /*****************************************************************************/
         $indicador = FichaTecnica::model()->findByPk(19);
         if($indicador) {
             $respuesta = $indicador->crearIndicador();
@@ -160,7 +173,7 @@ class TableroController extends Controller
             if(!$respuesta['error']) 
                 $sr_sns = $indicador->calcularIndicador('id_estado', array('id_estado'=>7, 'anio'=>2013), null, false);
         }
-        
+        /*****************************************************************************/
         $indicador = FichaTecnica::model()->findByPk(20);
         if($indicador) {
             $respuesta = $indicador->crearIndicador();
@@ -168,11 +181,128 @@ class TableroController extends Controller
             if(!$respuesta['error']) 
                 $td_sns = $indicador->calcularIndicador('id_estado', array('id_estado'=>7, 'anio'=>2013), null, false);
         }
+        /*****************************************************************************/
+        $indicador = FichaTecnica::model()->findByPk(1);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) {
+                $vac_cob_m1 = $indicador->calcularIndicador('mes', array('id_estado'=>7, 'anio'=>2013), null, false);
+                $tmpDatos = array();
+                
+                foreach ($vac_cob_m1 as $temp) {
+                    $tmpDatos[$meses[$temp["mes"]]] = floatval($temp["indicador"]);
+                }
+                $tmpDatos = array_filter($tmpDatos);
+                ksort($tmpDatos);
+                unset($tmpDatos[12]);
+                $vac_cob_m1 = $tmpDatos;
+            }
+        }
+        /*****************************************************************************/
+        $indicador = FichaTecnica::model()->findByPk(21);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) {
+                $vac_cen_m1 = $indicador->calcularIndicador('mes', array('id_estado'=>7, 'anio'=>2013), null, false);
+                $tmpDatos = array();
+                
+                foreach ($vac_cen_m1 as $temp) {
+                    $tmpDatos[$meses[$temp["mes"]]] = floatval($temp["indicador"]);
+                }
+                $tmpDatos = array_filter($tmpDatos);
+                ksort($tmpDatos);
+                unset($tmpDatos[12]);
+                $vac_cen_m1 = $tmpDatos;
+            }
+        }
+        /*****************************************************************************/
+        $indicador = FichaTecnica::model()->findByPk(2);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) {
+                $vac_cob_1 = $indicador->calcularIndicador('mes', array('id_estado'=>7, 'anio'=>2013), null, false);
+                $tmpDatos = array();
+                
+                foreach ($vac_cob_1 as $temp) {
+                    $tmpDatos[$meses[$temp["mes"]]] = floatval($temp["indicador"]);
+                }
+                $tmpDatos = array_filter($tmpDatos);
+                ksort($tmpDatos);
+                unset($tmpDatos[12]);
+                $vac_cob_1 = $tmpDatos;
+            }
+        }
+        /*****************************************************************************/
+        $indicador = FichaTecnica::model()->findByPk(22);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) {
+                $vac_cen_1 = $indicador->calcularIndicador('mes', array('id_estado'=>7, 'anio'=>2013), null, false);
+                $tmpDatos = array();
+                
+                foreach ($vac_cen_1 as $temp) {
+                    $tmpDatos[$meses[$temp["mes"]]] = floatval($temp["indicador"]);
+                }
+                $tmpDatos = array_filter($tmpDatos);
+                ksort($tmpDatos);
+                unset($tmpDatos[12]);
+                $vac_cen_1 = $tmpDatos;
+            }
+        }
+        /*****************************************************************************/
+        $indicador = FichaTecnica::model()->findByPk(17);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) {
+                $vac_cob_1_4 = $indicador->calcularIndicador('mes', array('id_estado'=>7, 'anio'=>2013), null, false);
+                $tmpDatos = array();
+                
+                foreach ($vac_cob_1_4 as $temp) {
+                    $tmpDatos[$meses[$temp["mes"]]] = floatval($temp["indicador"]);
+                }
+                $tmpDatos = array_filter($tmpDatos);
+                ksort($tmpDatos);
+                unset($tmpDatos[12]);
+                $vac_cob_1_4 = $tmpDatos;
+            }
+        }
+        /*****************************************************************************/
+        $indicador = FichaTecnica::model()->findByPk(23);
+        if($indicador) {
+            $respuesta = $indicador->crearIndicador();
+            
+            if(!$respuesta['error']) {
+                $vac_cen_1_4 = $indicador->calcularIndicador('mes', array('id_estado'=>7, 'anio'=>2013), null, false);
+                $tmpDatos = array();
+                
+                foreach ($vac_cen_1_4 as $temp) {
+                    $tmpDatos[$meses[$temp["mes"]]] = floatval($temp["indicador"]);
+                }
+                $tmpDatos = array_filter($tmpDatos);
+                ksort($tmpDatos);
+                unset($tmpDatos[12]);
+                $vac_cen_1_4 = $tmpDatos;
+            }
+        }
+        
+        /*****************************************************************************/
         
         Yii::app()->clientScript->registerScript('appConfig', 'var baseUrl = '.$baseUrl.';'.
                                                               'var sabin_sns = '.CJavaScript::encode($sabin_sns[0]['indicador']).';'.
                                                               'var sr_sns = '.CJavaScript::encode($sr_sns[0]['indicador']).';'.
-                                                              'var td_sns  = '.CJavaScript::encode($td_sns[0]['indicador']).';', CClientScript::POS_HEAD);
+                                                              'var td_sns = '.CJavaScript::encode($td_sns[0]['indicador']).';'.
+                                                              'var vac_cob_m1 = '.CJavaScript::encode($vac_cob_m1).';'.
+                                                              'var vac_cen_m1 = '.CJavaScript::encode($vac_cen_m1).';'.
+                                                              'var vac_cob_1 = '.CJavaScript::encode($vac_cob_1).';'.
+                                                              'var vac_cen_1 = '.CJavaScript::encode($vac_cen_1).';'.
+                                                              'var vac_cob_1_4 = '.CJavaScript::encode($vac_cob_1_4).';'.
+                                                              'var vac_cen_1_4 = '.CJavaScript::encode($vac_cen_1_4).';', 
+                                    CClientScript::POS_HEAD);
         
 		$this->render('gerencial', array());
 	}
