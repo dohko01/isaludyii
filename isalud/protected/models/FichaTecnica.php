@@ -843,7 +843,7 @@ class FichaTecnica extends CActiveRecord
             $resultado['nivel'] = array("id" => $this->Nivel->id, "nombre" => $this->Nivel->nombre);
             // Se establece el tipo de grafico barras por defecto, en caso de que no este definido
             $resultado['tipo_grafico'] = $this->TipoGrafico ? $this->TipoGrafico->codigo : 'bar';
-            $resultado['idDimension'] = $datosCatalogo;
+            //$resultado['idDimension'] = $datosCatalogo;
             
             // Enviar los valores y las etiquetas en un arreglo separado,
             // es necesario para la construccion de la grafica
@@ -859,6 +859,7 @@ class FichaTecnica extends CActiveRecord
                 }
             } else {
                 $resultado['datos'] = Yii::app()->db->createCommand($sql)->query()->readAll();
+                $tempDimension = array();
                 
                 foreach($resultado['datos'] as $fila) {
                     // La columna indicador es fija y contiene el valor del indicador
@@ -866,7 +867,13 @@ class FichaTecnica extends CActiveRecord
                     // El campo etiqueta depende de la dimension a mostrar
                     array_push($resultado['etiquetas'], $fila[$campoEtiqueta]);
                     
+                    foreach($datosCatalogo as $regDimension) {
+                        if($regDimension['nombre'] == $fila[$campoEtiqueta])
+                            $tempDimension[] = $regDimension[$resultado['dimension']];
+                    }
+                    
                 }
+                $resultado['idDimension'] = $tempDimension;
             }
             
             $escalaEvaluacion = $this->EscalaEvaluacion;
