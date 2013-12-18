@@ -33,7 +33,14 @@ $this->breadcrumbs=array(
                 <div><strong>Indicadores de Eficiencia</strong></div>
                 <div style="overflow: auto;" class="graficoIndicador" id="eficiencia">
 <!--                    <h4>Cobertura de vacunación de niños</h4>-->
-                    <div id="vacunacion" align="center"></div>
+                    <table align="center"><tr><td>
+                        <div id="vacunacion" align="center"></div></td>
+                            <td valign="top" align="center"><p><strong>Grupos etareos</strong></p>
+                                <p><button class="btn btnVacunacion" data-id="menor_1"> <i class="fa fa-male fa-lg"></i> < 1 año</button></p>
+                                <p><button class="btn btnVacunacion" data-id="_1"> <i class="fa fa-male fa-lg"></i> 1 año</button></p>
+                                <p><button class="btn btnVacunacion" data-id="1_4"> <i class="fa fa-male fa-lg"></i> 1 - 4 años</button></p>
+                            </td>
+                    </tr></table>
                     
                     <!--<table align="center">
                         <tr align="center">
@@ -97,7 +104,7 @@ $this->breadcrumbs=array(
                             </td>
                             <td>
                                 <div id="biologico"><br>
-                                    <img src="../images/semaforo-amarillo.png">
+                                    <img src="../images/semaforo-rojo.png">
                                     <h5>Existencia de biológicos de <br>acuerdo a lo planeado</h5>
                                 </div>
                             </td>
