@@ -15,6 +15,7 @@ class TableroController extends Controller
 		$this->render('index', array(
             'indicadores' => CHtml::listData(FichaTecnica::model()->findAll(array('order'=>'nombre ASC')), 'id', 'nombre'),
             'tableros' => CHtml::listData(Tablero::model()->findAll(array('order'=>'nombre ASC')), 'id', 'nombre'),
+            'datosPost'=>$_POST,
         ));
 	}
 	

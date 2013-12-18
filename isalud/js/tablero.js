@@ -64,6 +64,19 @@ function regresaNivel(id, id_actualizar)
     //$( "li.third-item" ).nextAll().css( "background-color", "red" )
 }
 
+function cargaIndicadoresPost(id,filtroString,dimension)
+{
+    var filtro = JSON.parse(filtroString);
+    parametros = {
+                id: id,
+                dimension: dimension,
+                filtro: filtro,
+                tipo_grafico: '',
+                configuracion: ''
+            };
+    obtieneIndicador(parametros);
+}
+
 function cambiaNivel(id)
 {
     parametros = {

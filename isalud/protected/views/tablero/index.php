@@ -98,6 +98,7 @@ $this->beginWidget('zii.widgets.jui.CJuiDialog',array(
         
 $this->endWidget('zii.widgets.jui.CJuiDialog');
 ?>
+
 <script language="javascript" type="text/javascript">
 zingchart.node_click = function(node){
         //console.log(node);
@@ -139,3 +140,23 @@ zingchart.node_click = function(node){
 //        }
 }
 </script>
+<?php
+if(!empty($datosPost))
+{
+    $idIndicadores = explode(',',$datosPost['indicador']);//1,21,2,22,17,23
+?>
+    <script language="javascript" type="text/javascript">
+    $(document).ready(function() {
+<?php    
+    foreach($idIndicadores as $idIndicador)
+    {
+    ?>
+    cargaIndicadoresPost(<?php echo '\''.$idIndicador.'\',\''.$datosPost['filtro'].'\',\''.$datosPost['dimension'].'\'';?>);
+<?php
+    }
+    ?>
+    });
+    </script>
+<?php    
+}
+?>
