@@ -42,7 +42,7 @@ class FichaTecnicaController extends Controller
 	{
 		return array(
             array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'verdatos', 'getfichatecnica'),
+				'actions'=>array('index','view','create','update','admin','delete', 'verdatos', 'getfichatecnica', 'getNextDimension'),
 				'expression'=>'$user->id == 1 && $user->tipoUsuario == 1',
 			),
 			/*array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -349,4 +349,13 @@ class FichaTecnicaController extends Controller
             ));
         }
 	}
+        
+        public function actionGetNextDimension()
+        {
+            if(Yii::app()->request->isAjaxRequest && isset($_POST['id']))
+            {
+                $fichaTecnica = $this->loadModel($_POST['id']);
+                echo $fichaTecnica->getNextDimLugar($_POST['dimension']);
+            }
+        }
 }

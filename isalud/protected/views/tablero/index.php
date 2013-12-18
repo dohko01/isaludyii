@@ -122,6 +122,9 @@ zingchart.node_click = function(node){
                         $('#indicadorActual_'+id_indicador[1]).html(jDatos.idIndicadores[node.nodeindex]);
                         cambiaNivel(jDatos.idIndicadores[node.nodeindex]);
                         $('#listadoGrafica_'+id_indicador[1]).append('<a class="grafico_'+jDatos.idIndicadores[node.nodeindex]+'" href="#" onclick="regresaNivel('+jDatos.idIndicadores[node.nodeindex]+',\'graficoIndicador_'+id+'\');">&nbsp;>>'+jDatos.etiquetas[node.nodeindex]+'</a>');
+                    }else{
+                        alert(node.nodeindex);
+                        cambiaDimension(indicadorActual,jDatos.dimension,node.id,jDatos.idDimension[node.nodeindex]);
                     }
                 }
             },

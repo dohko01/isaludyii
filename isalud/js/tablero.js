@@ -9,6 +9,43 @@ urlLogo = baseUrl+'/images/logo.png';
 
 /**
  * 
+ * Cambia dimensiones en la grafica
+ */
+function cambiaDimension(idIndicador, dimension, idIndicadorActualizar,idFiltro)
+{
+    var idIndicador = idIndicador;
+    var dimension = dimension;
+    var filtro = JSON.parse($('#filtro').val());
+    
+    $.ajax({
+        url: baseUrl+'/fichaTecnica/getNextDimension/'+idIndicador,
+        data: 'id='+idIndicador+'&dimension='+dimension+'&YII_CSRF_TOKEN='+$('[name=YII_CSRF_TOKEN]').val()+'&cambiaNivel=1',
+        type: "POST",
+        //dataType : "json",
+        success: function(respuesta) {
+            if(respuesta != null)
+            {
+                filtro[''+dimension+''] = idFiltro;
+                parametros = {
+                    id: idIndicador,
+                    dimension: respuesta,
+                    filtro: filtro,
+                    tipo_grafico: '',
+                    configuracion: ''
+                };
+                $('#actualizarGrafica').val(idIndicadorActualizar);
+                obtieneIndicador(parametros);
+                //alert(respuesta);
+            }
+        },
+        error: function( xhr, status ) {
+            showError( "Error al obtener los datos. "+status+" "+xhr.status );
+        }
+    });
+}
+
+/**
+ * 
  * Regresa niveles de las graficas
  */
 
@@ -489,9 +526,17 @@ function generaGrafica(parametros, indicadorId)
         var actualizarGrafica = $('#actualizarGrafica').val();
         
         if($('#isMaximized').val() != '1')
+        {
+            heidhtZingChart = 400;  // Le restamos la altura del toolbar
+            widthZingChart = 700;
             var idGrafica = "graficoIndicador_"+indicadorId;
+        }
         else
+        {
+            heidhtZingChart = Math.round($('#winMaximizarGrafica').outerHeight()-heightToolbar);  // Le restamos la altura del toolbar
+            widthZingChart = Math.round($('#winMaximizarGrafica').outerWidth())-30;
             var idGrafica = "maxGraficoIndicador_"+indicadorId;
+        }
         
         if(actualizarGrafica != '')
         {
