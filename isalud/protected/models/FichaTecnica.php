@@ -638,6 +638,7 @@ class FichaTecnica extends CActiveRecord
         $subtitulo = '';
         $significados = CHtml::listData(SignificadoCampo::model()->findAll(), 'codigo', 'descripcion');
         $idIndicadores = array(); //En el caso de ser un indicador compuesto, almacena todos los ids de los indicadores hijos
+        $datosCatalogo = '';
 
         // Validar las columnas del indicador, solo en caso de que el indicador tenga variables asociadas
         // ya que un indicador compuesto no tendra tabla asociada
@@ -754,6 +755,10 @@ class FichaTecnica extends CActiveRecord
             $dimension .= ', nombre';
             $campoEtiqueta = $objDimension->catalogo;
             $campoSubtitulo = $objDimension->descripcion;
+            
+            // Se obtiene el id de todos los indicadores
+            $slqCatalogo = 'SELECT '.$objDimension->llave_primaria.', nombre FROM tblc_'.$objDimension->catalogo;
+            $datosCatalogo = Yii::app()->db->createCommand($slqCatalogo)->queryAll();
         } else {
             $strColumnas = $dimension;
             $campoEtiqueta = $dimension;
@@ -838,6 +843,7 @@ class FichaTecnica extends CActiveRecord
             $resultado['nivel'] = array("id" => $this->Nivel->id, "nombre" => $this->Nivel->nombre);
             // Se establece el tipo de grafico barras por defecto, en caso de que no este definido
             $resultado['tipo_grafico'] = $this->TipoGrafico ? $this->TipoGrafico->codigo : 'bar';
+            $resultado['idDimension'] = $datosCatalogo;
             
             // Enviar los valores y las etiquetas en un arreglo separado,
             // es necesario para la construccion de la grafica
