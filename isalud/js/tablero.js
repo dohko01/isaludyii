@@ -262,6 +262,7 @@ function getJSONGrafica(parametros) {
                         "font-color": "#FFFFFF",
                         "bold": true,
                         "padding": 5,
+                        "text" : "%k - %v%"
                     },
                 } ]
             };

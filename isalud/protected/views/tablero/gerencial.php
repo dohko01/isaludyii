@@ -1,6 +1,7 @@
 <?php
 Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/styles/jqx.base.css');
 Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/styles/jqx.ui-redmond.css');
+Yii::app()->getClientScript()->registerCssFile(Yii::app()->request->baseUrl.'/js/qtip2/jquery.qtip.min.css');
 
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/jqxcore.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/jQWidgets/jqwidgets/jqxdocking.js');
@@ -13,10 +14,15 @@ Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/zingchart-html5-min.js');
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/zingChart/license.js');
 
+Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/qtip2/jquery.qtip.min.js');
+
 $this->breadcrumbs=array(
 	'Tablero','Gerencial'
 );
 ?>
+
+<!--<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.2.0/jquery.qtip.min.js"></script>
+<link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/qtip2/2.2.0/jquery.qtip.min.css" />-->
 
 <style type="text/css">
     #tableroPrincipal {
@@ -99,18 +105,18 @@ $this->breadcrumbs=array(
                     <table align="center" width="90%">
                         <tr align="center" valign="top">
                             <td>
-                                <h5>Presupuesto</h5>
+                                <h5>Presupuesto asignado vs Presupuesto ejercido</h5>
                                 <div id="presupuesto"></div>
                             </td>
                             <td>
                                 <div id="biologico"><br>
-                                    <img src="../images/semaforo-rojo.png">
+                                    <img id="biologicos" src="../images/semaforo-rojo.png">
                                     <h5>Existencia de biológicos de <br>acuerdo a lo planeado</h5>
                                 </div>
                             </td>
                             <td>
                                 <div id="red_frio"><br>
-                                    <img src="../images/semaforo-rojo.png">
+                                    <img id="red_frios" src="../images/semaforo-rojo.png">
                                     <h5>Situación actual de <br>la red de fríos</h5>
                                 </div>
                             </td>

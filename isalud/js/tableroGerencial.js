@@ -629,4 +629,32 @@ $(document).ready(function () {
 
     /*********************** FIN economia ****************************/
     
+     $("#biologicos").qtip({
+        content: {
+            title: 'Falta de biológico',
+            text: 'Falta de biológico BCG en la Jurisdicción II San Cristobal'
+        },
+        position: {
+			my: 'bottom center',
+			at: 'top center'
+		},
+		style: {
+			classes: "qtip-tipped"
+		}
+    });
+    
+    $("#red_frios").qtip({
+        content: {
+            title: 'Refrigerador no funcionando',
+            text: 'El refrigerador de municipio Tapachula no esta funcionando por falta de mantenimiento'
+        },
+        position: {
+			my: 'bottom center',
+			at: 'top center'
+		},
+		style: {
+			classes: "qtip-tipped"
+		}
+    });
+    
 });
