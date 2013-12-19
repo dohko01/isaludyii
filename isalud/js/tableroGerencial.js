@@ -79,7 +79,7 @@ function cambiaGraficaVacunacion() {
             eje_concordancia = ar_vac_cen_1;
             break;
         case '1_4':
-            titulo = "Vacunación en población menor de 1 a 4 años";
+            titulo = "Vacunación en población de 1 a 4 años";
             eje_cobertura = ar_vac_cob_1_4;
             eje_concordancia = ar_vac_cen_1_4;
             break;
@@ -90,7 +90,7 @@ function cambiaGraficaVacunacion() {
     indicador = { 
         id: 'vacunacion',
         alto: 300,
-        ancho: 650,
+        ancho: 450,
         grafica: {
             "graphset": [{
                 "type": "mixed",
@@ -261,7 +261,7 @@ $(document).ready(function () {
     indicador = { 
         id: 'vacunacion',
         alto: 300,
-        ancho: 650,
+        ancho: 450,
         grafica: {
             "graphset": [{
                 "type": "mixed",
@@ -323,7 +323,7 @@ $(document).ready(function () {
     
     
     /******************** INICIO eficacia *******************************/
-    var wiLinearGauge = 400, heLinearGauge = 73, metaSNS = 95;
+    var wiLinearGauge = 320, heLinearGauge = 73, metaSNS = 95;
     
     var graficoSNSSabin = new FusionCharts("HLInearGauge", "SNSSabin", wiLinearGauge, heLinearGauge);
     
@@ -353,7 +353,7 @@ $(document).ready(function () {
                     "dashLen": "1", 
                     "dashGap": "3",
                     "usemarker": "1", 
-                    "markercolor": "F1F1F1",
+                    "markercolor": "6F6",
                     "markerbordercolor": "666666", 
                     "markerradius": "7"
                 } ]
@@ -409,7 +409,7 @@ $(document).ready(function () {
                     "dashLen": "1", 
                     "dashGap": "3",
                     "usemarker": "1", 
-                    "markercolor": "F1F1F1",
+                    "markercolor": "6F6",
                     "markerbordercolor": "666666", 
                     "markerradius": "7"
                 } ]
@@ -464,7 +464,7 @@ $(document).ready(function () {
                     "dashLen": "1", 
                     "dashGap": "3",
                     "usemarker": "1", 
-                    "markercolor": "F1F1F1",
+                    "markercolor": "6F6",
                     "markerbordercolor": "666666", 
                     "markerradius": "7"
                 } ]
@@ -645,8 +645,8 @@ $(document).ready(function () {
     
     $("#red_frios").qtip({
         content: {
-            title: 'Refrigerador no funcionando',
-            text: 'El refrigerador de municipio Tapachula no esta funcionando por falta de mantenimiento'
+            title: 'Funcionamiento ineficiente general de la red',
+            text: 'Algunas unidades de refrigeración se encuentran sin funcionar y otras con deficiencia'
         },
         position: {
 			my: 'bottom center',

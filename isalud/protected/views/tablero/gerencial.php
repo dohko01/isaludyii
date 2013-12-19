@@ -94,18 +94,33 @@ $this->breadcrumbs=array(
     <div id="docking2">
         <div style="width: 39%">
             <div id="window3" class="grupoIndicador">
-                <div><strong>An&aacute;lisis de la informaci&oacute;n</strong></div>
-                <div style="overflow: auto;" class="graficoIndicador" id="recursos"></div>
+                <div><strong>Comentarios</strong></div>
+                <div style="overflow: auto;" class="graficoIndicador" id="recursos">
+                    <br>
+                    <h4>Jurisdicci&oacute;n II, Municipios Cruzada contra el hambre</h4>
+                    <br>
+                    <p>
+                    Se incrementó la cobertura de los municipios de la jurisdicci&oacute;n
+                    </p>
+                    <ul style="margin-left:40px;">
+                        <li>< 1 a&ntilde;o paso de 0.9% a 28.2%</li>
+                        <li>1 a&ntilde;o paso de 4.1% a 41.4%</li>
+                        <li>1 a 4 a&ntilde;os paso de 34.3% a 69.0%</li>
+                    </ul>
+                    <p>
+                        A partir del mes Diciembre se incrementan los municipios objeto de intervenci&oacute;n de la cruzada contra el hambre de 12 a 50
+                    </p>
+                </div>
             </div>
         </div>
         <div style="width: 59%">
             <div id="window4" class="grupoIndicador">
-                <div><strong>Indicadores de Econom&iacute;a</strong></div>
+                <div><strong>Indicadores Econ&oacute;micos</strong></div>
                 <div style="overflow: auto;" class="graficoIndicador" id="economia">
                     <table align="center" width="90%">
                         <tr align="center" valign="top">
                             <td>
-                                <h5>Presupuesto asignado vs Presupuesto ejercido</h5>
+                                <h5>Presupuesto total ejercido</h5>
                                 <div id="presupuesto"></div>
                             </td>
                             <td>
@@ -117,7 +132,7 @@ $this->breadcrumbs=array(
                             <td>
                                 <div id="red_frio"><br>
                                     <img id="red_frios" src="../images/semaforo-rojo.png">
-                                    <h5>Situación actual de <br>la red de fríos</h5>
+                                    <h5>Situación actual de <br>la red de frío</h5>
                                 </div>
                             </td>
                         </tr>

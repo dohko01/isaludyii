@@ -36,7 +36,8 @@
 	-moz-transition: border-color 0.3s;
 	transition: border-color 0.3s;
     min-height: 450px;
-    min-width: 470px;
+    min-width: 370px;
+    width: 580px;
 }
 
 /* Fuente: http://css-tricks.com/snippets/css/media-queries-for-standard-devices/ */

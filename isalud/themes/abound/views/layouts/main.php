@@ -32,6 +32,7 @@
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap.min.css');
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap-responsive.min.css');
 	  $cs->registerCssFile($baseUrl.'/css/abound.css');
+          $cs->registerCssFile(Yii::app()->request->baseUrl.'/css/hackZingChart.css');
       $cs->registerCssFile('http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css');
 	  //$cs->registerCssFile($baseUrl.'/css/style-blue.css');
 	  ?>
