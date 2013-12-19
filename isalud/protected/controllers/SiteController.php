@@ -35,7 +35,7 @@ class SiteController extends Controller
 		else
 		{
 			if(Yii::app()->user->tipoUsuario == 1)
-				$this->redirect(array("administrador/"));
+				$this->redirect(array("tablero/gerencial"));
 			if(Yii::app()->user->tipoUsuario == 2)
 				$this->redirect(array("analista/"));
 		}

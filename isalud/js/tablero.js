@@ -2,7 +2,7 @@
 
 heightToolbar = 65;
 heidhtZingChart = 400;
-widthZingChart = 700;
+widthZingChart = 550;
 zingchart.ASYNC = true;
 outputZingChart = "svg";
 urlLogo = baseUrl+'/images/logo.png';
@@ -542,7 +542,7 @@ function generaGrafica(parametros, indicadorId)
         if($('#isMaximized').val() != '1')
         {
             heidhtZingChart = 400;  // Le restamos la altura del toolbar
-            widthZingChart = 700;
+            widthZingChart = 550;
             var idGrafica = "graficoIndicador_"+indicadorId;
         }
         else
@@ -831,7 +831,7 @@ $(document).ready(function() {
         dashboardData : widgetDefinitions
     });
 
-    $('#menuIndicadores > li').click(function(event){
+    $('#menuIndicadores > li').on('click touchend',function(event){
         event.preventDefault();
         event.stopPropagation();
         
