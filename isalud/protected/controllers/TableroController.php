@@ -307,6 +307,14 @@ class TableroController extends Controller
         
 		$this->render('gerencial', array());
 	}
+    
+    public function actionPrincipal()
+	{
+        $baseUrl = CJavaScript::encode(Yii::app()->baseUrl);
+        Yii::app()->clientScript->registerScript('appConfig', 'var baseUrl = '.$baseUrl, CClientScript::POS_HEAD);
+        
+		$this->render('principal');
+	}
 
     // Uncomment the following methods and override them if needed
 	/*

@@ -26,7 +26,7 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<h2> Pantalla de inicio principal </h2>
+<h2>Tablero de control</h2>
 
 <div id="opcionesTablero">
 

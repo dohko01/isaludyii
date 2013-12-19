@@ -17,7 +17,7 @@ Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'
 Yii::app()->getClientScript()->registerScriptFile(Yii::app()->request->baseUrl.'/js/qtip2/jquery.qtip.min.js');
 
 $this->breadcrumbs=array(
-	'Tablero','Gerencial'
+	'Tablero'=>'principal','Gerencial'
 );
 ?>
 
