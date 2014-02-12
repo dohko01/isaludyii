@@ -24,7 +24,7 @@
 //        );
 	?>
     <!-- Fav and Touch and touch icons -->
-    <link rel="shortcut icon" href="<?php echo $baseUrl;?>/img/icons/favicon.ico">
+    <link rel="shortcut icon" href="<?php echo $baseUrl;?>/img/icons/favicon2.png">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<?php echo $baseUrl;?>/img/icons/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo $baseUrl;?>/img/icons/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="<?php echo $baseUrl;?>/img/icons/apple-touch-icon-57-precomposed.png">

@@ -14,9 +14,12 @@ $this->breadcrumbs=array(
 <div class="row-fluid">
     <table align="center" cellpadding="10px">
         <tr>
-            <td><img src="<?php echo Yii::app()->request->baseUrl;?>/images/abajo_login.png"></td>
             <td>
-                <div class="span3 offset3">
+                <img src="<?php echo Yii::app()->request->baseUrl;?>/images/logo.png" width="210"><br>
+                <img src="<?php echo Yii::app()->request->baseUrl;?>/images/saludesta.png" width="210">                
+            </td>
+            <td>
+                <div class="span4 offset3">
             <?php
                     $this->beginWidget('zii.widgets.CPortlet', array(
                             'title'=>"Iniciar Sesión",
@@ -61,9 +64,6 @@ $this->breadcrumbs=array(
 
                 </div>
             </td>
-        </tr>
-        <tr>
-            <td colspan="2" align="right"><img src="<?php echo Yii::app()->request->baseUrl;?>/images/central.png"></td>
         </tr>
     </table>
 

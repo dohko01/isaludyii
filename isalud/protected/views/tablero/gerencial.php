@@ -122,17 +122,20 @@ $this->breadcrumbs=array(
                             <td>
                                 <h5>Presupuesto total ejercido</h5>
                                 <div id="presupuesto"></div>
+                                <p>Presupuesto asignado al 2013: $176,620,747.55</p>
                             </td>
                             <td>
                                 <div id="biologico"><br>
-                                    <img id="biologicos" src="../images/semaforo-rojo.png">
-                                    <h5>Existencia de biológicos de <br>acuerdo a lo planeado</h5>
+                                    <h6>Existencia de biológicos</h6>
+                                    <img id="biologicos" src="../images/semaforo-rojo.png" width="80px">
+                                    <p>Falta de biológico BCG<br>en la Jurisdicción II</p>
                                 </div>
                             </td>
                             <td>
                                 <div id="red_frio"><br>
-                                    <img id="red_frios" src="../images/semaforo-rojo.png">
-                                    <h5>Situación actual de <br>la red de frío</h5>
+                                    <h6>Situación de la red<br>de frío</h6>
+                                    <img id="red_frios" src="../images/semaforo-rojo.png" width="80px">
+                                    <p>Algunas unidades se encuentran sin<br>funcionar y otras<br>con deficiencia</p>
                                 </div>
                             </td>
                         </tr>
