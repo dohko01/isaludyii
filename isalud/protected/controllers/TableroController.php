@@ -323,6 +323,14 @@ class TableroController extends Controller
         
 		$this->render('poa');
 	}
+    
+    public function actionGraficas()
+	{
+        $baseUrl = CJavaScript::encode(Yii::app()->baseUrl);
+        Yii::app()->clientScript->registerScript('appConfig', 'var baseUrl = '.$baseUrl, CClientScript::POS_HEAD);
+        
+		$this->render('graficas');
+	}
 
     // Uncomment the following methods and override them if needed
 	/*
