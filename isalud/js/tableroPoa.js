@@ -86,12 +86,12 @@ $(document).ready(function () {
                     "series":[
                         {
                             "values":[40,55,50,30,60,70,40,50,60,30,70,60],
-                            "text" : "Autorizado",
+                            "text" : "Ejercido",
                             "background-color":"#04536C #00B4E8",
                         },
                         {
                             "values":[60,45,50,70,40,30,60,50,40,70,30,40],
-                            "text" : "Ejercido",
+                            "text" : "Autorizado",
                             "background-color":"#D03806 #F87245",
                         }
                     ]
