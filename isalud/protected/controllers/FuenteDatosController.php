@@ -517,8 +517,10 @@ class FuenteDatosController extends Controller
 
     /**
 	 * Devuelve un json con los campos de la fuente de datos
+     * 
+     * $soloCampCal Especifica si se devuelve solo los campos para calculos
 	 */
-	public function actionObtenerCampos($id)
+	public function actionObtenerCampos($id, $soloCampCal=true)
 	{
         if($id==0)
             return false;
@@ -528,7 +530,11 @@ class FuenteDatosController extends Controller
 
             try {
                 $model = $this->loadModel($id);
-                $respuesta = CHtml::listData($model->Campos, 'id', 'nombre');
+                
+                if($soloCampCal)
+                    $respuesta = CHtml::listData($model->getOnlyCalculo(), 'id', 'nombre');
+                else
+                    $respuesta = CHtml::listData($model->Campos, 'id', 'nombre');
             } catch(Exception $e) {
                 $respuesta['error'] = true;
                 $respuesta['msjerror'] = $e->getMessage();

@@ -8,8 +8,11 @@
                 dataType: 'json',
                 data: 'YII_CSRF_TOKEN=<?php echo Yii::app()->request->csrfToken; ?>',
             }).done(function(response) {
-                if(!response) {
+                if(!response || response.length == 0) {
                     $('#Variable_id_campo > :not(option[value=""])').remove();
+                    
+                    showAdvertencia('No se encontraron campos configurados con el significado "Campo para formula", esto quiere decir que no estan bien configurados o todos los disponibles ya están asociados a una variable, revise la lista de variables creadas con origen en la fuente de datos seleccionada.');
+                    
                     return false;
                 }
                 if(response.error) {

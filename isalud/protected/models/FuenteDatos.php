@@ -375,6 +375,22 @@ class FuenteDatos extends CActiveRecord
 
         return $campos;
 	}
+    
+    /**
+	 * Devuelve todos los campos que tengan como significado "Campo para formula"
+	 */
+	public function getOnlyCalculo()
+	{
+        $campos = $this->Campos;
+
+        foreach ($campos as $index => $campo) {
+            if($campo->id_significado_campo != 1 || $campo->Variable) { // Si el campo no es un "Campo para formula"
+                unset($campos[$index]); // Lo eliminamos del arreglo
+            }
+        }
+
+        return $campos;
+	}
 
     /**
 	 * Obtiene el numero total de registros de la fuente de datos
