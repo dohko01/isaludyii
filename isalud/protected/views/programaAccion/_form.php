@@ -20,9 +20,9 @@
 	<?php echo $form->errorSummary($model); ?>
     
     <div class="row">
-		<?php echo $form->labelEx($model,'Coordinación'); ?>
+		<?php echo $form->labelEx($model,'id_cat_coordinacion'); ?>
 		<?php $list = CHTml::listData(Coordinacion::model()->findAll(), 'id','nombre');?>
-		<?php echo $form->dropDownList($model,'id_cat_coordinacion', $list); ?>
+		<?php echo $form->dropDownList($model,'id_cat_coordinacion', $list, array('empty'=>'Seleccionar...') ); ?>
 		<?php echo $form->error($model,'id_cat_coordinacion'); ?>
 	</div>
 

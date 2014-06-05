@@ -12,8 +12,9 @@
 )); ?>
 
 	<div class="row">
+        <?php $list = CHtml::listData(Direccion::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->label($model,'id_cat_direccion'); ?>
-		<?php echo $form->textField($model,'id_cat_direccion'); ?>
+		<?php echo $form->dropDownList($model,'id_cat_direccion', $list, array('empty'=>'Seleccionar...') ); ?>
 	</div>
 
 	<div class="row">

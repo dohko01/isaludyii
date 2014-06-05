@@ -18,11 +18,11 @@
  */
 class Direccion extends CActiveRecord
 {
-	/**
-	 * @return string the associated database table name
-	 */
 	public $institucion_search; //se define la variable para realizar la busqueda en admin por las relaciones que tiene.
 	
+    /**
+	 * @return string the associated database table name
+	 */
 	public function tableName()
 	{
 		return 'tblc_direccion';
@@ -68,7 +68,7 @@ class Direccion extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'id_cat_institucion' => 'Id Cat Institucion',
+			'id_cat_institucion' => 'Institución',
 			'nombre' => 'Nombre',
 			'responsable' => 'Responsable',
 			'comentario' => 'Comentario',
@@ -93,11 +93,11 @@ class Direccion extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('id_cat_institucion',$this->id_cat_institucion);
-		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('responsable',$this->responsable,true);
-		$criteria->compare('comentario',$this->comentario,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.id_cat_institucion',$this->id_cat_institucion);
+		$criteria->compare('t.nombre',$this->nombre,true);
+		$criteria->compare('t.responsable',$this->responsable,true);
+		$criteria->compare('t.comentario',$this->comentario,true);
 		// Se crea el apuntador al campo que se va a buscar de la tabla a la que pertenece la llave foranea
 		$criteria->with=array('idCatInstitucion');
 		$criteria->compare('"idCatInstitucion"."nombre"',$this->institucion_search, true);

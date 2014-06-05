@@ -46,9 +46,9 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 	'columns'=>array(
 		//'id_cat_coordinacion',
 		array(
-			'header'=>'Coordinación',
+			'name'=>'id_cat_coordinacion',
 			'value'=>'($data->idCatCoordinacion!=null) ? $data->idCatCoordinacion->nombre : null',
-			'filter'=>CHtml::activeDropDownList($model,'coordinacion_search',$list)
+			'filter'=>CHtml::activeDropDownList($model,'coordinacion_search',$list, array('empty'=>'Seleccionar...') )
 		),
 		'nombre',
 		'responsable',

@@ -13,7 +13,8 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'id_cat_coordinacion'); ?>
-		<?php echo $form->textField($model,'id_cat_coordinacion'); ?>
+		<?php $list = CHTml::listData(Coordinacion::model()->findAll(), 'id', 'nombre'); ?>
+		<?php echo $form->dropDownList($model,'id_cat_coordinacion', $list, array('empty'=>'Seleccionar...') ); ?>
 	</div>
 
 	<div class="row">

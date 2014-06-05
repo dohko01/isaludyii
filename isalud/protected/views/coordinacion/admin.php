@@ -39,6 +39,7 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 )); ?>
 </div><!-- search-form -->
 <?php $list = CHtml::listData(Subdireccion::model()->findAll(), 'nombre', 'nombre'); ?>
+<?php array_unshift($list, "Todos"); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'coordinacion-grid',
 	'dataProvider'=>$model->search(),

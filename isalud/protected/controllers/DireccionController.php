@@ -13,14 +13,14 @@ class DireccionController extends Controller
 	 *
 	 * @var string
 	 */
-	public $title_sin = 'Direccion';
+	public $title_sin = 'Dirección';
 
 	/**
 	 * Titulo plural para breadcrumb y encabezado
 	 *     
 	 * @var string 
 	 */
-	public $title_plu = 'Direccion';
+	public $title_plu = 'Direcciones';
 
 	/**
 	 * @return array action filters

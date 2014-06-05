@@ -32,7 +32,15 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+		<?php 
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnEnviarForm',
+            'value'=>'1',
+            'caption'=>($model->isNewRecord ? 'Guardar' : 'Actualizar'),
+            )
+        );
+        ?>
 	</div>
 
 <?php $this->endWidget(); ?>

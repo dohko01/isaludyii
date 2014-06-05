@@ -13,7 +13,9 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'id_cat_institucion'); ?>
-		<?php echo $form->textField($model,'id_cat_institucion'); ?>
+        <?php $list = CHtml::listData(Institucion::model()->findAll(), 'id', 'nombre'); ?>
+        <?php array_unshift($list, "Todos"); ?>
+        <?php echo $form->dropDownList($model,'id_cat_institucion',$list); ?>
 	</div>
 
 	<div class="row">

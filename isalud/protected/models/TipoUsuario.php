@@ -13,6 +13,8 @@
  */
 class TipoUsuario extends CActiveRecord
 {
+    //se define la variable para realizar la busqueda en admin por las relaciones que tiene.
+    public $activo_search;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -34,7 +36,7 @@ class TipoUsuario extends CActiveRecord
 			array('activo', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, nombre, activo', 'safe', 'on'=>'search'),
+			array('id, nombre, activo_search, activo', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -82,7 +84,7 @@ class TipoUsuario extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('activo',$this->activo);
+		$criteria->compare('activo',$this->activo_search);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

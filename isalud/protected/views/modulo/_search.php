@@ -12,8 +12,9 @@
 )); ?>
 
 	<div class="row">
-		<?php echo $form->label($model,'id_cat_tipo_usuario'); ?>
-		<?php echo $form->textField($model,'id_cat_tipo_usuario'); ?>
+        <?php $list = CHtml::listData(TipoUsuario::model()->findAll(), 'id', 'nombre'); ?>
+        <?php echo $form->label($model,'id_cat_tipo_usuario'); ?>
+		<?php echo $form->dropDownList($model,'id_cat_tipo_usuario', $list, array('empty'=>'Seleccionar...') ); ?>
 	</div>
 
 	<div class="row">
@@ -32,8 +33,9 @@
 	</div>
 
 	<div class="row">
+        <?php $list = CHtml::listData(Modulo::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->label($model,'parent_id'); ?>
-		<?php echo $form->textField($model,'parent_id'); ?>
+		<?php echo $form->dropDownList($model,'parent_id', $list, array('empty'=>'Seleccionar..')); ?>
 	</div>
 
 	<div class="row buttons">

@@ -3,13 +3,13 @@
 /* @var $model TipoIndicador */
 
 $this->breadcrumbs=array(
-	'Tipo de Indicadores'=>array('index'),
+	$this->title_plu=>array('index'),
 	'Administrar',
 );
 
 $this->menu=array(
-	array('label'=>'Listar Tipo de Indicador', 'url'=>array('index')),
-	array('label'=>'Crear Tipo de Indicador', 'url'=>array('create')),
+	array('label'=>'Listar '.$this->title_plu, 'url'=>array('index')),
+	array('label'=>'Crear '.$this->title_sin, 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -26,7 +26,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Administrar Tipo de Indicadores</h1>
+<h1>Administrar <?php echo $this->title_plu; ?></h1>
 <?php
 /*
 <p>

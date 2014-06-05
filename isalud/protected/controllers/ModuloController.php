@@ -13,14 +13,14 @@ class ModuloController extends Controller
 	 *
 	 * @var string
 	 */
-	public $title_sin = 'Modulo';
+	public $title_sin = 'Módulo';
 
 	/**
 	 * Titulo plural para breadcrumb y encabezado
 	 *     
 	 * @var string 
 	 */
-	public $title_plu = 'Modulo';
+	public $title_plu = 'Módulos';
 
 	/**
 	 * @return array action filters

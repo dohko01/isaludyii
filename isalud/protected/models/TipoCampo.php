@@ -57,8 +57,8 @@ class TipoCampo extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'descripcion' => 'Descripcion',
-			'codigo' => 'Codigo',
+			'descripcion' => 'Descripción',
+			'codigo' => 'Código',
 		);
 	}
 
@@ -81,8 +81,8 @@ class TipoCampo extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('descripcion',$this->descripcion,true);
-		$criteria->compare('codigo',$this->codigo,true);
+		$criteria->compare('LOWER(descripcion)',strtolower($this->descripcion),true);
+		$criteria->compare('LOWER(codigo)',strtolower($this->codigo),true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

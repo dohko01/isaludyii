@@ -39,6 +39,8 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 )); ?>
 </div><!-- search-form -->
 
+<?php $list = CHtml::listData(Institucion::model()->findAll(), 'nombre', 'nombre'); ?>
+<?php array_unshift($list, "Todos"); ?>
 <?php $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'direccion-grid',
 	'dataProvider'=>$model->search(),
@@ -47,7 +49,7 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 		array(
 		'header'=>'Institución',
 		'value'=>'($data->idCatInstitucion!=null) ? $data->idCatInstitucion->nombre : null',
-		'filter'=>CHtml::activeTextField($model,'institucion_search')
+		'filter'=>CHtml::activeDropDownList($model,'institucion_search',$list)
 		),
 		'nombre',
 		'responsable',

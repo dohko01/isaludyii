@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),
-	$model->id,
+	$model->username,
 );
 
 $this->menu=array(

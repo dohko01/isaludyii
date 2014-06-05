@@ -18,6 +18,11 @@
  */
 class Modulo extends CActiveRecord
 {
+    //se define la variable para realizar la busqueda en admin por las relaciones que tiene.
+    public $modulo_search;
+    public $tipousuario_search;
+    public $activo_search;
+    
 	/**
 	 * @return string the associated database table name
 	 */
@@ -41,7 +46,7 @@ class Modulo extends CActiveRecord
 			array('activo', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, id_cat_tipo_usuario, nombre, url, activo, parent_id', 'safe', 'on'=>'search'),
+			array('id, modulo_search, activo_search, tipousuario_search, id_cat_tipo_usuario, nombre, url, activo, parent_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -66,11 +71,11 @@ class Modulo extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'id_cat_tipo_usuario' => 'Tipo de Usuario',
+			'id_cat_tipo_usuario' => 'Tipo de usuario',
 			'nombre' => 'Nombre',
-			'url' => 'Url',
+			'url' => 'URL',
 			'activo' => 'Activo',
-			'parent_id' => 'Parent',
+			'parent_id' => 'Padre',
 		);
 	}
 
@@ -93,14 +98,21 @@ class Modulo extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('id_cat_tipo_usuario',$this->id_cat_tipo_usuario);
-		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('url',$this->url,true);
-		$criteria->compare('activo',$this->activo);
-		$criteria->compare('parent_id',$this->parent_id);
-
+		//$criteria->compare('id_cat_tipo_usuario',$this->id_cat_tipo_usuario);
+		$criteria->compare('"t"."nombre"',$this->nombre,true);
+		$criteria->compare('"t"."url"',$this->url,true);
+		$criteria->compare('"t"."activo"',$this->activo_search);
+		//$criteria->compare('parent_id',$this->parent_id);
+        
+        $criteria->with=array('idCatTipoUsuario','parent');
+        $criteria->compare('"idCatTipoUsuario"."nombre"',$this->tipousuario_search, true);
+        $criteria->compare('"parent"."nombre"',$this->modulo_search, true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+            'pagination'=>array(
+                'pageSize'=>Yii::app()->params['filasPorPagina'],
+            )
 		));
 	}
 

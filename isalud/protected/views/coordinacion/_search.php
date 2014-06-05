@@ -13,7 +13,9 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'id_cat_subdireccion'); ?>
-		<?php echo $form->textField($model,'id_cat_subdireccion'); ?>
+        <?php $list = CHtml::listData(Subdireccion::model()->findAll(), 'id', 'nombre'); ?>
+        <?php array_unshift($list, "Todos"); ?>
+        <?php echo $form->dropDownList($model,'id_cat_subdireccion',$list); ?>
 	</div>
 
 	<div class="row">

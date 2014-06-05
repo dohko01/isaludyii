@@ -46,9 +46,9 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 	'columns'=>array(
 		//'id_cat_direccion',
 		array(
-		'header'=>'Direccion',
+		'header'=>'Dirección',
 		'value'=>'($data->idCatDireccion!=null) ? $data->idCatDireccion->nombre : null',
-		'filter'=>CHtml::activeDropDownList($model,'direccion_search',$list),
+		'filter'=>CHtml::activeDropDownList($model,'direccion_search',$list, array('empty'=>'Seleccionar...') ),
 		),
 		'nombre',
 		'responsable',

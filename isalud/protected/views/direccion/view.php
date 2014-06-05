@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),
-	$model->id,
+	$model->nombre,
 );
 
 $this->menu=array(
@@ -16,7 +16,7 @@ $this->menu=array(
 );
 ?>
 
-<h1>Datos del <?php echo $this->title_sin; ?></h1>
+<h1>Datos de la <?php echo $this->title_sin; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,

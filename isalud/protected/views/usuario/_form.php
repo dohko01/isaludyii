@@ -38,8 +38,8 @@
 	<div class="row">
     	<?php
 			$list = array();
-			if($model->id_cat_jurisdiccion)
-				 $list = CHtml::listData(Jurisdiccion::model()->findAll(), 'id_jurisdiccion', 'nombre');
+			if($model->id_cat_estado)
+				 $list = CHtml::listData(Jurisdiccion::model()->findAll(array('condition'=>'id_estado = '.$model->id_cat_estado)), 'id_jurisdiccion', 'numNombre');
 		?>
 		<?php echo $form->labelEx($model,'id_cat_jurisdiccion'); ?>
 		<?php echo $form->dropDownList($model,'id_cat_jurisdiccion',$list,array('empty'=>'Seleccionar...')); ?>
@@ -64,8 +64,8 @@
 	<div class="row">
     	<?php
 			$list = array();
-			if($model->id_cat_direccion)
-				 $list = CHtml::listData(Direccion::model()->findAll(), 'id', 'nombre');
+			if($model->id_cat_institucion)
+				 $list = CHtml::listData(Direccion::model()->findAll(array('condition'=>'id_cat_institucion = '.$model->id_cat_institucion)), 'id', 'nombre');
 		?>
 		<?php echo $form->labelEx($model,'id_cat_direccion'); ?>
 		<?php echo $form->dropDownList($model,'id_cat_direccion',$list,
@@ -83,8 +83,8 @@
 	<div class="row">
     	<?php
 			$list = array();
-			if($model->id_cat_subdireccion)
-				 $list = CHtml::listData(Subdireccion::model()->findAll(), 'id', 'nombre');
+			if($model->id_cat_direccion)
+				 $list = CHtml::listData(Subdireccion::model()->findAll(array('condition'=>'id_cat_direccion = '.$model->id_cat_direccion)), 'id', 'nombre');
 		?>
 		<?php echo $form->labelEx($model,'id_cat_subdireccion'); ?>
 		<?php echo $form->dropDownList($model,'id_cat_subdireccion',$list,
@@ -102,8 +102,8 @@
 	<div class="row">
     	<?php
 			$list = array();
-			if($model->id_cat_coordinacion)
-				 $list = CHtml::listData(Coordinacion::model()->findAll(), 'id', 'nombre');
+			if($model->id_cat_subdireccion)
+				 $list = CHtml::listData(Coordinacion::model()->findAll(array('condition'=>'id_cat_direccion = '.$model->id_cat_direccion)), 'id', 'nombre');
 		?>
 		<?php echo $form->labelEx($model,'id_cat_coordinacion'); ?>
 		<?php echo $form->dropDownList($model,'id_cat_coordinacion',$list,array('empty'=>'Seleccionar...')); ?>
@@ -113,7 +113,7 @@
 	<div class="row">
 		<?php $list = CHtml::listData(TipoUsuario::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->labelEx($model,'id_cat_tipo_usuario'); ?>
-		<?php echo $form->dropDownList($model,'id_cat_tipo_usuario', $list); ?>
+		<?php echo $form->dropDownList($model,'id_cat_tipo_usuario', $list, array('empty'=>'Seleccionar...') ); ?>
 		<?php echo $form->error($model,'id_cat_tipo_usuario'); ?>
 	</div>
 
@@ -154,7 +154,15 @@
 	</div>
 
 	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Guardar' : 'Actualizar'); ?>
+		<?php 
+        $this->widget('zii.widgets.jui.CJuiButton',array(
+            'buttonType'=>'submit',
+            'name'=>'btnEnviarForm',
+            'value'=>'1',
+            'caption'=>($model->isNewRecord ? 'Guardar' : 'Actualizar'),
+            )
+        );
+        ?>
 	</div>
 
 <?php $this->endWidget(); ?>

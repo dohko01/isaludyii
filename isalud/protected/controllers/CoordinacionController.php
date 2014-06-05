@@ -13,14 +13,14 @@ class CoordinacionController extends Controller
 	 *
 	 * @var string
 	 */
-	public $title_sin = 'Coordinacion';
+	public $title_sin = 'Coordinación';
 
 	/**
 	 * Titulo plural para breadcrumb y encabezado
 	 *     
 	 * @var string 
 	 */
-	public $title_plu = 'Coordinacion';
+	public $title_plu = 'Coordinaciones';
 
 	/**
 	 * @return array action filters

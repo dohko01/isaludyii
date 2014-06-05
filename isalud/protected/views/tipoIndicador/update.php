@@ -3,19 +3,19 @@
 /* @var $model TipoIndicador */
 
 $this->breadcrumbs=array(
-	'Tipo de Indicadores'=>array('index'),
-	$model->id=>array('view','id'=>$model->id),
+	$this->title_sin=>array('index'),
+	$model->nombre=>array('view','id'=>$model->id),
 	'Actualizar',
 );
 
 $this->menu=array(
-	array('label'=>'Listar Tipo de Indicador', 'url'=>array('index')),
-	array('label'=>'Crear Tipo de Indicador', 'url'=>array('create')),
-	array('label'=>'Ver Tipo de Indicador', 'url'=>array('view', 'id'=>$model->id)),
-	array('label'=>'Administrar Tipo de Indicador', 'url'=>array('admin')),
+	array('label'=>'Listar '.$this->title_plu, 'url'=>array('index')),
+	array('label'=>'Crear '.$this->title_sin, 'url'=>array('create')),
+	array('label'=>'Ver '.$this->title_sin, 'url'=>array('view', 'id'=>$model->id)),
+	array('label'=>'Administrar '.$this->title_plu, 'url'=>array('admin')),
 );
 ?>
 
-<h1>Actualizar Tipo de Indicador #<?php echo $model->id; ?></h1>
+<h1>Actualizar <?php echo $this->title_sin; ?></h1>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

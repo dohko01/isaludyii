@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),
-	$model->id,
+	$model->nombre,
 );
 
 $this->menu=array(
@@ -23,7 +23,7 @@ $this->menu=array(
 	'attributes'=>array(
 		//'id_cat_coordinacion',
 		array(
-			'label'=>'Periodicidad de actualización',
+			'name'=>'id_cat_coordinacion',
             'value' => $model->idCatCoordinacion->nombre,
 		),
 		'nombre',

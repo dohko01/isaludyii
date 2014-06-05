@@ -3,26 +3,29 @@
 /* @var $model TipoUsuario */
 
 $this->breadcrumbs=array(
-	'Tipo Usuarios'=>array('index'),
-	$model->id,
+	$this->title_sin=>array('index'),
+	$model->nombre,
 );
 
 $this->menu=array(
-	array('label'=>'Listar Tipo de Usuario', 'url'=>array('index')),
-	array('label'=>'Crear Tipo de Usuario', 'url'=>array('create')),
-	array('label'=>'Actualizar Tipo de Usuario', 'url'=>array('update', 'id'=>$model->id)),
-	array('label'=>'Eliminar Tipo de Usuario', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Está seguro que desea eliminar este registro?')),
-	array('label'=>'Administrar Tipo de Usuario', 'url'=>array('admin')),
+	array('label'=>'Listar '.$this->title_plu, 'url'=>array('index')),
+	array('label'=>'Crear '.$this->title_sin, 'url'=>array('create')),
+	array('label'=>'Actualizar '.$this->title_sin, 'url'=>array('update', 'id'=>$model->id)),
+	array('label'=>'Eliminar '.$this->title_sin, 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Está seguro que desea eliminar este registro?')),
+	array('label'=>'Administrar '.$this->title_plu, 'url'=>array('admin')),
 );
 ?>
 
-<h1>View Tipo de Usuario #<?php echo $model->id; ?></h1>
+<h1>Datos del <?php echo $this->title_sin; ?></h1>
 
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
 		//'id',
 		'nombre',
-		'activo',
+		array(
+			'name'=>'activo',
+            'value' => ($model->activo) ? "Si":"No",
+		),
 	),
 )); ?>

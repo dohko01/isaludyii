@@ -20,7 +20,7 @@ class UsuarioController extends Controller
 	 *     
 	 * @var string 
 	 */
-	public $title_plu = 'Usuario';
+	public $title_plu = 'Usuarios';
 
 	/**
 	 * @return array action filters

@@ -22,7 +22,7 @@
 	<div class="row">
 		<?php $list = CHtml::listData(TipoUsuario::model()->findAll(), 'id', 'nombre'); ?>
 		<?php echo $form->labelEx($model,'id_cat_tipo_usuario'); ?>
-		<?php echo $form->dropDownList($model,'id_cat_tipo_usuario', $list); ?>
+		<?php echo $form->dropDownList($model,'id_cat_tipo_usuario', $list, array('empty'=>'Seleccionar...') ); ?>
 		<?php echo $form->error($model,'id_cat_tipo_usuario'); ?>
 	</div>
 

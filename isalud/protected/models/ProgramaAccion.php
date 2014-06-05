@@ -64,7 +64,7 @@ class ProgramaAccion extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'id_cat_coordinacion' => 'Id Cat Coordinacion',
+			'id_cat_coordinacion' => 'Coordinación',
 			'nombre' => 'Nombre',
 			'responsable' => 'Responsable',
 			'comentario' => 'Comentario',
@@ -89,11 +89,11 @@ class ProgramaAccion extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('id_cat_coordinacion',$this->id_cat_coordinacion);
-		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('responsable',$this->responsable,true);
-		$criteria->compare('comentario',$this->comentario,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.id_cat_coordinacion',$this->id_cat_coordinacion);
+		$criteria->compare('t.nombre',$this->nombre,true);
+		$criteria->compare('t.responsable',$this->responsable,true);
+		$criteria->compare('t.comentario',$this->comentario,true);
 		// Se crea el apuntador al campo que se va a buscar de la tabla a la que pertenece la llave foranea
 		$criteria->with=array('idCatCoordinacion');
 		$criteria->compare('"idCatCoordinacion"."nombre"',$this->coordinacion_search, true);

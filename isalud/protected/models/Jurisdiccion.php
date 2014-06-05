@@ -107,4 +107,14 @@ class Jurisdiccion extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+    
+    /**
+     * Obtiene el Numero y Nombre concatenados
+     * 
+     * @return String
+     */
+    function getNumNombre()
+    {
+        return $this->id_jurisdiccion.'. '.$this->nombre;
+    }
 }

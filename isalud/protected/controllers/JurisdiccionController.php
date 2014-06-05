@@ -13,7 +13,7 @@ class JurisdiccionController extends Controller
 		$data = Jurisdiccion::model()->findAll('"id_estado"=:id_estado',
 												array(':id_estado'=>(int)$datosPost[1]['id_cat_estado'])
 												);
-		$data = CHtml::listData($data,'id_jurisdiccion','nombre');
+		$data = CHtml::listData($data,'id_jurisdiccion','numNombre');
 		
 		echo CHtml::tag('option', array('value'=>'empty'),CHtml::encode('Seleccionar'),true);
 		foreach($data as $value => $name)

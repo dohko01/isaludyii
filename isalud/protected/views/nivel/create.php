@@ -3,16 +3,16 @@
 /* @var $model Nivel */
 
 $this->breadcrumbs=array(
-	'Nivels'=>array('index'),
+	$this->title_sin=>array('index'),
 	'Crear',
 );
 
 $this->menu=array(
-	array('label'=>'Listar Nivel', 'url'=>array('index')),
-	array('label'=>'Crear Nivel', 'url'=>array('admin')),
+	array('label'=>'Listar '.$this->title_sin, 'url'=>array('index')),
+	array('label'=>'Crear '.$this->title_sin, 'url'=>array('admin')),
 );
 ?>
 
-<h1>Crear Nivel</h1>
+<h1>Crear <?php echo $this->title_sin; ?></h1>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

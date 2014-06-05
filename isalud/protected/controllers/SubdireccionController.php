@@ -13,14 +13,14 @@ class SubdireccionController extends Controller
 	 *
 	 * @var string
 	 */
-	public $title_sin = 'Subdireccion';
+	public $title_sin = 'Subdirección';
 
 	/**
 	 * Titulo plural para breadcrumb y encabezado
 	 *     
 	 * @var string 
 	 */
-	public $title_plu = 'Subdireccion';
+	public $title_plu = 'Subdirecciones';
 
 	/**
 	 * @return array action filters

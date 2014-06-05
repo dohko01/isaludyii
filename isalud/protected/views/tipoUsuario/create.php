@@ -3,16 +3,16 @@
 /* @var $model TipoUsuario */
 
 $this->breadcrumbs=array(
-	'Tipo Usuarios'=>array('index'),
+	$this->title_sin=>array('index'),
 	'Crear',
 );
 
 $this->menu=array(
-	array('label'=>'Listar Tipo de Usuario', 'url'=>array('index')),
-	array('label'=>'Administrar Tipo de Usuario', 'url'=>array('admin')),
+	array('label'=>'Listar '.$this->title_sin, 'url'=>array('index')),
+	array('label'=>'Administrar '.$this->title_sin, 'url'=>array('admin')),
 );
 ?>
 
-<h1>Crear TipoUsuario</h1>
+<h1>Crear nuevo <?php echo $this->title_sin;?></h1>
 
 <?php $this->renderPartial('_form', array('model'=>$model)); ?>

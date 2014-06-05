@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),
-	$model->id=>array('view','id'=>$model->id),
+	$model->username=>array('view','id'=>$model->id),
 	'Actualizar',
 );
 

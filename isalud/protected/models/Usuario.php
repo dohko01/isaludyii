@@ -30,6 +30,10 @@
  */
 class Usuario extends CActiveRecord
 {
+    //se define la variable para realizar la busqueda en admin por las relaciones que tiene.
+    public $tipousuario_search;
+    public $activo_search;
+    
 	/**
 	 * @return string the associated database table name
 	 */
@@ -56,7 +60,7 @@ class Usuario extends CActiveRecord
 			array('activo', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, id_cat_estado, id_cat_jurisdiccion, id_cat_direccion, id_cat_subdireccion, id_cat_coordinacion, id_cat_tipo_usuario, id_cat_institucion, nombre, email, telefono, username, pass, activo', 'safe', 'on'=>'search'),
+			array('id, tipousuario_search, activo_search, id_cat_estado, id_cat_jurisdiccion, id_cat_direccion, id_cat_subdireccion, id_cat_coordinacion, id_cat_tipo_usuario, id_cat_institucion, nombre, email, telefono, username, pass, activo', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -87,13 +91,13 @@ class Usuario extends CActiveRecord
 			'id' => 'ID',
 			'id_cat_estado' => 'Estado',
 			'id_cat_jurisdiccion' => 'Jurisdicción',
-			'id_cat_direccion' => 'Direccion',
+			'id_cat_direccion' => 'Dirección',
 			'id_cat_subdireccion' => 'Subdirección',
 			'id_cat_coordinacion' => 'Coordinación',
-			'id_cat_tipo_usuario' => 'Tipo Usuario',
+			'id_cat_tipo_usuario' => 'Tipo de usuario',
 			'id_cat_institucion' => 'Institución',
 			'nombre' => 'Nombre',
-			'email' => 'E-Mail',
+			'email' => 'E-mail',
 			'telefono' => 'Teléfono',
 			'username' => 'Usuario',
 			'pass' => 'Contraseña',
@@ -119,22 +123,25 @@ class Usuario extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('id_cat_estado',$this->id_cat_estado);
-		$criteria->compare('id_cat_jurisdiccion',$this->id_cat_jurisdiccion);
-		$criteria->compare('id_cat_direccion',$this->id_cat_direccion);
-		$criteria->compare('id_cat_subdireccion',$this->id_cat_subdireccion);
-		$criteria->compare('id_cat_coordinacion',$this->id_cat_coordinacion);
-		$criteria->compare('id_cat_tipo_usuario',$this->id_cat_tipo_usuario);
-		$criteria->compare('id_cat_institucion',$this->id_cat_institucion);
-		$criteria->compare('nombre',$this->nombre,true);
-		$criteria->compare('email',$this->email,true);
-		$criteria->compare('telefono',$this->telefono,true);
-		$criteria->compare('username',$this->username,true);
-		$criteria->compare('pass',$this->pass,true);
-		$criteria->compare('activo',$this->activo);
-        $criteria->order = 'nombre ASC';
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.id_cat_estado',$this->id_cat_estado);
+		$criteria->compare('t.id_cat_jurisdiccion',$this->id_cat_jurisdiccion);
+		$criteria->compare('t.id_cat_direccion',$this->id_cat_direccion);
+		$criteria->compare('t.id_cat_subdireccion',$this->id_cat_subdireccion);
+		$criteria->compare('t.id_cat_coordinacion',$this->id_cat_coordinacion);
+		$criteria->compare('t.id_cat_tipo_usuario',$this->id_cat_tipo_usuario);
+		$criteria->compare('t.id_cat_institucion',$this->id_cat_institucion);
+		$criteria->compare('t.nombre',$this->nombre,true);
+		$criteria->compare('t.email',$this->email,true);
+		$criteria->compare('t.telefono',$this->telefono,true);
+		$criteria->compare('t.username',$this->username,true);
+		$criteria->compare('t.pass',$this->pass,true);
+		$criteria->compare('t.activo',$this->activo);
+        $criteria->order = 't.nombre ASC';
 
+        $criteria->with=array('idCatTipoUsuario');
+        $criteria->compare('"idCatTipoUsuario"."nombre"',$this->tipousuario_search, true);
+        
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));

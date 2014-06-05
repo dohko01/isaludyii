@@ -3,13 +3,13 @@
 /* @var $model TipoUsuario */
 
 $this->breadcrumbs=array(
-	'Tipo Usuarios'=>array('index'),
+	$this->title_plu=>array('index'),
 	'Administrar',
 );
 
 $this->menu=array(
-	array('label'=>'Listar Tipo de Usuario', 'url'=>array('index')),
-	array('label'=>'Crear Tipo de Usuario', 'url'=>array('create')),
+	array('label'=>'Listar '.$this->title_plu, 'url'=>array('index')),
+	array('label'=>'Crear '.$this->title_sin, 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -26,14 +26,12 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Administrar Tipo Usuarios</h1>
-<?php
-/*
+<h1>Administrar <?php echo $this->title_plu; ?></h1>
+
 <p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
+Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b> o <b>=</b>
 </p>
-*/?>
+
 <?php echo CHtml::link('Busqueda Avanzada','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
 <?php $this->renderPartial('_search',array(
@@ -52,6 +50,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		array(
 			'value'=>'($data->activo) ? "Si" : "No"',
 			'header'=>'Activo',
+            'filter'=>CHtml::activeDropDownList($model,'activo_search', array(1=>'Si', 0=>'No'), array('empty'=>'Seleccionar...'))
 		),
 		array(
 			'class'=>'CButtonColumn',

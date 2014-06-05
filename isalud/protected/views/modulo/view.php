@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	$this->title_sin=>array('index'),
-	$model->id,
+	$model->nombre,
 );
 
 $this->menu=array(
@@ -21,10 +21,19 @@ $this->menu=array(
 <?php $this->widget('zii.widgets.CDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
-		'id_cat_tipo_usuario',
+        array(
+			'name'=>'id_cat_tipo_usuario',
+			'value'=>($model->idCatTipoUsuario != NULL) ? $model->idCatTipoUsuario->nombre : "",
+		),
 		'nombre',
 		'url',
-		'activo',
-		'parent_id',
+		array(
+			'name'=>'activo',
+			'value'=>($model->activo) ? "Si":"No",
+		),
+		array(
+			'name'=>'parent_id',
+			'value'=>($model->parent_id != NULL) ? $model->parent->nombre : "",
+		),
 	),
 )); ?>

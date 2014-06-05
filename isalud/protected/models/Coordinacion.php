@@ -70,7 +70,7 @@ class Coordinacion extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'id_cat_subdireccion' => 'Id Cat Subdireccion',
+			'id_cat_subdireccion' => 'Subdirección',
 			'nombre' => 'Nombre',
 			'responsable' => 'Responsable',
 			'comentario' => 'Comentario',

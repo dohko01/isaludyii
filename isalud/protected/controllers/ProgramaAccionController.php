@@ -13,14 +13,14 @@ class ProgramaAccionController extends Controller
 	 *
 	 * @var string
 	 */
-	public $title_sin = 'ProgramaAccion';
+	public $title_sin = 'Programa de acción';
 
 	/**
 	 * Titulo plural para breadcrumb y encabezado
 	 *     
 	 * @var string 
 	 */
-	public $title_plu = 'ProgramaAccion';
+	public $title_plu = 'Programas de acción';
 
 	/**
 	 * @return array action filters
