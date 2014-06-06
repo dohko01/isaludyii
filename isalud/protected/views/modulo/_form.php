@@ -45,7 +45,7 @@
 	</div>
 
 	<div class="row">
-		<?php $list = CHtml::listData(Modulo::model()->findAll(), 'id', 'nombre'); ?>
+		<?php $list = CHtml::listData(Modulo::model()->findAll(array('order'=>'t.nombre ASC')), 'id', 'nombre'); ?>
 		<?php echo $form->labelEx($model,'parent_id'); ?>
 		<?php echo $form->dropDownList($model,'parent_id', $list, array('empty'=>'Seleccionar..')); ?>
 		<?php echo $form->error($model,'parent_id'); ?>

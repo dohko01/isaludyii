@@ -802,7 +802,9 @@ class FichaTecnica extends CActiveRecord
 
             // Agregar todos los filtros la consulta
             foreach ($camposFiltro as $campFil) {
-                $where .= ' AND '.$campFil.' = \''.$filtros[$campFil].'\'';
+                if($filtros[$campFil]) {
+                    $where .= ' AND '.$campFil.' = \''.$filtros[$campFil].'\'';
+                }
             }
 
             $variables = $this->Variables;
@@ -982,7 +984,7 @@ class FichaTecnica extends CActiveRecord
         $variables = array();
         $objsVariables = $this->Variables;
 
-        // Elimina de la lista de columnas, aquellas que son variables
+        // agrega a un arreglo las iniciales de cada variable
         foreach ($objsVariables as $variable) {
             $variables[] = $variable->ini_formula;
         }
@@ -1134,5 +1136,43 @@ class FichaTecnica extends CActiveRecord
         $sqlAllDatos = 'SELECT ROW_NUMBER() OVER () AS id, * FROM ind_'.$this->id;
 
         return $sqlAllDatos;
+	}
+    
+    /**
+	 * Obtiene los datos de la tabla del indicador y los devuelve en formato JSON,
+     * esta función es utilizada para construir el pivotTable
+	 */
+	public function obtenerJSONDatos($headers = true)
+	{
+        try {
+            $variables = $this->getVariablesIndicador();
+            $dimensiones = $this->getColumsIndicador();
+            $columnas = array();
+            $innerJoin = '';
+            
+            foreach($dimensiones as $dim){
+                $objDimension = SignificadoCampo::model()->findByAttributes(array('codigo'=>$dim));
+
+                // Si la dimension es un catalogo
+                if($objDimension->catalogo) {
+                    // La columna nombre es fija en todos los catalogos y contiene la descripcion del id al que hace referencia
+                    array_push($columnas, 'tblc_'.$objDimension->catalogo.'.nombre AS "'.$objDimension->descripcion.'"');
+                    // Todos los catalogos tienen como prefijo tblc_
+                    $innerJoin .= ' INNER JOIN tblc_'.$objDimension->catalogo.' USING('.$objDimension->llave_primaria.') ';
+                }
+                else {
+                    array_push($columnas, Yii::app()->params['prefixTblIndicador'].$this->id.'.'.$dim.' AS "'.$objDimension->descripcion.'"');
+                }
+            }
+            
+            $query = 'SELECT '.implode(', ',$columnas).','.implode(', ',$variables).' FROM '.Yii::app()->params['prefixTblIndicador'].$this->id.$innerJoin;
+                        
+            $result = Yii::app()->db->createCommand($query)->queryAll();
+        } catch (Exception $e) {
+            $error['error'] = $e->getMessage();
+            return $error;
+        }
+        
+        return json_encode($result);
 	}
 }
