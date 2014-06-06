@@ -32,8 +32,9 @@
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap.min.css');
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap-responsive.min.css');
 	  $cs->registerCssFile($baseUrl.'/css/abound.css');
-          $cs->registerCssFile(Yii::app()->request->baseUrl.'/css/hackZingChart.css');
+      $cs->registerCssFile(Yii::app()->request->baseUrl.'/css/hackZingChart.css');
       $cs->registerCssFile('http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css');
+      $cs->registerCssFile(Yii::app()->request->baseUrl.'/js/pace/themes/pace-theme-corner-indicator.css');
 	  //$cs->registerCssFile($baseUrl.'/css/style-blue.css');
 	  ?>
       <!-- styles for style switcher -->
@@ -44,6 +45,7 @@
       $cs->registerScriptFile($baseUrl.'/js/bootstrap.min.js');
       $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/jqAlert/jquery.alerts.js', CClientScript::POS_END);
       $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/funciones.js', CClientScript::POS_END);
+      $cs->registerScriptFile(Yii::app()->request->baseUrl.'/js/pace/pace.min.js');
 	  //$cs->registerScriptFile($baseUrl.'/js/plugins/jquery.sparkline.js');
 	  //$cs->registerScriptFile($baseUrl.'/js/plugins/jquery.flot.min.js');
 	  //$cs->registerScriptFile($baseUrl.'/js/plugins/jquery.flot.pie.min.js');
