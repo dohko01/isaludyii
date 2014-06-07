@@ -152,9 +152,9 @@ function addGraficaMaximizar(event, object) {
     
     $('#winMaximizarGrafica .contenedorIndicador').html(wgIndicador);
     
-    $('#winMaximizarGrafica .verTipoGrafico').click(cambiarTipoGrafico);
-    $('#winMaximizarGrafica .verFichaTecnica').click(getFichaTecnica);
-    $('#winMaximizarGrafica .verTablaDatos').click(getTablaDatos); 
+    $('#winMaximizarGrafica .verTipoGrafico').on('click touchend', cambiarTipoGrafico);
+    $('#winMaximizarGrafica .verFichaTecnica').on('click touchend', getFichaTecnica);
+    $('#winMaximizarGrafica .verTablaDatos').on('click touchend', getTablaDatos); 
     
     // Obtiene el objeto JSON que contiene los datos devueltos al obtener el indicador
     parametros = JSON.parse($('#json_'+idGraficaActual).text());;
@@ -603,7 +603,7 @@ function agregarIndicador(indicador, contenido) {
                     widgetContent : wgIndicador
                 });
     
-    $('#'+prefixTblIndicador+indicador+' .verTipoGrafico').click(cambiarTipoGrafico);
+    $('#'+prefixTblIndicador+indicador+' .verTipoGrafico').on('click touchend', cambiarTipoGrafico);
 }
 
 /**
@@ -655,8 +655,8 @@ function obtieneIndicador(parametros) {
                     // Guarda todo el objeto JSON para posteriormente utilizarlo al cambiar el tipo de grafico
                     $('#datosIndicadores').append('<li id="json_'+parametros.id+'">'+JSON.stringify(respuesta)+'</li>'); // $.param(jsonObj)
                     
-                    $('#'+prefixTblIndicador+parametros.id+' .verFichaTecnica').click(getFichaTecnica);
-                    $('#'+prefixTblIndicador+parametros.id+' .verTablaDatos').click(getTablaDatos);
+                    $('#'+prefixTblIndicador+parametros.id+' .verFichaTecnica').on('click touchend', getFichaTecnica);
+                    $('#'+prefixTblIndicador+parametros.id+' .verTablaDatos').on('click touchend', getTablaDatos);
                     
                     generaGrafica(respuesta, parametros.id);
                 }
@@ -849,7 +849,7 @@ $(document).ready(function() {
         $(this).parent().parent().removeClass('open');
     });
     
-    $('#menuTableros > li').click(function(event){
+    $('#menuTableros > li').on('click touchend',function(event){
         event.preventDefault();
         event.stopPropagation();
         
@@ -859,8 +859,8 @@ $(document).ready(function() {
         $(this).parent().parent().removeClass('open');
     });
     
-    $('#tableroPrincipal .verFichaTecnica').click(getFichaTecnica);
-    $('#tableroPrincipal .verTablaDatos').click(getTablaDatos); 
+    $('#tableroPrincipal .verFichaTecnica').on('click touchend', getFichaTecnica);
+    $('#tableroPrincipal .verTablaDatos').on('click touchend', getTablaDatos); 
     
-    $('#btnGuardarTablero').click(guardarTablero);
+    $('#btnGuardarTablero').on('click touchend', guardarTablero);
 });

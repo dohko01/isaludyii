@@ -112,6 +112,64 @@ class PivotTableController extends Controller
             'error' => $error,
         ));
 	}
+    
+    /**
+     * Obtiene los datos de la tabla HTML y los devuelve en un archivo Excel
+     */
+    public function actionExportXLS()
+	{
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        header('Content-type: application/excel');
+
+        // Necesario para el indicador de downloading
+        // Fuente: http://johnculviner.com/jquery-file-download-plugin-for-ajax-like-feature-rich-file-downloads/
+        header('Set-Cookie: fileDownload=true; path=/');
+        header('Cache-Control: max-age=60, must-revalidate');
+        header('Content-Disposition: attachment; filename="'.utf8_decode(Yii::app()->request->getPost('archivo')).'.xls"');
+
+        echo '<html xmlns:x="urn:schemas-microsoft-com:office:excel">
+        <head>
+            <!--[if gte mso 9]>
+            <xml>
+                <x:ExcelWorkbook>
+                    <x:ExcelWorksheets>
+                        <x:ExcelWorksheet>
+                            <x:Name>Hoja 1</x:Name>
+                            <x:WorksheetOptions>
+                                <x:Print>
+                                    <x:ValidPrinterInfo/>
+                                </x:Print>
+                            </x:WorksheetOptions>
+                        </x:ExcelWorksheet>
+                    </x:ExcelWorksheets>
+                </x:ExcelWorkbook>
+            </xml>
+            <![endif]-->
+        </head>
+
+        <body>'.utf8_decode(Yii::app()->request->getPost('tabla')).'
+        </body></html>';
+    }
+    
+    /**
+     * Obtiene los datos de la tabla HTML y los devuelve en un archivo Excel
+     */
+    public function actionExportIMG()
+	{
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        header('Content-type: image/png');
+
+        // Necesario para el indicador de downloading
+        // Fuente: http://johnculviner.com/jquery-file-download-plugin-for-ajax-like-feature-rich-file-downloads/
+        header('Set-Cookie: fileDownload=true; path=/');
+        header('Cache-Control: max-age=60, must-revalidate');
+        header('Content-Disposition: attachment; filename="'.utf8_decode(Yii::app()->request->getPost('archivo')).'.png"');
+        
+        echo base64_decode(substr($_POST['imagen'], 22)); // data from canvas.toDataURL("image/png");
+        
+    }
 
 	// Uncomment the following methods and override them if needed
 	/*
