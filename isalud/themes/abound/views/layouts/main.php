@@ -28,6 +28,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<?php echo $baseUrl;?>/img/icons/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="<?php echo $baseUrl;?>/img/icons/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="<?php echo $baseUrl;?>/img/icons/apple-touch-icon-57-precomposed.png">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
 	<?php  
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap.min.css');
 	  $cs->registerCssFile($baseUrl.'/css/bootstrap-responsive.min.css');
@@ -54,6 +55,11 @@
 	  //$cs->registerScriptFile($baseUrl.'/js/plugins/jquery.masonry.min.js');
 	  //$cs->registerScriptFile($baseUrl.'/js/styleswitcher.js');
 	?>
+    <script type="text/javascript">
+    $(function() {
+        $( document ).tooltip({ track: true, });
+    });
+    </script>
   </head>
 
 <body>
