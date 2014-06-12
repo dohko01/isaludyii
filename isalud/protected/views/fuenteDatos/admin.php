@@ -45,6 +45,7 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 	'id'=>'fuente-datos-grid',
 	'dataProvider'=>$model->search(),
 	'filter'=>$model,
+    'afterAjaxUpdate'=>"function(){jQuery('#datepicker_ultima_lectura').datepicker({'dateFormat': 'yy-mm-dd', 'language': 'es'})}",
 	'columns'=>array(
 		'nombre',
 		'responsable',
@@ -64,7 +65,29 @@ Operadores de comparaci&oacute;n soportados por el campo busqueda: <b>&lt;</b>, 
 		/*'descripcion',
 		'sentencia_sql',*/
 		'archivo',
-		'ultima_lectura',
+        array(
+            'name' => 'ultima_lectura',
+            'filter'=>$this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                'model'=>$model, 
+                'attribute'=>'ultima_lectura', 
+                'language' => 'es',
+                'i18nScriptFile' => 'jquery.ui.datepicker-es.js',
+                'htmlOptions' => array(
+                    'id' => 'datepicker_ultima_lectura',
+                    'size' => '10',
+                ),
+                'defaultOptions' => array(
+                    'showOn' => 'focus', 
+                    'dateFormat' => 'yy/mm/dd',
+                    'showOtherMonths' => true,
+                    'selectOtherMonths' => true,
+                    'changeMonth' => true,
+                    'changeYear' => true,
+                    'showButtonPanel' => true,
+                ),
+            ), 
+            true),
+        ),
         array(
             // Utilizamos la nueva clase extendida para poder evaluar el id en el array options
 			'class'=>'ButtonColumn',

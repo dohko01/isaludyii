@@ -37,7 +37,14 @@
 
 	<div class="row">
 		<?php echo $form->label($model,'ultima_lectura'); ?>
-		<?php echo $form->textField($model,'ultima_lectura'); ?>
+        <?php $this->widget('zii.widgets.jui.CJuiDatePicker', array(
+                            'name'=>'ultima_lectura',
+                            'model'=>$model,
+                            'language' => 'es',
+                            'options'=>array(
+                                'dateFormat'=>'yy-mm-dd',
+                            ),
+                        )); ?>
 	</div>
 
 	<div class="row buttons">

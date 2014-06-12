@@ -110,7 +110,13 @@ class FuenteDatos extends CActiveRecord
 		$criteria->compare('id_cat_periodicidad',$this->id_cat_periodicidad);
 		$criteria->compare('LOWER(nombre)',strtolower($this->nombre),true);
 		$criteria->compare('LOWER(responsable)',strtolower($this->responsable),true);
-		$criteria->compare('ultima_lectura',$this->ultima_lectura,true);
+        
+        if($this->ultima_lectura) {
+            $fecha = new DateTime($this->ultima_lectura);
+            $strFecha = $fecha->format('Y-m-d h:m:s');
+            $criteria->addCondition('ultima_lectura >= \''.$strFecha.'\'');
+        }
+        
         $criteria->order = 'nombre ASC';
 
 		return new CActiveDataProvider($this, array(
